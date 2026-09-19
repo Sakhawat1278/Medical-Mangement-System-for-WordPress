@@ -361,6 +361,10 @@ class ECARE_API
             'support-messages'       => 'ecare_support_messages',
             'notifications'          => 'ecare_notifications',
             'payouts'                => 'ecare_payouts',
+            'reviews'                => 'ecare_reviews',
+            'blood-inventory'        => 'ecare_blood_inventory',
+            'blood-donors'           => 'ecare_blood_donors',
+            'blood-requests'         => 'ecare_blood_requests',
         );
 
         // Filter modules allowed for current user role
@@ -369,20 +373,20 @@ class ECARE_API
             if ($role === 'admin') {
                 $allowed_modules[$endpoint] = $collection;
             } elseif ($role === 'staff') {
-                if (in_array($endpoint, array('patients', 'staff', 'doctors', 'specialities', 'services', 'appointments', 'care-providers', 'care-provider-bookings', 'ambulance', 'ambulance-bookings', 'billing', 'refunds', 'manual-verifications', 'lab-tests', 'lab-orders', 'lab-locations', 'telemed-rooms', 'telemed-messages', 'doctor-availability', 'consultation-notes', 'staff-attendance', 'settings', 'support-tickets', 'support-messages', 'notifications', 'payouts'), true)) {
+                if (in_array($endpoint, array('patients', 'staff', 'doctors', 'specialities', 'services', 'appointments', 'care-providers', 'care-provider-bookings', 'ambulance', 'ambulance-bookings', 'billing', 'refunds', 'manual-verifications', 'lab-tests', 'lab-orders', 'lab-locations', 'telemed-rooms', 'telemed-messages', 'doctor-availability', 'consultation-notes', 'staff-attendance', 'settings', 'support-tickets', 'support-messages', 'notifications', 'payouts', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'), true)) {
                     $allowed_modules[$endpoint] = $collection;
                 }
             } elseif ($role === 'doctor') {
-                if (in_array($endpoint, array('doctors', 'specialities', 'services', 'appointments', 'telemed-rooms', 'telemed-messages', 'doctor-availability', 'consultation-notes', 'staff-attendance', 'support-tickets', 'support-messages', 'notifications', 'patients', 'billing', 'lab-orders', 'care-provider-bookings', 'payouts'), true)) {
+                if (in_array($endpoint, array('doctors', 'specialities', 'services', 'appointments', 'telemed-rooms', 'telemed-messages', 'doctor-availability', 'consultation-notes', 'staff-attendance', 'support-tickets', 'support-messages', 'notifications', 'patients', 'billing', 'lab-orders', 'care-provider-bookings', 'payouts', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'), true)) {
                     $allowed_modules[$endpoint] = $collection;
                 }
             } elseif ($role === 'patient') {
-                if (in_array($endpoint, array('specialities', 'services', 'doctors', 'care-providers', 'ambulance', 'lab-tests', 'lab-locations', 'doctor-availability', 'appointments', 'billing', 'refunds', 'lab-orders', 'care-provider-bookings', 'ambulance-bookings', 'telemed-rooms', 'telemed-messages', 'consultation-notes', 'support-tickets', 'support-messages', 'notifications', 'manual-verifications', 'patients'), true)) {
+                if (in_array($endpoint, array('specialities', 'services', 'doctors', 'care-providers', 'ambulance', 'lab-tests', 'lab-locations', 'doctor-availability', 'appointments', 'billing', 'refunds', 'lab-orders', 'care-provider-bookings', 'ambulance-bookings', 'telemed-rooms', 'telemed-messages', 'consultation-notes', 'support-tickets', 'support-messages', 'notifications', 'manual-verifications', 'patients', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'), true)) {
                     $allowed_modules[$endpoint] = $collection;
                 }
             } else {
                 // Guest
-                if (in_array($endpoint, array('doctors', 'specialities', 'services', 'care-providers', 'ambulance', 'lab-tests', 'lab-locations', 'doctor-availability', 'settings'), true)) {
+                if (in_array($endpoint, array('doctors', 'specialities', 'services', 'care-providers', 'ambulance', 'lab-tests', 'lab-locations', 'doctor-availability', 'settings', 'reviews', 'blood-inventory'), true)) {
                     $allowed_modules[$endpoint] = $collection;
                 }
             }
@@ -409,18 +413,22 @@ class ECARE_API
             }
 
             // Apply role-based record filtering for privacy
-            if ($role === 'patient' && in_array($endpoint, array('appointments', 'billing', 'refunds', 'lab-orders', 'care-provider-bookings', 'ambulance-bookings', 'telemed-rooms', 'telemed-messages', 'consultation-notes', 'support-tickets', 'support-messages', 'manual-verifications'), true)) {
+            if ($role === 'patient' && in_array($endpoint, array('appointments', 'billing', 'refunds', 'lab-orders', 'care-provider-bookings', 'ambulance-bookings', 'telemed-rooms', 'telemed-messages', 'consultation-notes', 'support-tickets', 'support-messages', 'manual-verifications', 'reviews'), true)) {
                 $data = array_values(array_filter($data, function($item) use ($current_user_id, $endpoint) {
                     if ($endpoint === 'support-tickets') return strval($item->user_id ?? '') === strval($current_user_id);
                     if ($endpoint === 'support-messages') return true;
                     if ($endpoint === 'telemed-messages') return true;
                     if ($endpoint === 'billing') return $this->billing_belongs_to_current_user($item, $current_user_id);
                     if ($endpoint === 'refunds') return $this->refund_belongs_to_current_user($item, $current_user_id);
+                    if ($endpoint === 'reviews') {
+                        if (($item->status ?? '') === 'Approved') return true;
+                        return strval($item->patient_id ?? $item->patient_user_id ?? $item->user_id ?? '') === strval($current_user_id);
+                    }
                     return strval($item->patient_id ?? $item->patient_user_id ?? $item->user_id ?? $item->patientId ?? '') === strval($current_user_id);
                 }));
             }
             
-            if ($role === 'doctor' && in_array($endpoint, array('appointments', 'telemed-rooms', 'telemed-messages', 'consultation-notes', 'doctor-availability', 'payouts'), true)) {
+            if ($role === 'doctor' && in_array($endpoint, array('appointments', 'telemed-rooms', 'telemed-messages', 'consultation-notes', 'doctor-availability', 'payouts', 'reviews'), true)) {
                 $doctor_name = $this->get_doctor_name_by_user_id($current_user_id);
                 $data = array_values(array_filter($data, function($item) use ($current_user_id, $doctor_name, $endpoint) {
                     if ($endpoint === 'doctor-availability') return strval($item->doctor_id ?? $item->doctor_user_id ?? '') === strval($current_user_id);
@@ -428,7 +436,19 @@ class ECARE_API
                     if ($endpoint === 'appointments') {
                         return $this->doctor_can_access_appointment($item, $current_user_id, $doctor_name);
                     }
+                    if ($endpoint === 'reviews') {
+                        if (($item->status ?? '') === 'Approved') return true;
+                        $matches_id = strval($item->doctor_id ?? $item->doctor_user_id ?? '') === strval($current_user_id);
+                        $matches_name = !empty($doctor_name) && (($item->doctor_name ?? '') === $doctor_name || ($item->doctorName ?? '') === $doctor_name);
+                        return $matches_id || $matches_name;
+                    }
                     return true;
+                }));
+            }
+
+            if ($role === 'guest' && $endpoint === 'reviews') {
+                $data = array_values(array_filter($data, function($item) {
+                    return ($item->status ?? '') === 'Approved';
                 }));
             }
 
@@ -847,14 +867,36 @@ class ECARE_API
             return true;
         }
 
-        $public_read_modules = array('doctors', 'specialities', 'services', 'lab-tests', 'lab-locations', 'settings', 'stats');
+        $public_read_modules = array('doctors', 'specialities', 'services', 'lab-tests', 'lab-locations', 'settings', 'stats', 'blood-inventory', 'blood-donors');
         if ($action === 'read' && in_array($module, $public_read_modules, true)) {
             return true;
+        }
+
+        if ($role === 'guest') {
+            if ($action === 'read' && $module === 'reviews') {
+                return ($record->status ?? '') === 'Approved';
+            }
+            return false;
         }
 
         if ($role === 'patient') {
             if (in_array($module, array('appointments', 'care-provider-bookings', 'ambulance-bookings', 'lab-orders', 'medical-vault', 'patient-vitals'), true)) {
                 return $this->record_matches_user($record, array('patient_user_id', 'patient_id', 'user_id'), $current_user_id);
+            }
+            if ($module === 'reviews') {
+                if ($action === 'read') {
+                    if (($record->status ?? '') === 'Approved') {
+                        return true;
+                    }
+                    return $this->record_matches_user($record, array('patient_user_id', 'patient_id', 'user_id'), $current_user_id);
+                }
+                return $this->record_matches_user($record, array('patient_user_id', 'patient_id', 'user_id'), $current_user_id);
+            }
+            if ($module === 'blood-requests') {
+                return true;
+            }
+            if ($module === 'blood-donors') {
+                return true;
             }
             if ($module === 'billing') {
                 return $this->billing_belongs_to_current_user($record, $current_user_id);
@@ -886,6 +928,18 @@ class ECARE_API
         if ($role === 'doctor') {
             $doctor_name = $this->get_doctor_name_by_user_id($current_user_id);
 
+            if ($module === 'reviews') {
+                if ($action === 'read') {
+                    if (($record->status ?? '') === 'Approved') {
+                        return true;
+                    }
+                    return $this->record_matches_user($record, array('doctor_id', 'doctor_user_id'), $current_user_id) || (!empty($doctor_name) && (($record->doctorName ?? '') === $doctor_name || ($record->doctor_name ?? '') === $doctor_name));
+                }
+                return false;
+            }
+            if ($module === 'blood-requests' || $module === 'blood-donors') {
+                return true;
+            }
             if ($module === 'appointments') {
                 return $this->doctor_can_access_appointment($record, $current_user_id, $doctor_name);
             }
@@ -949,7 +1003,7 @@ class ECARE_API
         $method = $request ? $request->get_method() : 'GET';
 
         if ($role === 'guest') {
-            if ($method === 'GET' && in_array($module, array('specialities', 'services', 'settings', 'doctors'), true)) {
+            if ($method === 'GET' && in_array($module, array('specialities', 'services', 'settings', 'doctors', 'reviews', 'blood-inventory', 'blood-donors'), true)) {
                 return true;
             }
             if ($method === 'POST' && in_array($module, array('doctors', 'care-providers', 'ambulance'), true)) {
@@ -983,13 +1037,14 @@ class ECARE_API
                 'appointments', 'telemed-rooms', 'telemed-messages', 'doctor-availability', 
                 'consultation-notes', 'patient-vitals', 'payouts', 'patients', 'specialities', 'services', 
                 'lab-tests', 'lab-locations', 'lab-orders', 'support-tickets', 'support-messages', 'medical-vault',
-                'doctors', 'staff', 'notifications', 'stats', 'settings', 'billing'
+                'doctors', 'staff', 'notifications', 'stats', 'settings', 'billing',
+                'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'
             );
             if (!in_array($module, $allowed_doctor_modules, true)) {
                 return false;
             }
             if (in_array($method, array('POST', 'PUT', 'DELETE'), true)) {
-                $restricted_doctor_modules = array('patients', 'specialities', 'services', 'lab-tests', 'lab-locations', 'settings');
+                $restricted_doctor_modules = array('patients', 'specialities', 'services', 'lab-tests', 'lab-locations', 'settings', 'reviews', 'blood-inventory');
                 if (in_array($module, $restricted_doctor_modules, true)) {
                     return false;
                 }
@@ -1003,14 +1058,14 @@ class ECARE_API
                 'medical-vault', 'telemed-rooms', 'telemed-messages', 'support-tickets', 
                 'support-messages', 'patients', 'specialities', 'services', 'doctors', 
                 'lab-tests', 'lab-locations', 'lab-orders', 'patient-vitals', 'notifications',
-                'stats', 'settings'
+                'stats', 'settings', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'
             );
             if (!in_array($module, $allowed_patient_modules, true)) {
                 return false;
             }
             if (in_array($method, array('POST', 'PUT', 'DELETE'), true)) {
-                // Patients cannot create/modify clinic catalogue data (read-only for them)
-                $restricted_patient_modules = array('specialities', 'services', 'doctors', 'lab-tests', 'lab-locations', 'settings');
+                // Patients cannot create/modify clinic catalogue data or blood inventory (read-only for them)
+                $restricted_patient_modules = array('specialities', 'services', 'doctors', 'lab-tests', 'lab-locations', 'settings', 'blood-inventory');
                 if (in_array($module, $restricted_patient_modules, true)) {
                     return false;
                 }

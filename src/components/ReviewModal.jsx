@@ -41,7 +41,7 @@ const ReviewModal = ({ isOpen, onClose, appointment }) => {
 
       const doctorName = appointment?.doctorName || appointment?.doctor_name || doc?.name || 'Doctor';
 
-      await addReview({
+      const res = await addReview({
         patient_id: user?.id,
         patient_name: user?.name,
         doctor_id: doctorId,
@@ -52,10 +52,12 @@ const ReviewModal = ({ isOpen, onClose, appointment }) => {
         status: 'Pending',
         created_at: new Date().toISOString()
       });
-      toast.success('Thank you! Your review has been submitted for moderation.');
-      setRating(0);
-      setReviewText('');
-      onClose();
+      if (res) {
+        toast.success('Thank you! Your review has been submitted for moderation.');
+        setRating(0);
+        setReviewText('');
+        onClose();
+      }
     } catch (err) {
       console.error(err);
       toast.error('Failed to submit review.');

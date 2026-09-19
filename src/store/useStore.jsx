@@ -1069,18 +1069,19 @@ const useStore = create(
             if (endpoint === 'telemed-rooms' || endpoint === 'telemed-messages') {
               return Promise.resolve({ data: endpoint === 'telemed-rooms' ? get().telemedRooms : get().telemedMessages });
             }
-            const allowedForGuest = ['doctors', 'specialities', 'services', 'settings'];
+            const allowedForGuest = ['doctors', 'specialities', 'services', 'settings', 'reviews', 'blood-inventory'];
             const allowedForPatient = [
               'stats', 'patients', 'doctors', 'specialities', 'services', 'appointments', 
               'care-provider-bookings', 'ambulance-bookings', 'billing', 'lab-tests', 'lab-orders', 
               'lab-locations', 'telemed-rooms', 'telemed-messages', 'settings', 'support-tickets', 
-              'support-messages', 'notifications'
+              'support-messages', 'notifications', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'
             ];
             const allowedForDoctor = [
               'stats', 'patients', 'doctors', 'specialities', 'services', 'appointments', 
               'billing', 'lab-tests', 'lab-orders', 'lab-locations', 'telemed-rooms', 
               'telemed-messages', 'doctor-availability', 'consultation-notes', 'settings', 
-              'support-tickets', 'support-messages', 'notifications', 'payouts'
+              'support-tickets', 'support-messages', 'notifications', 'payouts',
+              'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'
             ];
 
             let isAllowed = false;
@@ -1107,7 +1108,8 @@ const useStore = create(
               ambulanceBookings, billing, refunds, manualVerifications, 
               labTests, labOrders, labLocations, telemedRooms, telemedMessages, 
               doctorAvailability, consultationNotes, staffAttendance, settings,
-              supportTickets, supportMessages, notificationsResp, payoutsResp;
+              supportTickets, supportMessages, notificationsResp, payoutsResp,
+              reviews, bloodInventory, bloodDonors, bloodRequests;
 
           let bootstrapResp = null;
           try {
@@ -1145,6 +1147,10 @@ const useStore = create(
             supportMessages      = { data: b['support-messages'] || [] };
             notificationsResp    = { data: b.notifications || [] };
             payoutsResp          = { data: b.payouts || [] };
+            reviews              = { data: b.reviews || [] };
+            bloodInventory       = { data: b['blood-inventory'] || [] };
+            bloodDonors          = { data: b['blood-donors'] || [] };
+            bloodRequests        = { data: b['blood-requests'] || [] };
           } else {
             [
               stats, patients, staff, doctors, specialities, services, 
@@ -1152,7 +1158,8 @@ const useStore = create(
               ambulanceBookings, billing, refunds, manualVerifications, 
               labTests, labOrders, labLocations, telemedRooms, telemedMessages, 
               doctorAvailability, consultationNotes, staffAttendance, settings,
-              supportTickets, supportMessages, notificationsResp, payoutsResp
+              supportTickets, supportMessages, notificationsResp, payoutsResp,
+              reviews, bloodInventory, bloodDonors, bloodRequests
             ] = await Promise.all([
               getEndpointPromise('stats', true),
               getEndpointPromise('patients'),
@@ -1180,7 +1187,11 @@ const useStore = create(
               getEndpointPromise('support-tickets'),
               getEndpointPromise('support-messages'),
               getEndpointPromise('notifications'),
-              getEndpointPromise('payouts')
+              getEndpointPromise('payouts'),
+              getEndpointPromise('reviews'),
+              getEndpointPromise('blood-inventory'),
+              getEndpointPromise('blood-donors'),
+              getEndpointPromise('blood-requests')
             ]);
           }
 
@@ -1257,6 +1268,10 @@ const useStore = create(
             })) : [],
             transactions: Array.isArray(billing.data) ? billing.data : [],
             payouts: Array.isArray(payoutsResp.data) ? payoutsResp.data : [],
+            reviews: Array.isArray(reviews.data) ? reviews.data : [],
+            bloodInventory: Array.isArray(bloodInventory.data) ? bloodInventory.data : [],
+            bloodDonors: Array.isArray(bloodDonors.data) ? bloodDonors.data : [],
+            bloodRequests: Array.isArray(bloodRequests.data) ? bloodRequests.data : [],
             refunds: Array.isArray(refunds.data) ? refunds.data : [],
             manualVerifications: Array.isArray(manualVerifications.data) ? manualVerifications.data : [],
             labTests: Array.isArray(labTests.data) ? labTests.data : [],
@@ -1340,17 +1355,17 @@ const useStore = create(
           const currentUser = get().user;
           const role = currentUser?.ecareRole || 'guest';
 
-          const allowedForGuest = ['doctors', 'reviews'];
+          const allowedForGuest = ['doctors', 'reviews', 'blood-inventory'];
           const allowedForPatient = [
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
             'telemed-rooms', 'support-tickets', 'support-messages', 
             'care-provider-bookings', 'ambulance-bookings', 'telemed-messages',
-            'patients', 'reviews', 'blood-donors', 'blood-requests'
+            'patients', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'
           ];
           const allowedForDoctor = [
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
             'telemed-rooms', 'support-tickets', 'support-messages', 'telemed-messages',
-            'patients', 'reviews', 'blood-inventory', 'blood-requests'
+            'patients', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'
           ];
           const allowedForAdmin = [
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
@@ -1545,7 +1560,7 @@ const useStore = create(
       },
 
       // Reviews
-      addReview: (data) => get().handleOp('reviews', 'post', data, 'Review submitted successfully', 'reviews'),
+      addReview: (data) => get().handleOp('reviews', 'post', data, null, 'reviews'),
       updateReview: (id, data) => get().handleOp('reviews', 'put', data, 'Review updated', 'reviews', id),
       deleteReview: (id) => get().handleOp('reviews', 'delete', null, 'Review removed', 'reviews', id),
 

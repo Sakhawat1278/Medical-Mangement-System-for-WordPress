@@ -43,7 +43,7 @@ const Appointments = () => {
     user, appointments, patients, doctorList, updateAppointment, 
     deleteAppointment, bulkDelete, openConfirm, setActivePage, 
     setEditingAppointment, getCurrentDoctor, completeAppointment, missAppointment,
-    addRefund, refunds, transactions
+    addRefund, refunds, transactions, reviews
   } = useStore()
   const isDoctor = user?.ecareRole === 'doctor'
   const isPatient = user?.ecareRole === 'patient'
@@ -387,9 +387,13 @@ const Appointments = () => {
 
         // 1. Finished/Concluded consultations (Completed, Closed)
         if (st === 'completed' || st === 'closed') {
-          const hasReviewed = (useStore.getState().reviews || []).some(r => String(r.appointment_id) === String(row.id));
+          const apptReview = (reviews || []).find(r => 
+            (r.appointment_id && String(r.appointment_id) === String(row.id)) ||
+            (r.appointmentId && String(r.appointmentId) === String(row.id))
+          );
+          const hasReviewed = Boolean(apptReview);
           return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }} onClick={(e) => e.stopPropagation()}>
               <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <CheckCircle size={14} weight="bold" /> {st === 'closed' ? 'Concluded' : 'Completed'}
               </span>
@@ -401,22 +405,69 @@ const Appointments = () => {
                     setIsReviewModalOpen(true);
                   }}
                   style={{
-                    padding: '4px 10px', borderRadius: '6px',
-                    background: '#fef3c7', color: '#d97706',
+                    padding: '5px 12px', borderRadius: '8px',
+                    background: '#fef3c7', color: '#b45309',
                     border: '1px solid #fde68a',
-                    fontSize: '0.68rem', fontWeight: 700, cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: '4px',
+                    fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '5px',
                     justifyContent: 'center', transition: 'all 0.2s',
                     boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
                   }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = '#fde68a'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = '#fef3c7'}
                 >
-                  <Star size={12} weight="fill" /> Rate Doctor
+                  <Star size={13} weight="fill" color="#f59e0b" /> Rate Doctor
                 </button>
               )}
               {isPatient && hasReviewed && (
-                <span style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '2px' }}>
-                  <Star size={11} weight="fill" color="#f59e0b" /> Reviewed
-                </span>
+                <div 
+                  title={apptReview?.review_text ? `"${apptReview.review_text}"` : 'Your review has been recorded'}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '4px 10px',
+                    background: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    width: 'fit-content',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#d97706', fontWeight: 700, fontSize: '0.75rem' }}>
+                    <Star size={13} weight="fill" color="#f59e0b" />
+                    <span>{apptReview.rating || 5}★ Rated</span>
+                  </div>
+                  <span style={{
+                    fontSize: '0.65rem',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                    fontWeight: 700,
+                    background: apptReview.status === 'Approved' ? '#ecfdf5' : '#fffbeb',
+                    color: apptReview.status === 'Approved' ? '#059669' : '#b45309',
+                    border: apptReview.status === 'Approved' ? '1px solid #a7f3d0' : '1px solid #fde68a',
+                  }}>
+                    {apptReview.status === 'Approved' ? 'Verified' : 'Under Review'}
+                  </span>
+                </div>
+              )}
+              {!isPatient && hasReviewed && (
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  padding: '3px 8px',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '6px',
+                  fontSize: '0.72rem',
+                  color: '#d97706',
+                  fontWeight: 600,
+                  width: 'fit-content'
+                }}>
+                  <Star size={12} weight="fill" color="#f59e0b" />
+                  <span>{apptReview.rating || 5}★ Patient Review</span>
+                </div>
               )}
             </div>
           );
