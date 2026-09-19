@@ -737,6 +737,9 @@ const useStore = create(
       bloodRequests: [],
       bloodCamps: [],
       bloodExpiryAlerts: [],
+      ipdWards: [],
+      ipdBeds: [],
+      ipdAdmissions: [],
       careProviderBookings: [],
       careProviders: [],
       pendingCareProviders: [],
@@ -1155,6 +1158,9 @@ const useStore = create(
             bloodRequests        = { data: b['blood-requests'] || [] };
             bloodCamps           = { data: b['blood-camps'] || [] };
             bloodExpiryAlerts    = { data: b['blood-expiry-alerts'] || [] };
+            ipdWards             = { data: b['ipd-wards'] || [] };
+            ipdBeds              = { data: b['ipd-beds'] || [] };
+            ipdAdmissions        = { data: b['ipd-admissions'] || [] };
           } else {
             [
               stats, patients, staff, doctors, specialities, services, 
@@ -1164,7 +1170,8 @@ const useStore = create(
               doctorAvailability, consultationNotes, staffAttendance, settings,
               supportTickets, supportMessages, notificationsResp, payoutsResp,
               reviews, bloodInventory, bloodDonors, bloodRequests,
-              bloodCamps, bloodExpiryAlerts
+              bloodCamps, bloodExpiryAlerts,
+              ipdWards, ipdBeds, ipdAdmissions
             ] = await Promise.all([
               getEndpointPromise('stats', true),
               getEndpointPromise('patients'),
@@ -1198,7 +1205,10 @@ const useStore = create(
               getEndpointPromise('blood-donors'),
               getEndpointPromise('blood-requests'),
               getEndpointPromise('blood-camps'),
-              getEndpointPromise('blood-expiry-alerts')
+              getEndpointPromise('blood-expiry-alerts'),
+              getEndpointPromise('ipd-wards'),
+              getEndpointPromise('ipd-beds'),
+              getEndpointPromise('ipd-admissions')
             ]);
           }
 
@@ -1281,6 +1291,9 @@ const useStore = create(
             bloodRequests: Array.isArray(bloodRequests.data) ? bloodRequests.data : [],
             bloodCamps: Array.isArray(bloodCamps.data) ? bloodCamps.data : [],
             bloodExpiryAlerts: Array.isArray(bloodExpiryAlerts.data) ? bloodExpiryAlerts.data : [],
+            ipdWards: Array.isArray(ipdWards.data) ? ipdWards.data : [],
+            ipdBeds: Array.isArray(ipdBeds.data) ? ipdBeds.data : [],
+            ipdAdmissions: Array.isArray(ipdAdmissions.data) ? ipdAdmissions.data : [],
             refunds: Array.isArray(refunds.data) ? refunds.data : [],
             manualVerifications: Array.isArray(manualVerifications.data) ? manualVerifications.data : [],
             labTests: Array.isArray(labTests.data) ? labTests.data : [],
@@ -1370,13 +1383,13 @@ const useStore = create(
             'telemed-rooms', 'support-tickets', 'support-messages', 
             'care-provider-bookings', 'ambulance-bookings', 'telemed-messages',
             'patients', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests',
-            'blood-camps'
+            'blood-camps', 'ipd-wards', 'ipd-beds', 'ipd-admissions'
           ];
           const allowedForDoctor = [
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
             'telemed-rooms', 'support-tickets', 'support-messages', 'telemed-messages',
             'patients', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests',
-            'blood-camps'
+            'blood-camps', 'ipd-wards', 'ipd-beds', 'ipd-admissions'
           ];
           const allowedForAdmin = [
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
@@ -1384,7 +1397,7 @@ const useStore = create(
             'care-providers', 'ambulance', 'manual-verifications',
             'care-provider-bookings', 'ambulance-bookings', 'telemed-messages',
             'patients', 'staff', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests',
-            'blood-camps', 'blood-expiry-alerts'
+            'blood-camps', 'blood-expiry-alerts', 'ipd-wards', 'ipd-beds', 'ipd-admissions'
           ];
 
           let modulesToSync = [];
@@ -1429,6 +1442,9 @@ const useStore = create(
           const bloodRequestsData = Array.isArray(data['blood-requests']) ? data['blood-requests'] : [];
           const bloodCampsData = Array.isArray(data['blood-camps']) ? data['blood-camps'] : (get().bloodCamps || []);
           const bloodExpiryAlertsData = Array.isArray(data['blood-expiry-alerts']) ? data['blood-expiry-alerts'] : (get().bloodExpiryAlerts || []);
+          const ipdWardsData = Array.isArray(data['ipd-wards']) ? data['ipd-wards'] : (get().ipdWards || []);
+          const ipdBedsData = Array.isArray(data['ipd-beds']) ? data['ipd-beds'] : (get().ipdBeds || []);
+          const ipdAdmissionsData = Array.isArray(data['ipd-admissions']) ? data['ipd-admissions'] : (get().ipdAdmissions || []);
 
           const allDoctors = doctorsData;
 
@@ -1462,6 +1478,9 @@ const useStore = create(
             bloodRequests: bloodRequestsData,
             bloodCamps: bloodCampsData,
             bloodExpiryAlerts: bloodExpiryAlertsData,
+            ipdWards: ipdWardsData,
+            ipdBeds: ipdBedsData,
+            ipdAdmissions: ipdAdmissionsData,
             transactions: billingData,
             notifications: combinedNotifs,
             telemedRooms: telemedRoomsData,
@@ -1633,6 +1652,186 @@ const useStore = create(
           toast.error('Expiry scan failed');
           return null;
         }
+      },
+      // Inpatient Bed & Ward Management (IPD)
+      addIpdWard: (data) => get().handleOp('ipd-wards', 'post', data, 'Ward added successfully', 'ipdWards'),
+      updateIpdWard: (id, data) => get().handleOp('ipd-wards', 'put', data, 'Ward updated', 'ipdWards', id),
+      deleteIpdWard: (id) => get().handleOp('ipd-wards', 'delete', null, 'Ward removed', 'ipdWards', id),
+
+      addIpdBed: (data) => get().handleOp('ipd-beds', 'post', data, 'Bed added to ward', 'ipdBeds'),
+      updateIpdBed: (id, data) => get().handleOp('ipd-beds', 'put', data, 'Bed updated', 'ipdBeds', id),
+      deleteIpdBed: (id) => get().handleOp('ipd-beds', 'delete', null, 'Bed removed', 'ipdBeds', id),
+      markBedStatus: async (bedId, status, notes = '') => {
+        const bed = (get().ipdBeds || []).find(b => String(b.id) === String(bedId));
+        if (!bed) return;
+        const updated = { ...bed, status, notes: notes || bed.notes || '' };
+        if (status === 'Available') {
+          updated.patient_name = '';
+          updated.diagnosis = '';
+          updated.admitted_date = '';
+          updated.doctor_name = '';
+          updated.tags = [];
+          updated.current_admission_id = '';
+        }
+        return get().handleOp('ipd-beds', 'put', updated, `Bed #${bed.bed_number} marked as ${status}`, 'ipdBeds', bedId);
+      },
+
+      addIpdAdmission: async (data) => {
+        // 1. Create admission record
+        const admRes = await get().handleOp('ipd-admissions', 'post', {
+          ...data,
+          status: 'Admitted',
+          admission_date: data.admission_date || new Date().toISOString()
+        }, 'Patient admitted to IPD', 'ipdAdmissions');
+
+        // 2. Mark bed as Occupied with patient details
+        if (data.bed_id) {
+          const bed = (get().ipdBeds || []).find(b => String(b.id) === String(data.bed_id));
+          if (bed) {
+            await get().handleOp('ipd-beds', 'put', {
+              ...bed,
+              status: 'Occupied',
+              patient_name: data.patient_name,
+              age: data.age,
+              gender: data.gender,
+              diagnosis: data.diagnosis,
+              admitted_date: data.admission_date ? data.admission_date.split('T')[0] : new Date().toISOString().split('T')[0],
+              doctor_name: data.attending_doctor_name || '',
+              tags: data.tags || [],
+              current_admission_id: admRes?.data?.id || ''
+            }, null, 'ipdBeds', bed.id);
+          }
+        }
+        return admRes;
+      },
+
+      transferIpdBed: async (admissionId, fromBedId, toBedId, reason) => {
+        const admission = (get().ipdAdmissions || []).find(a => String(a.id) === String(admissionId));
+        const fromBed = (get().ipdBeds || []).find(b => String(b.id) === String(fromBedId));
+        const toBed = (get().ipdBeds || []).find(b => String(b.id) === String(toBedId));
+        if (!toBed) {
+          toast.error('Target bed not found');
+          return;
+        }
+
+        // 1. Update old bed to Cleaning
+        if (fromBed) {
+          await get().handleOp('ipd-beds', 'put', {
+            ...fromBed,
+            status: 'Cleaning',
+            patient_name: '',
+            diagnosis: '',
+            admitted_date: '',
+            doctor_name: '',
+            tags: [],
+            current_admission_id: '',
+            notes: `Transferred to ${toBed.bed_number}. Housekeeping in progress.`
+          }, null, 'ipdBeds', fromBed.id);
+        }
+
+        // 2. Update new bed to Occupied
+        await get().handleOp('ipd-beds', 'put', {
+          ...toBed,
+          status: 'Occupied',
+          patient_name: admission?.patient_name || fromBed?.patient_name || '',
+          age: admission?.age || fromBed?.age || '',
+          gender: admission?.gender || fromBed?.gender || '',
+          diagnosis: admission?.diagnosis || fromBed?.diagnosis || '',
+          admitted_date: admission?.admission_date || fromBed?.admitted_date || new Date().toISOString().split('T')[0],
+          doctor_name: admission?.attending_doctor_name || fromBed?.doctor_name || '',
+          tags: admission?.tags || fromBed?.tags || [],
+          current_admission_id: admissionId
+        }, null, 'ipdBeds', toBed.id);
+
+        // 3. Record transfer in admission document
+        if (admission) {
+          const transfers = Array.isArray(admission.bed_transfers) ? [...admission.bed_transfers] : [];
+          transfers.push({
+            from_bed: fromBed?.bed_number || fromBedId,
+            to_bed: toBed.bed_number,
+            date: new Date().toISOString(),
+            reason: reason || 'Clinical Transfer'
+          });
+          await get().handleOp('ipd-admissions', 'put', {
+            ...admission,
+            bed_id: toBedId,
+            ward_id: toBed.ward_id,
+            bed_transfers: transfers
+          }, `Transferred to ${toBed.bed_number}`, 'ipdAdmissions', admissionId);
+        }
+      },
+
+      dischargeIpdPatient: async (admissionId, dischargeData) => {
+        const admission = (get().ipdAdmissions || []).find(a => String(a.id) === String(admissionId));
+        const bed = (get().ipdBeds || []).find(b => String(b.id) === String(admission?.bed_id || dischargeData?.bed_id));
+
+        // 1. Calculate stay days and room charges
+        const admDate = new Date(admission?.admission_date || dischargeData?.admission_date || new Date());
+        const disDate = new Date();
+        const diffDays = Math.max(1, Math.ceil((disDate.getTime() - admDate.getTime()) / (1000 * 60 * 60 * 24)));
+        const dailyRate = Number(bed?.daily_rate || 80.00);
+        const totalRoomCharges = diffDays * dailyRate;
+
+        // 2. Create invoice in billing collection
+        const invoiceNo = `INV-IPD-${Date.now().toString().slice(-6)}`;
+        await get().handleOp('billing', 'post', {
+          invoiceNo,
+          patientName: admission?.patient_name || dischargeData?.patient_name || 'Inpatient',
+          patient_user_id: admission?.patient_user_id || null,
+          service: `Inpatient Accommodation (${diffDays} Days - Bed #${bed?.bed_number || 'Room'})`,
+          amount: totalRoomCharges,
+          paidAmount: dischargeData?.paidAmount || 0,
+          status: (Number(dischargeData?.paidAmount || 0) >= totalRoomCharges) ? 'Paid' : 'Pending',
+          method: dischargeData?.paymentMethod || 'Cash / Counter',
+          date: new Date().toISOString().split('T')[0],
+          admission_id: admissionId
+        }, null, 'transactions');
+
+        // 3. Mark bed as Cleaning
+        if (bed) {
+          await get().handleOp('ipd-beds', 'put', {
+            ...bed,
+            status: 'Cleaning',
+            patient_name: '',
+            diagnosis: '',
+            admitted_date: '',
+            doctor_name: '',
+            tags: [],
+            current_admission_id: '',
+            notes: `Discharged ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}. Housekeeping required.`
+          }, null, 'ipdBeds', bed.id);
+        }
+
+        // 4. Update admission record to Discharged
+        const updatedAdmission = {
+          ...admission,
+          status: 'Discharged',
+          discharge_date: new Date().toISOString(),
+          stay_days: diffDays,
+          room_charges: totalRoomCharges,
+          invoice_no: invoiceNo,
+          discharge_condition: dischargeData?.condition || 'Recovered',
+          discharge_summary: dischargeData?.summary || '',
+          discharge_advice: dischargeData?.advice || ''
+        };
+        return get().handleOp('ipd-admissions', 'put', updatedAdmission, `Patient discharged. Invoice #${invoiceNo} created.`, 'ipdAdmissions', admissionId);
+      },
+
+      addAdmissionClinicalNote: async (admissionId, noteData) => {
+        const admission = (get().ipdAdmissions || []).find(a => String(a.id) === String(admissionId));
+        if (!admission) return;
+        const notes = Array.isArray(admission.daily_notes) ? [...admission.daily_notes] : [];
+        notes.unshift({
+          id: `note_${Date.now()}`,
+          recorded_at: new Date().toISOString(),
+          author: get().user?.name || 'Attending Physician',
+          role: get().user?.ecareRole || 'Doctor',
+          ...noteData
+        });
+        return get().handleOp('ipd-admissions', 'put', {
+          ...admission,
+          daily_notes: notes
+        }, 'Clinical rounds note recorded', 'ipdAdmissions', admissionId);
       },
 
 

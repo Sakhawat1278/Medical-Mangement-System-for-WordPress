@@ -71,7 +71,10 @@ class ECARE_API
             'blood-donors',
             'blood-requests',
             'blood-camps',
-            'blood-expiry-alerts'
+            'blood-expiry-alerts',
+            'ipd-wards',
+            'ipd-beds',
+            'ipd-admissions'
         );
 
         register_rest_route('ecare/v1', '/bootstrap', array(
@@ -367,6 +370,11 @@ class ECARE_API
             'blood-inventory'        => 'ecare_blood_inventory',
             'blood-donors'           => 'ecare_blood_donors',
             'blood-requests'         => 'ecare_blood_requests',
+            'blood-camps'            => 'ecare_blood_camps',
+            'blood-expiry-alerts'    => 'ecare_blood_expiry_alerts',
+            'ipd-wards'              => 'ecare_ipd_wards',
+            'ipd-beds'               => 'ecare_ipd_beds',
+            'ipd-admissions'         => 'ecare_ipd_admissions',
         );
 
         // Filter modules allowed for current user role
@@ -375,20 +383,20 @@ class ECARE_API
             if ($role === 'admin') {
                 $allowed_modules[$endpoint] = $collection;
             } elseif ($role === 'staff') {
-                if (in_array($endpoint, array('patients', 'staff', 'doctors', 'specialities', 'services', 'appointments', 'care-providers', 'care-provider-bookings', 'ambulance', 'ambulance-bookings', 'billing', 'refunds', 'manual-verifications', 'lab-tests', 'lab-orders', 'lab-locations', 'telemed-rooms', 'telemed-messages', 'doctor-availability', 'consultation-notes', 'staff-attendance', 'settings', 'support-tickets', 'support-messages', 'notifications', 'payouts', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'), true)) {
+                if (in_array($endpoint, array('patients', 'staff', 'doctors', 'specialities', 'services', 'appointments', 'care-providers', 'care-provider-bookings', 'ambulance', 'ambulance-bookings', 'billing', 'refunds', 'manual-verifications', 'lab-tests', 'lab-orders', 'lab-locations', 'telemed-rooms', 'telemed-messages', 'doctor-availability', 'consultation-notes', 'staff-attendance', 'settings', 'support-tickets', 'support-messages', 'notifications', 'payouts', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests', 'blood-camps', 'blood-expiry-alerts', 'ipd-wards', 'ipd-beds', 'ipd-admissions'), true)) {
                     $allowed_modules[$endpoint] = $collection;
                 }
             } elseif ($role === 'doctor') {
-                if (in_array($endpoint, array('doctors', 'specialities', 'services', 'appointments', 'telemed-rooms', 'telemed-messages', 'doctor-availability', 'consultation-notes', 'staff-attendance', 'support-tickets', 'support-messages', 'notifications', 'patients', 'billing', 'lab-orders', 'care-provider-bookings', 'payouts', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'), true)) {
+                if (in_array($endpoint, array('doctors', 'specialities', 'services', 'appointments', 'telemed-rooms', 'telemed-messages', 'doctor-availability', 'consultation-notes', 'staff-attendance', 'support-tickets', 'support-messages', 'notifications', 'patients', 'billing', 'lab-orders', 'care-provider-bookings', 'payouts', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests', 'blood-camps', 'ipd-wards', 'ipd-beds', 'ipd-admissions'), true)) {
                     $allowed_modules[$endpoint] = $collection;
                 }
             } elseif ($role === 'patient') {
-                if (in_array($endpoint, array('specialities', 'services', 'doctors', 'care-providers', 'ambulance', 'lab-tests', 'lab-locations', 'doctor-availability', 'appointments', 'billing', 'refunds', 'lab-orders', 'care-provider-bookings', 'ambulance-bookings', 'telemed-rooms', 'telemed-messages', 'consultation-notes', 'support-tickets', 'support-messages', 'notifications', 'manual-verifications', 'patients', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'), true)) {
+                if (in_array($endpoint, array('specialities', 'services', 'doctors', 'care-providers', 'ambulance', 'lab-tests', 'lab-locations', 'doctor-availability', 'appointments', 'billing', 'refunds', 'lab-orders', 'care-provider-bookings', 'ambulance-bookings', 'telemed-rooms', 'telemed-messages', 'consultation-notes', 'support-tickets', 'support-messages', 'notifications', 'manual-verifications', 'patients', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests', 'blood-camps', 'ipd-wards', 'ipd-beds', 'ipd-admissions'), true)) {
                     $allowed_modules[$endpoint] = $collection;
                 }
             } else {
                 // Guest
-                if (in_array($endpoint, array('doctors', 'specialities', 'services', 'care-providers', 'ambulance', 'lab-tests', 'lab-locations', 'doctor-availability', 'settings', 'reviews', 'blood-inventory'), true)) {
+                if (in_array($endpoint, array('doctors', 'specialities', 'services', 'care-providers', 'ambulance', 'lab-tests', 'lab-locations', 'doctor-availability', 'settings', 'reviews', 'blood-inventory', 'blood-camps', 'ipd-wards', 'ipd-beds'), true)) {
                     $allowed_modules[$endpoint] = $collection;
                 }
             }
@@ -869,7 +877,7 @@ class ECARE_API
             return true;
         }
 
-        $public_read_modules = array('doctors', 'specialities', 'services', 'lab-tests', 'lab-locations', 'settings', 'stats', 'blood-inventory', 'blood-donors', 'blood-camps');
+        $public_read_modules = array('doctors', 'specialities', 'services', 'lab-tests', 'lab-locations', 'settings', 'stats', 'blood-inventory', 'blood-donors', 'blood-camps', 'ipd-wards', 'ipd-beds');
         if ($action === 'read' && in_array($module, $public_read_modules, true)) {
             return true;
         }
@@ -903,6 +911,9 @@ class ECARE_API
             // Patients can read blood camps and POST camp registrations (handled via update)
             if ($module === 'blood-camps') {
                 return true;
+            }
+            if ($module === 'ipd-admissions') {
+                return $this->record_matches_user($record, array('patient_user_id', 'patient_id', 'user_id'), $current_user_id);
             }
             if ($module === 'billing') {
                 return $this->billing_belongs_to_current_user($record, $current_user_id);
@@ -943,7 +954,7 @@ class ECARE_API
                 }
                 return false;
             }
-            if ($module === 'blood-requests' || $module === 'blood-donors') {
+            if ($module === 'blood-requests' || $module === 'blood-donors' || $module === 'ipd-admissions' || $module === 'ipd-wards' || $module === 'ipd-beds') {
                 return true;
             }
             if ($module === 'appointments') {
@@ -1120,7 +1131,10 @@ class ECARE_API
             'blood-donors'    => 'ecare_blood_donors',
             'blood-requests'  => 'ecare_blood_requests',
             'blood-camps'     => 'ecare_blood_camps',
-            'blood-expiry-alerts' => 'ecare_blood_expiry_alerts'
+            'blood-expiry-alerts' => 'ecare_blood_expiry_alerts',
+            'ipd-wards'       => 'ecare_ipd_wards',
+            'ipd-beds'        => 'ecare_ipd_beds',
+            'ipd-admissions'  => 'ecare_ipd_admissions'
         );
         return isset($map[$module]) ? $map[$module] : null;
     }
@@ -1257,12 +1271,113 @@ class ECARE_API
         return rest_ensure_response($results);
     }
 
+    private function ensure_ipd_seeded() {
+        $existing_wards = ECARE_DB_Client::select_all('ecare_ipd_wards');
+        if (!empty($existing_wards)) {
+            return;
+        }
+
+        // Seed Default Wards
+        $w4e_id = ECARE_DB_Client::insert('ecare_ipd_wards', array(
+            'name'        => 'Ward 4 East (Medical-Surgical)',
+            'code'        => 'W4E',
+            'ward_type'   => 'General',
+            'floor'       => '4th Floor, East Wing',
+            'daily_rate'  => 80.00,
+            'supervisor'  => 'Nurse Supervisor Sarah Jenkins',
+            'contact_ext' => '401',
+            'total_beds'  => 14
+        ));
+
+        $icu_id = ECARE_DB_Client::insert('ecare_ipd_wards', array(
+            'name'        => 'Intensive Care Unit (ICU)',
+            'code'        => 'ICU',
+            'ward_type'   => 'ICU',
+            'floor'       => '3rd Floor, Block A',
+            'daily_rate'  => 180.00,
+            'supervisor'  => 'Nurse Head Michael Croft',
+            'contact_ext' => '301',
+            'total_beds'  => 4
+        ));
+
+        $cab_id = ECARE_DB_Client::insert('ecare_ipd_wards', array(
+            'name'        => 'Executive Deluxe Cabins',
+            'code'        => 'CAB',
+            'ward_type'   => 'Cabin',
+            'floor'       => '5th Floor, Executive Wing',
+            'daily_rate'  => 220.00,
+            'supervisor'  => 'Hostess Victoria Vance',
+            'contact_ext' => '501',
+            'total_beds'  => 2
+        ));
+
+        // Seed Default Beds for Ward 4 East matching the reference blueprint
+        $w4e_beds = array(
+            array('bed_number' => 'Bed 401A', 'room_number' => '401', 'bed_type' => 'Standard Bed', 'status' => 'Available', 'daily_rate' => 80.00),
+            array('bed_number' => 'Bed 401B', 'room_number' => '401', 'bed_type' => 'Standard Bed', 'status' => 'Available', 'daily_rate' => 80.00),
+            array(
+                'bed_number' => 'Bed 402A', 'room_number' => '401', 'bed_type' => 'Telemetry Bed', 'status' => 'Occupied', 'daily_rate' => 95.00,
+                'patient_name' => 'James Smith', 'age' => 72, 'gender' => 'M', 'admitted_date' => date('Y-m-d', strtotime('-4 days')),
+                'diagnosis' => 'Congestive Heart Failure (CHF)', 'doctor_name' => 'Dr. Robert Vance',
+                'tags' => array('Fall Risk', 'Isolation'), 'notes' => 'Continuous telemetry monitoring required'
+            ),
+            array('bed_number' => 'Bed 402B', 'room_number' => '402', 'bed_type' => 'Standard Bed', 'status' => 'Available', 'daily_rate' => 80.00),
+            array('bed_number' => 'Bed 402D', 'room_number' => '402', 'bed_type' => 'Standard Bed', 'status' => 'Available', 'daily_rate' => 80.00),
+            array(
+                'bed_number' => 'Bed 403B', 'room_number' => '402', 'bed_type' => 'Standard Bed', 'status' => 'Cleaning', 'daily_rate' => 80.00,
+                'notes' => 'Patient discharged 45 mins ago. Housekeeping disinfection in progress.'
+            ),
+            array('bed_number' => 'Bed 403C', 'room_number' => '403C', 'bed_type' => 'Oxygen Supported', 'status' => 'Available', 'daily_rate' => 85.00),
+            array(
+                'bed_number' => 'Bed 404A', 'room_number' => '414', 'bed_type' => 'Deluxe Suite', 'status' => 'Reserved', 'daily_rate' => 140.00,
+                'reserved_for' => 'Emily Davis', 'expected_time' => '14:00 Today', 'tags' => array('Fall Risk'), 'has_lounge' => true
+            ),
+            array('bed_number' => 'Bed 405A', 'room_number' => '405A', 'bed_type' => 'Standard Bed', 'status' => 'Available', 'daily_rate' => 80.00),
+            array('bed_number' => 'Bed 406',  'room_number' => '406',  'bed_type' => 'Standard Bed', 'status' => 'Available', 'daily_rate' => 80.00),
+            array('bed_number' => 'Bed 407',  'room_number' => '407',  'bed_type' => 'Standard Bed', 'status' => 'Available', 'daily_rate' => 80.00),
+            array('bed_number' => 'Bed 415',  'room_number' => '415',  'bed_type' => 'Standard Bed', 'status' => 'Available', 'daily_rate' => 80.00),
+            array('bed_number' => 'Bed 416',  'room_number' => '416',  'bed_type' => 'Standard Bed', 'status' => 'Available', 'daily_rate' => 80.00),
+            array('bed_number' => 'Bed 417',  'room_number' => '417',  'bed_type' => 'Standard Bed', 'status' => 'Available', 'daily_rate' => 80.00),
+        );
+
+        foreach ($w4e_beds as $b) {
+            $b['ward_id'] = $w4e_id;
+            ECARE_DB_Client::insert('ecare_ipd_beds', $b);
+        }
+
+        // Seed ICU Beds
+        $icu_beds = array(
+            array('bed_number' => 'ICU-01', 'room_number' => 'ICU-A', 'bed_type' => 'ICU Ventilator', 'status' => 'Occupied', 'daily_rate' => 180.00, 'patient_name' => 'Michael Chang', 'age' => 54, 'gender' => 'M', 'admitted_date' => date('Y-m-d', strtotime('-2 days')), 'diagnosis' => 'Acute Respiratory Distress Syndrome (ARDS)', 'doctor_name' => 'Dr. Robert Vance', 'tags' => array('Ventilated', 'Critical')),
+            array('bed_number' => 'ICU-02', 'room_number' => 'ICU-A', 'bed_type' => 'ICU Ventilator', 'status' => 'Available', 'daily_rate' => 180.00),
+            array('bed_number' => 'ICU-03', 'room_number' => 'ICU-B', 'bed_type' => 'ICU Ventilator', 'status' => 'Cleaning', 'daily_rate' => 180.00, 'notes' => 'Sanitizing ventilator circuits'),
+            array('bed_number' => 'ICU-04', 'room_number' => 'ICU-B', 'bed_type' => 'ICU Ventilator', 'status' => 'Available', 'daily_rate' => 180.00),
+        );
+        foreach ($icu_beds as $ib) {
+            $ib['ward_id'] = $icu_id;
+            ECARE_DB_Client::insert('ecare_ipd_beds', $ib);
+        }
+
+        // Seed Cabin Beds
+        $cab_beds = array(
+            array('bed_number' => 'CABIN-501', 'room_number' => '501', 'bed_type' => 'Electric Luxury Bed', 'status' => 'Occupied', 'daily_rate' => 220.00, 'patient_name' => 'Eleanor Vance', 'age' => 38, 'gender' => 'F', 'admitted_date' => date('Y-m-d', strtotime('-3 days')), 'diagnosis' => 'Post Caesarean Care', 'doctor_name' => 'Dr. Claire Fisher', 'has_lounge' => true),
+            array('bed_number' => 'CABIN-502', 'room_number' => '502', 'bed_type' => 'Electric Luxury Bed', 'status' => 'Available', 'daily_rate' => 220.00, 'has_lounge' => true),
+        );
+        foreach ($cab_beds as $cb) {
+            $cb['ward_id'] = $cab_id;
+            ECARE_DB_Client::insert('ecare_ipd_beds', $cb);
+        }
+    }
+
     public function handle_get_request($request)
     {
         $module = $request['module'];
         $id = $request['id'] ?? null;
         $role = $this->get_current_user_role();
         $current_user_id = get_current_user_id();
+
+        if ($module === 'ipd-wards' || $module === 'ipd-beds') {
+            $this->ensure_ipd_seeded();
+        }
 
         if ($module === 'stats')
             return $this->get_dashboard_stats($request);

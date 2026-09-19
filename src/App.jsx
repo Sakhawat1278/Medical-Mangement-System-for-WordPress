@@ -35,6 +35,8 @@ import BloodInventory from './pages/bloodbank/BloodInventory'
 import BloodDonors from './pages/bloodbank/BloodDonors'
 import BloodRequests from './pages/bloodbank/BloodRequests'
 import BloodCamps from './pages/bloodbank/BloodCamps'
+import BedManagement from './pages/ipd/BedManagement'
+import Admissions from './pages/ipd/Admissions'
 import AppointmentModal from './components/AppointmentModal'
 import CareProviderBookingModal from './components/CareProviderBookingModal'
 import ConfirmModal from './components/ConfirmModal'
@@ -212,7 +214,9 @@ function App() {
         'blood-inventory',
         'blood-donors',
         'blood-requests',
-        'blood-camps'
+        'blood-camps',
+        'ipd-beds',
+        'ipd-admissions'
       ]
       if (!patientAllowedPages.includes(activePage)) {
         setActivePage('dashboard')
@@ -255,7 +259,9 @@ function App() {
       'blood-inventory': 'bloodbank',
       'blood-donors':    'bloodbank',
       'blood-requests':  'bloodbank',
-      'blood-camps':     'bloodbank'
+      'blood-camps':     'bloodbank',
+      'ipd-beds':        'ipd-beds',
+      'ipd-admissions':  'ipd-admissions'
     }
 
     const requiredModule = pageModuleMap[activePage]
@@ -348,6 +354,10 @@ function App() {
         return <BloodRequests />
       case 'blood-camps':
         return <BloodCamps />
+      case 'ipd-beds':
+        return <BedManagement />
+      case 'ipd-admissions':
+        return <Admissions />
       case 'care-providers':
       case 'care-bookings':
       case 'care-pending':

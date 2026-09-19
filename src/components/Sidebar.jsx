@@ -4,7 +4,7 @@ import {
   UserCircle, Flask, FirstAid,
   CreditCard, Gear, UserGear, SignOut, CaretDown, CaretLeft, CaretRight,
   IdentificationCard, Truck, Heartbeat, TestTube,
-  VideoCamera, Chats, ShoppingCart, Star, Drop
+  VideoCamera, Chats, ShoppingCart, Star, Drop, Bed
 } from 'phosphor-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useStore from '../store/useStore'
@@ -175,6 +175,7 @@ const Sidebar = () => {
   const [isPaymentOpen,      setIsPaymentOpen]      = useState(false)
   const [isLabOpen,          setIsLabOpen]          = useState(false)
   const [isBloodBankOpen,    setIsBloodBankOpen]    = useState(false)
+  const [isIpdOpen,          setIsIpdOpen]          = useState(false)
   const [isStaffOpen,        setIsStaffOpen]        = useState(false)
 
   // Dynamic Submenu List Generator with Role & Permission Filtering
@@ -270,6 +271,13 @@ const Sidebar = () => {
     items.push({ id: 'blood-camps',         label: "Blood Camps",  action: () => setActivePage('blood-camps') })
     return items
   }, [isPatient, setActivePage])
+
+  const ipdSubmenuItems = useMemo(() => {
+    const items = []
+    items.push({ id: 'ipd-beds', label: "Ward Floor Plan", action: () => setActivePage('ipd-beds') })
+    items.push({ id: 'ipd-admissions', label: "Admissions Registry", action: () => setActivePage('ipd-admissions') })
+    return items
+  }, [setActivePage])
 
   const staffSubmenuItems = useMemo(() => {
     const items = []
@@ -780,6 +788,51 @@ const Sidebar = () => {
                     ))
                   ) : (
                     bloodBankSubmenuItems.map((item, idx) => (
+                      <SubItem key={idx} label={item.label} isActive={activePage === item.id} onClick={item.action} />
+                    ))
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>
+        )}
+
+        {/* Inpatient (IPD) - Wards & Bed Management */}
+        {(isAdmin || isDoctor || isReceptionist || isPatient || canAccess('ipd-beds') || canAccess('ipd-admissions')) && (
+          <>
+            <NavItem
+              id="ipd-beds" 
+              icon={Bed} 
+              label={isPatient ? "Hospital Beds" : "Inpatient (IPD)"} 
+              index={9.5}
+              isCollapsed={isSidebarCollapsed} 
+              hasSubmenu={ipdSubmenuItems.length > 1} 
+              isOpen={ipdSubmenuItems.length > 1 && isIpdOpen}
+              onClick={ipdSubmenuItems.length > 1 ? () => setIsIpdOpen(!isIpdOpen) : ipdSubmenuItems[0]?.action}
+              active={isSubmenuActive(ipdSubmenuItems)}
+            />
+            <AnimatePresence>
+              {ipdSubmenuItems.length > 1 && isIpdOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }} 
+                  animate={{ opacity: 1, height: 'auto' }} 
+                  exit={{ opacity: 0, height: 0 }} 
+                  style={{
+                    overflow: 'visible',
+                    display: 'flex',
+                    flexDirection: isSidebarCollapsed ? 'row' : 'column',
+                    justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
+                    alignItems: 'center',
+                    gap: isSidebarCollapsed ? '6px' : '0',
+                    padding: isSidebarCollapsed ? '4px 0 8px' : '0'
+                  }}
+                >
+                  {isSidebarCollapsed ? (
+                    ipdSubmenuItems.map((item, idx) => (
+                      <MiniDot key={idx} isActive={activePage === item.id} onClick={item.action} />
+                    ))
+                  ) : (
+                    ipdSubmenuItems.map((item, idx) => (
                       <SubItem key={idx} label={item.label} isActive={activePage === item.id} onClick={item.action} />
                     ))
                   )}
