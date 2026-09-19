@@ -41,6 +41,7 @@ const StatCard = ({ title, value, icon: Icon, trend, color, delay }) => (
 
 const BloodBankDashboard = () => {
   const { 
+    user,
     bloodInventory, 
     bloodDonors, 
     bloodRequests, 
@@ -48,9 +49,11 @@ const BloodBankDashboard = () => {
     addBloodDonor, 
     addBloodRequest, 
     updateBloodBag, 
-    updateBloodRequest,
+    updateBloodRequest, 
     setActivePage 
   } = useStore()
+
+  const isPatient = user?.ecareRole === 'patient'
 
   const [isAddBagModalOpen, setIsAddBagModalOpen] = useState(false)
   const [isAddDonorModalOpen, setIsAddDonorModalOpen] = useState(false)
@@ -76,10 +79,10 @@ const BloodBankDashboard = () => {
   })
 
   const [donorForm, setDonorForm] = useState({
-    name: '',
-    blood_group: 'O+',
-    contact_number: '',
-    email: '',
+    name: isPatient ? (user?.name || '') : '',
+    blood_group: isPatient ? (user?.blood_group || user?.bloodGroup || 'O+') : 'O+',
+    contact_number: isPatient ? (user?.phone || '') : '',
+    email: isPatient ? (user?.email || '') : '',
     gender: 'Male',
     age: '',
     weight: '',
@@ -89,11 +92,11 @@ const BloodBankDashboard = () => {
   })
 
   const [requestForm, setRequestForm] = useState({
-    requester_name: '',
-    patient_name: '',
+    requester_name: isPatient ? (user?.name || '') : '',
+    patient_name: isPatient ? (user?.name || '') : '',
     hospital_name: '',
-    contact_phone: '',
-    blood_group: 'O+',
+    contact_phone: isPatient ? (user?.phone || '') : '',
+    blood_group: isPatient ? (user?.blood_group || user?.bloodGroup || 'O+') : 'O+',
     component: 'Whole Blood',
     units_required: 1,
     urgency: 'Urgent',
@@ -207,15 +210,16 @@ const BloodBankDashboard = () => {
 
     await addBloodDonor({
       ...donorForm,
+      patient_user_id: user?.id || null,
       total_donations: 1,
       created_at: new Date().toISOString()
     })
     setIsAddDonorModalOpen(false)
     setDonorForm({
-      name: '',
-      blood_group: 'O+',
-      contact_number: '',
-      email: '',
+      name: isPatient ? (user?.name || '') : '',
+      blood_group: isPatient ? (user?.blood_group || user?.bloodGroup || 'O+') : 'O+',
+      contact_number: isPatient ? (user?.phone || '') : '',
+      email: isPatient ? (user?.email || '') : '',
       gender: 'Male',
       age: '',
       weight: '',
@@ -223,6 +227,7 @@ const BloodBankDashboard = () => {
       status: 'Eligible',
       last_donation_date: new Date().toISOString().split('T')[0]
     })
+    toast.success('Donor registered successfully!')
   }
 
   const handleCreateRequest = async (e) => {
@@ -234,22 +239,24 @@ const BloodBankDashboard = () => {
 
     await addBloodRequest({
       ...requestForm,
+      patient_user_id: user?.id || null,
       status: 'Pending',
       request_date: new Date().toISOString().split('T')[0],
       created_at: new Date().toISOString()
     })
     setIsAddRequestModalOpen(false)
     setRequestForm({
-      requester_name: '',
-      patient_name: '',
+      requester_name: isPatient ? (user?.name || '') : '',
+      patient_name: isPatient ? (user?.name || '') : '',
       hospital_name: '',
-      contact_phone: '',
-      blood_group: 'O+',
+      contact_phone: isPatient ? (user?.phone || '') : '',
+      blood_group: isPatient ? (user?.blood_group || user?.bloodGroup || 'O+') : 'O+',
       component: 'Whole Blood',
       units_required: 1,
       urgency: 'Urgent',
       notes: ''
     })
+    toast.success('Blood requisition submitted successfully!')
   }
 
   const handleQuickFulfill = (req) => {
@@ -323,7 +330,7 @@ const BloodBankDashboard = () => {
             }}
           >
             <FirstAid size={16} weight="bold" color="#dc2626" />
-            <span>Emergency Request</span>
+            <span>{isPatient ? "Request Blood" : "Emergency Request"}</span>
           </button>
 
           <button 
@@ -345,31 +352,33 @@ const BloodBankDashboard = () => {
             }}
           >
             <UserPlus size={16} weight="bold" />
-            <span>Register Donor</span>
+            <span>{isPatient ? "Volunteer as Donor" : "Register Donor"}</span>
           </button>
 
-          <button 
-            type="button"
-            onClick={() => setIsAddBagModalOpen(true)}
-            className="ecare-button"
-            style={{ 
-              width: 'auto', 
-              minWidth: 'auto', 
-              height: '38px', 
-              padding: '0 1.25rem', 
-              borderRadius: '10px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '0.8125rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            <Plus size={16} weight="bold" />
-            <span>Add Blood Bag</span>
-          </button>
+          {!isPatient && (
+            <button 
+              type="button"
+              onClick={() => setIsAddBagModalOpen(true)}
+              className="ecare-button"
+              style={{ 
+                width: 'auto', 
+                minWidth: 'auto', 
+                height: '38px', 
+                padding: '0 1.25rem', 
+                borderRadius: '10px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '0.8125rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              <Plus size={16} weight="bold" />
+              <span>Add Blood Bag</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -556,25 +565,27 @@ const BloodBankDashboard = () => {
                       </div>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        updateBloodBag(bag.id, { ...bag, status: isPast ? 'Discarded' : 'Dispensed' })
-                        toast.success(`Bag #${bag.bag_number} marked as ${isPast ? 'Discarded' : 'Dispensed'}`)
-                      }}
-                      style={{
-                        padding: '4px 10px',
-                        borderRadius: '6px',
-                        background: '#ffffff',
-                        border: '1px solid #cbd5e1',
-                        fontSize: '0.725rem',
-                        fontWeight: 700,
-                        color: isPast ? '#dc2626' : '#475569',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {isPast ? 'Discard' : 'Dispense'}
-                    </button>
+                    {!isPatient && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          updateBloodBag(bag.id, { ...bag, status: isPast ? 'Discarded' : 'Dispensed' })
+                          toast.success(`Bag #${bag.bag_number} marked as ${isPast ? 'Discarded' : 'Dispensed'}`)
+                        }}
+                        style={{
+                          padding: '4px 10px',
+                          borderRadius: '6px',
+                          background: '#ffffff',
+                          border: '1px solid #cbd5e1',
+                          fontSize: '0.725rem',
+                          fontWeight: 700,
+                          color: isPast ? '#dc2626' : '#475569',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {isPast ? 'Discard' : 'Dispense'}
+                      </button>
+                    )}
                   </div>
                 )
               })}
@@ -642,22 +653,36 @@ const BloodBankDashboard = () => {
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFulfill(req)}
-                    style={{
-                      padding: '5px 12px',
+                  {!isPatient ? (
+                    <button
+                      type="button"
+                      onClick={() => handleQuickFulfill(req)}
+                      style={{
+                        padding: '5px 12px',
+                        borderRadius: '6px',
+                        background: 'var(--ecare-primary)',
+                        border: 'none',
+                        color: '#ffffff',
+                        fontSize: '0.725rem',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Fulfill
+                    </button>
+                  ) : (
+                    <span style={{
+                      padding: '4px 8px',
                       borderRadius: '6px',
-                      background: 'var(--ecare-primary)',
-                      border: 'none',
-                      color: '#ffffff',
-                      fontSize: '0.725rem',
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Fulfill
-                  </button>
+                      background: '#fef3c7',
+                      color: '#d97706',
+                      fontSize: '0.7rem',
+                      fontWeight: 800,
+                      textTransform: 'uppercase'
+                    }}>
+                      {req.status || 'Pending'}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>

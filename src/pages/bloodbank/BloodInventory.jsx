@@ -9,7 +9,8 @@ import toast from 'react-hot-toast'
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
 const BloodInventory = () => {
-  const { bloodInventory, addBloodBag, updateBloodBag, deleteBloodBag, openConfirm } = useStore()
+  const { user, bloodInventory, addBloodBag, updateBloodBag, deleteBloodBag, openConfirm } = useStore()
+  const isPatient = user?.ecareRole === 'patient'
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingBag, setEditingBag] = useState(null)
@@ -274,13 +275,45 @@ const BloodInventory = () => {
     { label: 'AB- Blood', value: 'AB-' }
   ]
 
+  const displayColumns = useMemo(() => {
+    if (isPatient) {
+      return columns.filter(c => c.key !== 'actions')
+    }
+    return columns
+  }, [isPatient, columns])
+
   return (
     <div className="ecare-page-slide">
+      {isPatient && (
+        <div style={{
+          marginBottom: '1.25rem',
+          padding: '1rem 1.25rem',
+          borderRadius: '14px',
+          background: 'linear-gradient(135deg, #fef2f2 0%, #eff6ff 100%)',
+          border: '1px solid #fecaca',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#dc2626', flexShrink: 0 }}>
+            <Drop size={22} weight="fill" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 800, color: '#991b1b' }}>
+              Hospital Blood Reserve Transparency
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#475569', marginTop: '2px' }}>
+              Live inventory of screened and certified blood units in clinical refrigeration. If you or a loved one requires immediate transfusion, use the <strong>Request Blood</strong> option.
+            </div>
+          </div>
+        </div>
+      )}
+
       <DataTable
         title="Blood Bag Inventory"
-        columns={columns}
+        columns={displayColumns}
         data={bloodInventory || []}
-        onAdd={handleOpenAdd}
+        onAdd={isPatient ? undefined : handleOpenAdd}
         addLabel="Add Blood Bag"
         filterOptions={filterOptions}
         searchPlaceholder="Search by bag barcode, blood group, donor, or location..."

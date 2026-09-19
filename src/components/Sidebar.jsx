@@ -256,12 +256,18 @@ const Sidebar = () => {
 
   const bloodBankSubmenuItems = useMemo(() => {
     const items = []
+    if (isPatient) {
+      items.push({ id: 'blood-bank', label: "Blood Stock", action: () => setActivePage('blood-bank') })
+      items.push({ id: 'blood-requests', label: "Request Blood", action: () => setActivePage('blood-requests') })
+      items.push({ id: 'blood-donors', label: "Donate Blood", action: () => setActivePage('blood-donors') })
+      return items
+    }
     items.push({ id: 'blood-bank', label: "Dashboard", action: () => setActivePage('blood-bank') })
     items.push({ id: 'blood-inventory', label: "Inventory", action: () => setActivePage('blood-inventory') })
     items.push({ id: 'blood-donors', label: "Donors", action: () => setActivePage('blood-donors') })
     items.push({ id: 'blood-requests', label: "Requests", action: () => setActivePage('blood-requests') })
     return items
-  }, [setActivePage])
+  }, [isPatient, setActivePage])
 
   const staffSubmenuItems = useMemo(() => {
     const items = []
@@ -737,7 +743,7 @@ const Sidebar = () => {
         )}
 
         {/* Blood Bank */}
-        {(isAdmin || canAccess('bloodbank')) && bloodBankSubmenuItems.length > 0 && (
+        {(isAdmin || isPatient || canAccess('bloodbank')) && bloodBankSubmenuItems.length > 0 && (
           <>
             <NavItem
               id="blood-bank" 

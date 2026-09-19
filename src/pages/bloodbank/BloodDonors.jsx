@@ -10,13 +10,16 @@ const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
 const BloodDonors = () => {
   const { 
+    user,
     bloodDonors, 
     addBloodDonor, 
     updateBloodDonor, 
     deleteBloodDonor, 
-    addBloodBag,
+    addBloodBag, 
     openConfirm 
   } = useStore()
+
+  const isPatient = user?.ecareRole === 'patient'
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isLogDonationModalOpen, setIsLogDonationModalOpen] = useState(false)
@@ -24,10 +27,10 @@ const BloodDonors = () => {
   const [selectedDonorForDonation, setSelectedDonorForDonation] = useState(null)
 
   const [formData, setFormData] = useState({
-    name: '',
-    blood_group: 'O+',
-    contact_number: '',
-    email: '',
+    name: isPatient ? (user?.name || '') : '',
+    blood_group: isPatient ? (user?.blood_group || user?.bloodGroup || 'O+') : 'O+',
+    contact_number: isPatient ? (user?.phone || '') : '',
+    email: isPatient ? (user?.email || '') : '',
     gender: 'Male',
     age: '',
     weight: '',
@@ -54,10 +57,10 @@ const BloodDonors = () => {
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      blood_group: 'O+',
-      contact_number: '',
-      email: '',
+      name: isPatient ? (user?.name || '') : '',
+      blood_group: isPatient ? (user?.blood_group || user?.bloodGroup || 'O+') : 'O+',
+      contact_number: isPatient ? (user?.phone || '') : '',
+      email: isPatient ? (user?.email || '') : '',
       gender: 'Male',
       age: '',
       weight: '',
@@ -130,6 +133,7 @@ const BloodDonors = () => {
     } else {
       await addBloodDonor({
         ...formData,
+        patient_user_id: user?.id || null,
         created_at: new Date().toISOString()
       })
       toast.success('New donor registered successfully')
@@ -276,64 +280,77 @@ const BloodDonors = () => {
     {
       key: 'actions',
       label: 'Actions',
-      render: (_, row) => (
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-          <button
-            onClick={() => handleOpenLogDonation(row)}
-            style={{
-              padding: '6px 10px',
-              borderRadius: '6px',
-              border: '1px solid #fecaca',
-              background: '#fee2e2',
-              color: '#dc2626',
-              fontSize: '0.725rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
-            }}
-            title="Log New Blood Donation"
-          >
-            <Drop size={13} weight="fill" />
-            <span>Collect</span>
-          </button>
-          <button
-            onClick={() => handleOpenEdit(row)}
-            style={{
-              padding: '6px',
-              borderRadius: '6px',
-              border: '1px solid #e2e8f0',
-              background: '#ffffff',
-              color: '#475569',
-              cursor: 'pointer'
-            }}
-            title="Edit Donor Profile"
-          >
-            <PencilSimple size={15} weight="bold" />
-          </button>
-          <button
-            onClick={() => {
-              openConfirm({
-                title: 'Delete Donor',
-                message: `Are you sure you want to remove donor "${row.name}" from registry?`,
-                onConfirm: () => deleteBloodDonor(row.id)
-              })
-            }}
-            style={{
-              padding: '6px',
-              borderRadius: '6px',
-              border: '1px solid #fecaca',
-              background: '#fff',
-              color: '#ef4444',
-              cursor: 'pointer'
-            }}
-            title="Delete"
-          >
-            <Trash size={15} weight="bold" />
-          </button>
-        </div>
-      )
+      render: (_, row) => {
+        const isOwn = !isPatient || 
+          (row.patient_user_id && String(row.patient_user_id) === String(user?.id)) ||
+          (row.name && row.name.toLowerCase() === (user?.name || '').toLowerCase()) ||
+          (row.email && row.email.toLowerCase() === (user?.email || '').toLowerCase())
+
+        return (
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            {!isPatient && (
+              <button
+                onClick={() => handleOpenLogDonation(row)}
+                style={{
+                  padding: '6px 10px',
+                  borderRadius: '6px',
+                  border: '1px solid #fecaca',
+                  background: '#fee2e2',
+                  color: '#dc2626',
+                  fontSize: '0.725rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+                title="Log New Blood Donation"
+              >
+                <Drop size={13} weight="fill" />
+                <span>Collect</span>
+              </button>
+            )}
+            {(!isPatient || isOwn) && (
+              <button
+                onClick={() => handleOpenEdit(row)}
+                style={{
+                  padding: '6px',
+                  borderRadius: '6px',
+                  border: '1px solid #e2e8f0',
+                  background: '#ffffff',
+                  color: '#475569',
+                  cursor: 'pointer'
+                }}
+                title={isPatient ? "Edit My Donor Profile" : "Edit Donor Profile"}
+              >
+                <PencilSimple size={15} weight="bold" />
+              </button>
+            )}
+            {!isPatient && (
+              <button
+                onClick={() => {
+                  openConfirm({
+                    title: 'Delete Donor',
+                    message: `Are you sure you want to remove donor "${row.name}" from registry?`,
+                    onConfirm: () => deleteBloodDonor(row.id)
+                  })
+                }}
+                style={{
+                  padding: '6px',
+                  borderRadius: '6px',
+                  border: '1px solid #fecaca',
+                  background: '#fff',
+                  color: '#ef4444',
+                  cursor: 'pointer'
+                }}
+                title="Delete"
+              >
+                <Trash size={15} weight="bold" />
+              </button>
+            )}
+          </div>
+        )
+      }
     }
   ]
 
@@ -350,12 +367,37 @@ const BloodDonors = () => {
 
   return (
     <div className="ecare-page-slide">
+      {isPatient && (
+        <div style={{
+          marginBottom: '1.25rem',
+          padding: '1rem 1.25rem',
+          borderRadius: '14px',
+          background: 'linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%)',
+          border: '1px solid #fecaca',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#dc2626', flexShrink: 0 }}>
+            <Heart size={22} weight="fill" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 800, color: '#991b1b' }}>
+              Voluntary Blood Donor Network
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#7f1d1d', marginTop: '2px' }}>
+              Every donation can save up to 3 lives. Register your profile to join our voluntary emergency donor directory. Hospital clinical teams reach out only when an urgent match is required.
+            </div>
+          </div>
+        </div>
+      )}
+
       <DataTable
         title="Blood Donors Registry"
         columns={columns}
         data={bloodDonors || []}
         onAdd={handleOpenAdd}
-        addLabel="Register Donor"
+        addLabel={isPatient ? "Register as Voluntary Donor" : "Register Donor"}
         filterOptions={filterOptions}
         searchPlaceholder="Search by donor name, phone, blood group, or city..."
       />

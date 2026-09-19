@@ -5,12 +5,15 @@ import {
   Flask, Heartbeat, Prescription, MapPin, 
   FirstAid, Bell, HouseLine, ShieldCheck,
   TrendUp, ArrowRight, IdentificationCard,
-  Truck, DownloadSimple, Receipt, Buildings, VideoCamera, ChatCenteredText
+  Truck, DownloadSimple, Receipt, Buildings, VideoCamera, ChatCenteredText,
+  Drop, Heart, X, Plus
 } from 'phosphor-react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import useStore from '../store/useStore'
 import MedicalVault from '../components/MedicalVault'
 import ChartFrame from '../components/ChartFrame'
+import { Portal } from '../utils/portal'
+import toast from 'react-hot-toast'
 import { 
   PieChart, Pie, Cell, Tooltip
 } from 'recharts'
@@ -91,10 +94,24 @@ const PatientDashboard = () => {
     user, appointments, labOrders, careProviderBookings, 
     ambulanceBookings, transactions, currencySymbol, setActivePage,
     supportTickets, supportMessages,
+    bloodInventory, bloodDonors, bloodRequests, addBloodRequest
   } = useStore()
 
   const [activeTab, setActiveTab] = React.useState('Overview')
   const [now] = React.useState(() => Date.now())
+
+  // Blood Request Modal State
+  const [isBloodRequestModalOpen, setIsBloodRequestModalOpen] = React.useState(false)
+  const [isSubmittingBloodReq, setIsSubmittingBloodReq] = React.useState(false)
+  const [bloodRequestForm, setBloodRequestForm] = React.useState({
+    blood_group: 'O+',
+    units_required: 1,
+    urgency: 'Urgent',
+    hospital_name: '',
+    contact_phone: user?.phone || user?.contact_number || '',
+    component: 'Whole Blood',
+    notes: ''
+  })
 
   // 1. Filtering Logic - Scope data to the current patient
   const currentUserId = String(user?.id || '')
@@ -108,6 +125,73 @@ const PatientDashboard = () => {
     const ticketIds = new Set(mySupportTickets.map(t => String(t.id)))
     return (Array.isArray(supportMessages) ? supportMessages : []).filter(m => ticketIds.has(String(m.ticket_id)))
   }, [supportMessages, mySupportTickets])
+
+  const myBloodRequests = useMemo(() => {
+    return (bloodRequests || []).filter(r => 
+      String(r.patient_user_id) === currentUserId || 
+      (user?.name && (r.patient_name === user.name || r.requester_name === user.name)) ||
+      (user?.phone && r.contact_phone === user.phone)
+    )
+  }, [bloodRequests, currentUserId, user?.name, user?.phone])
+
+  const myDonorProfile = useMemo(() => {
+    return (bloodDonors || []).find(d => 
+      String(d.patient_user_id) === currentUserId ||
+      (user?.email && d.email === user.email) ||
+      (user?.phone && d.contact_number === user.phone) ||
+      (user?.name && d.name === user.name)
+    )
+  }, [bloodDonors, currentUserId, user?.email, user?.phone, user?.name])
+
+  const bloodSummaryByGroup = useMemo(() => {
+    const groups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+    const counts = {}
+    groups.forEach(g => counts[g] = 0)
+    ;(bloodInventory || []).filter(b => b.status === 'Available').forEach(b => {
+      if (counts[b.blood_group] !== undefined) counts[b.blood_group]++
+    })
+    return counts
+  }, [bloodInventory])
+
+  const handleQuickBloodRequest = async (e) => {
+    e.preventDefault()
+    if (!bloodRequestForm.hospital_name.trim()) {
+      toast.error('Please enter the hospital or clinical center name')
+      return
+    }
+    if (!bloodRequestForm.contact_phone.trim()) {
+      toast.error('Please enter contact telephone number')
+      return
+    }
+
+    setIsSubmittingBloodReq(true)
+    try {
+      await addBloodRequest({
+        ...bloodRequestForm,
+        patient_user_id: user?.id,
+        patient_name: user?.name,
+        requester_name: user?.name,
+        status: 'Pending',
+        request_date: new Date().toISOString().split('T')[0],
+        created_at: new Date().toISOString()
+      })
+      toast.success('Blood requisition submitted! Staff is reviewing available inventory.')
+      setIsBloodRequestModalOpen(false)
+      setBloodRequestForm({
+        blood_group: 'O+',
+        units_required: 1,
+        urgency: 'Urgent',
+        hospital_name: '',
+        contact_phone: user?.phone || user?.contact_number || '',
+        component: 'Whole Blood',
+        notes: ''
+      })
+    } catch (err) {
+      toast.error('Failed to submit blood request')
+    } finally {
+      setIsSubmittingBloodReq(false)
+    }
+  }
 
   // Stats Calculations
   const upcomingAppt = useMemo(() => {
@@ -247,6 +331,7 @@ const PatientDashboard = () => {
     { name: 'Lab Tests', value: myLabOrders.length, color: '#db2777' },
     { name: 'Home Care', value: myHomeCare.length, color: '#059669' },
     { name: 'Ambulance', value: myAmbulanceBookings.length, color: '#ef4444' },
+    { name: 'Blood Requests', value: myBloodRequests.length, color: '#dc2626' },
   ]
 
   const healthTrend = [] // Obsolete
@@ -280,30 +365,31 @@ const PatientDashboard = () => {
             {/* Quick Services Grid - Replaced Wellness Chart */}
             <div className="ecare-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column' }}>
                <h3 style={{ fontSize: '0.9375rem', fontWeight: 700, marginBottom: '1.25rem' }}>Quick Medical Services</h3>
-               <div className="ecare-patient-services-grid" style={{ flex: 1 }}>
+               <div className="ecare-patient-services-grid" style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.625rem' }}>
                   {[
-                    { title: 'Video Consult', icon: VideoCamera, color: '#2563eb', desc: 'Expert doctors online', link: '/doctor-appointment' },
-                    { title: 'Clinic Visit', icon: Buildings, color: '#7c3aed', desc: 'Book physical visit', link: '/doctor-appointment' },
-                    { title: 'Lab Tests', icon: Flask, color: '#db2777', desc: 'Accurate clinical results', link: '/lab-test-booking' },
-                    { title: 'Nursing Care', icon: HouseLine, color: '#059669', desc: 'In-home care support', link: '/home-care-booking' }
+                    { title: 'Video Consult', icon: VideoCamera, color: '#2563eb', desc: 'Expert doctors online', link: '/doctor-appointment', page: 'doctor-appointment' },
+                    { title: 'Clinic Visit', icon: Buildings, color: '#7c3aed', desc: 'Book physical visit', link: '/doctor-appointment', page: 'doctor-appointment' },
+                    { title: 'Lab Tests', icon: Flask, color: '#db2777', desc: 'Accurate clinical results', link: '/lab-test-booking', page: 'lab-orders' },
+                    { title: 'Nursing Care', icon: HouseLine, color: '#059669', desc: 'In-home care support', link: '/home-care-booking', page: 'care-bookings' },
+                    { title: 'Blood Bank', icon: Drop, color: '#dc2626', desc: 'Find blood & donors', link: '/blood-bank', page: 'blood-bank' }
                   ].map((svc, i) => (
-                    <motion.a
+                    <motion.div
                       key={i}
-                      href={window.location.origin + svc.link}
-                      target="_blank"
-                      whileHover={{ y: -5, boxShadow: '0 10px 20px -5px rgba(0,0,0,0.1)' }}
+                      onClick={() => svc.page ? setActivePage(svc.page) : window.open(window.location.origin + svc.link, '_blank')}
+                      whileHover={{ y: -4, boxShadow: '0 10px 20px -5px rgba(0,0,0,0.1)' }}
                       className="ecare-service-card"
+                      style={{ cursor: 'pointer', padding: '0.85rem', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}
                     >
                       <div style={{ 
-                        width: '48px', height: '48px', borderRadius: '12px', background: 'white',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem',
+                        width: '42px', height: '42px', borderRadius: '12px', background: 'white',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.75rem',
                         color: svc.color, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
                       }}>
-                        <svc.icon size={28} weight="duotone" />
+                        <svc.icon size={24} weight="duotone" />
                       </div>
                       <div style={{ fontSize: '0.8125rem', fontWeight: 800, color: 'var(--ecare-text-main)', marginBottom: '4px' }}>{svc.title}</div>
                       <div style={{ fontSize: '0.65rem', color: 'var(--ecare-text-muted)', fontWeight: 600, lineHeight: 1.3 }}>{svc.desc}</div>
-                    </motion.a>
+                    </motion.div>
                   ))}
                </div>
             </div>
@@ -630,6 +716,131 @@ const PatientDashboard = () => {
           </div>
 
           <div className="ecare-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#dc2626' }}>
+                    <Drop size={18} weight="fill" />
+                  </div>
+                  <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, margin: 0, color: 'var(--ecare-text-main)' }}>Blood Bank & Requisitions</h3>
+                </div>
+                <p style={{ fontSize: '0.75rem', color: 'var(--ecare-text-muted)', margin: '0.25rem 0 0' }}>Live inventory reserves, emergency requisitions & donor registry.</p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                <button 
+                  onClick={() => setIsBloodRequestModalOpen(true)}
+                  style={{
+                    padding: '0.5rem 0.85rem', borderRadius: '8px',
+                    background: '#dc2626', color: '#ffffff', border: 'none',
+                    fontSize: '0.72rem', fontWeight: 800, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '4px',
+                    boxShadow: '0 2px 8px rgba(220, 38, 38, 0.25)'
+                  }}
+                >
+                  <FirstAid size={13} weight="bold" /> Request Blood
+                </button>
+                <button 
+                  onClick={() => setActivePage('blood-donors')} 
+                  className="ecare-btn-secondary" 
+                  style={{ borderRadius: '8px', padding: '0.5rem 0.75rem', fontSize: '0.72rem', fontWeight: 700 }}
+                >
+                  {myDonorProfile ? '❤️ Donor Card' : 'Volunteer'}
+                </button>
+              </div>
+            </div>
+
+            {/* Live 8-group stock availability badges */}
+            <div>
+              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', marginBottom: '0.45rem', letterSpacing: '0.03em' }}>
+                Hospital Reserve Stock
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.4rem' }}>
+                {Object.entries(bloodSummaryByGroup).map(([group, count]) => {
+                  const hasStock = count > 0
+                  return (
+                    <div 
+                      key={group}
+                      onClick={() => setActivePage('blood-bank')}
+                      style={{
+                        padding: '0.45rem 0.5rem', borderRadius: '8px',
+                        background: hasStock ? '#fef2f2' : '#f8fafc',
+                        border: `1px solid ${hasStock ? '#fecaca' : '#e2e8f0'}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        cursor: 'pointer', transition: 'all 0.15s'
+                      }}
+                      title={`${count} units of ${group} blood available`}
+                    >
+                      <span style={{ fontWeight: 900, fontSize: '0.8rem', color: hasStock ? '#991b1b' : '#94a3b8' }}>{group}</span>
+                      <span style={{ 
+                        fontSize: '0.62rem', fontWeight: 800, 
+                        color: hasStock ? '#dc2626' : '#94a3b8',
+                        background: hasStock ? '#ffffff' : 'transparent',
+                        padding: '1px 5px', borderRadius: '4px'
+                      }}>
+                        {hasStock ? `${count}u` : '0u'}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* My Active Requisitions (if any) */}
+            <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '0.65rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--ecare-text-main)' }}>
+                  My Blood Requisitions {myBloodRequests.length > 0 ? `(${myBloodRequests.length})` : ''}
+                </span>
+                <button 
+                  onClick={() => setActivePage('blood-requests')} 
+                  style={{ border: 'none', background: 'transparent', color: 'var(--ecare-primary)', fontSize: '0.68rem', fontWeight: 700, cursor: 'pointer', padding: 0 }}
+                >
+                  View All →
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {myBloodRequests.slice(0, 2).map((req, i) => {
+                  const s = String(req.status || 'Pending').toLowerCase()
+                  const statusColors = {
+                    fulfilled: { text: '#16a34a', bg: '#dcfce7' },
+                    approved: { text: '#2563eb', bg: '#dbeafe' },
+                    pending: { text: '#d97706', bg: '#fef3c7' },
+                    rejected: { text: '#dc2626', bg: '#fee2e2' }
+                  }
+                  const sc = statusColors[s] || statusColors.pending
+                  return (
+                    <div key={i} className="ecare-flex-responsive" style={{ padding: '0.65rem 0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', gap: '0.5rem', alignItems: 'center' }}>
+                      <div style={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.72rem', flexShrink: 0 }}>
+                          {req.blood_group}
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--ecare-text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {req.units_required || 1} Unit(s) • {req.hospital_name || 'Hospital Request'}
+                          </div>
+                          <div style={{ fontSize: '0.65rem', color: 'var(--ecare-text-muted)' }}>
+                            Urgency: {req.urgency || 'Urgent'} • {formatShortDate(req.request_date || req.created_at)}
+                          </div>
+                        </div>
+                      </div>
+                      <span style={{ fontSize: '0.62rem', fontWeight: 800, color: sc.text, background: sc.bg, padding: '2px 8px', borderRadius: '999px', textTransform: 'uppercase', flexShrink: 0 }}>
+                        {req.status || 'Pending'}
+                      </span>
+                    </div>
+                  )
+                })}
+
+                {myBloodRequests.length === 0 && (
+                  <div style={{ padding: '0.75rem', borderRadius: '10px', border: '1px dashed #e2e8f0', color: 'var(--ecare-text-muted)', fontSize: '0.72rem', textAlign: 'center', background: '#fafafa' }}>
+                    No pending blood requests. Click "Request Blood" if an emergency arises.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="ecare-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
               <div>
                 <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, margin: 0, color: 'var(--ecare-text-main)' }}>Messages</h3>
@@ -658,6 +869,157 @@ const PatientDashboard = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Quick Blood Request Modal */}
+      {isBloodRequestModalOpen && (
+        <Portal>
+          <AnimatePresence>
+            <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }} 
+                onClick={() => setIsBloodRequestModalOpen(false)} 
+                style={{ position: 'absolute', inset: 0, background: 'rgba(15, 23, 42, 0.45)', backdropFilter: 'blur(4px)' }} 
+              />
+              
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 15 }} 
+                animate={{ opacity: 1, scale: 1, y: 0 }} 
+                exit={{ opacity: 0, scale: 0.95, y: 15 }} 
+                style={{ 
+                  background: '#ffffff', width: '100%', maxWidth: '480px', 
+                  borderRadius: '20px', zIndex: 1, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                  display: 'flex', flexDirection: 'column', overflow: 'hidden'
+                }}
+              >
+                <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fef2f2' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Drop size={20} weight="fill" />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#991b1b' }}>Emergency Blood Requisition</h3>
+                      <p style={{ margin: 0, fontSize: '0.72rem', color: '#b91c1c' }}>Instant requisition submitted to blood bank reserves</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setIsBloodRequestModalOpen(false)} style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#94a3b8', padding: '4px' }}>
+                    <X size={18} weight="bold" />
+                  </button>
+                </div>
+
+                <form onSubmit={handleQuickBloodRequest} style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <div>
+                      <label style={{ fontSize: '0.725rem', fontWeight: 700, color: '#475569', marginBottom: '4px', display: 'block' }}>Blood Group Needed *</label>
+                      <select 
+                        value={bloodRequestForm.blood_group}
+                        onChange={(e) => setBloodRequestForm({ ...bloodRequestForm, blood_group: e.target.value })}
+                        style={{ width: '100%', padding: '0.65rem 0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', fontSize: '0.8125rem', fontWeight: 700 }}
+                      >
+                        {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(g => (
+                          <option key={g} value={g}>{g}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: '0.725rem', fontWeight: 700, color: '#475569', marginBottom: '4px', display: 'block' }}>Units Needed *</label>
+                      <input 
+                        type="number" 
+                        min="1" 
+                        max="10" 
+                        value={bloodRequestForm.units_required}
+                        onChange={(e) => setBloodRequestForm({ ...bloodRequestForm, units_required: Number(e.target.value) || 1 })}
+                        style={{ width: '100%', padding: '0.65rem 0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', fontSize: '0.8125rem' }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <div>
+                      <label style={{ fontSize: '0.725rem', fontWeight: 700, color: '#475569', marginBottom: '4px', display: 'block' }}>Urgency Level *</label>
+                      <select 
+                        value={bloodRequestForm.urgency}
+                        onChange={(e) => setBloodRequestForm({ ...bloodRequestForm, urgency: e.target.value })}
+                        style={{ width: '100%', padding: '0.65rem 0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', fontSize: '0.8125rem', fontWeight: 700 }}
+                      >
+                        <option value="Emergency">🚨 Emergency (Immediate)</option>
+                        <option value="Urgent">⚡ Urgent (Within 4 Hours)</option>
+                        <option value="Normal">Routine (Scheduled Procedure)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: '0.725rem', fontWeight: 700, color: '#475569', marginBottom: '4px', display: 'block' }}>Component Type</label>
+                      <select 
+                        value={bloodRequestForm.component}
+                        onChange={(e) => setBloodRequestForm({ ...bloodRequestForm, component: e.target.value })}
+                        style={{ width: '100%', padding: '0.65rem 0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', fontSize: '0.8125rem' }}
+                      >
+                        <option value="Whole Blood">Whole Blood</option>
+                        <option value="Packed RBC">Packed RBC</option>
+                        <option value="Platelets">Platelets</option>
+                        <option value="Fresh Frozen Plasma">Fresh Frozen Plasma</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '0.725rem', fontWeight: 700, color: '#475569', marginBottom: '4px', display: 'block' }}>Hospital / Clinical Center *</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Dhaka Central Hospital, Ward 4"
+                      value={bloodRequestForm.hospital_name}
+                      onChange={(e) => setBloodRequestForm({ ...bloodRequestForm, hospital_name: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', fontSize: '0.8125rem' }}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '0.725rem', fontWeight: 700, color: '#475569', marginBottom: '4px', display: 'block' }}>Contact Telephone Number *</label>
+                    <input 
+                      type="tel" 
+                      placeholder="e.g. +880 1712 345678"
+                      value={bloodRequestForm.contact_phone}
+                      onChange={(e) => setBloodRequestForm({ ...bloodRequestForm, contact_phone: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', fontSize: '0.8125rem' }}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '0.725rem', fontWeight: 700, color: '#475569', marginBottom: '4px', display: 'block' }}>Reason / Clinical Notes</label>
+                    <textarea 
+                      placeholder="e.g. Emergency surgery scheduled today"
+                      value={bloodRequestForm.notes}
+                      onChange={(e) => setBloodRequestForm({ ...bloodRequestForm, notes: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', fontSize: '0.8125rem', minHeight: '60px', resize: 'vertical' }}
+                    />
+                  </div>
+
+                  <button 
+                    type="submit"
+                    disabled={isSubmittingBloodReq}
+                    style={{
+                      width: '100%', padding: '0.85rem', borderRadius: '12px',
+                      background: '#dc2626', color: '#ffffff', border: 'none',
+                      fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                      opacity: isSubmittingBloodReq ? 0.7 : 1, marginTop: '0.5rem',
+                      boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)'
+                    }}
+                  >
+                    <FirstAid size={16} weight="bold" />
+                    {isSubmittingBloodReq ? 'Submitting Requisition...' : 'Submit Blood Request'}
+                  </button>
+                </form>
+              </motion.div>
+            </div>
+          </AnimatePresence>
+        </Portal>
       )}
     </div>
   )

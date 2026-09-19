@@ -10,6 +10,7 @@ const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
 const BloodRequests = () => {
   const { 
+    user,
     bloodRequests, 
     bloodInventory, 
     addBloodRequest, 
@@ -19,17 +20,19 @@ const BloodRequests = () => {
     openConfirm 
   } = useStore()
 
+  const isPatient = user?.ecareRole === 'patient'
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingRequest, setEditingRequest] = useState(null)
   const [fulfillingRequest, setFulfillingRequest] = useState(null)
   const [selectedBagToDispense, setSelectedBagToDispense] = useState('')
 
   const [formData, setFormData] = useState({
-    requester_name: '',
-    patient_name: '',
+    requester_name: isPatient ? (user?.name || '') : '',
+    patient_name: isPatient ? (user?.name || '') : '',
     hospital_name: '',
-    contact_phone: '',
-    blood_group: 'O+',
+    contact_phone: isPatient ? (user?.phone || '') : '',
+    blood_group: isPatient ? (user?.blood_group || user?.bloodGroup || 'O+') : 'O+',
     component: 'Whole Blood',
     units_required: 1,
     urgency: 'Urgent',
@@ -40,11 +43,11 @@ const BloodRequests = () => {
 
   const resetForm = () => {
     setFormData({
-      requester_name: '',
-      patient_name: '',
+      requester_name: isPatient ? (user?.name || '') : '',
+      patient_name: isPatient ? (user?.name || '') : '',
       hospital_name: '',
-      contact_phone: '',
-      blood_group: 'O+',
+      contact_phone: isPatient ? (user?.phone || '') : '',
+      blood_group: isPatient ? (user?.blood_group || user?.bloodGroup || 'O+') : 'O+',
       component: 'Whole Blood',
       units_required: 1,
       urgency: 'Urgent',
@@ -108,6 +111,7 @@ const BloodRequests = () => {
     } else {
       await addBloodRequest({
         ...formData,
+        patient_user_id: user?.id || null,
         created_at: new Date().toISOString()
       })
       toast.success('Blood requisition created')
@@ -259,66 +263,79 @@ const BloodRequests = () => {
     {
       key: 'actions',
       label: 'Actions',
-      render: (_, row) => (
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-          {row.status !== 'Fulfilled' && (
-            <button
-              onClick={() => handleOpenFulfill(row)}
-              style={{
-                padding: '6px 10px',
-                borderRadius: '6px',
-                border: 'none',
-                background: 'var(--ecare-primary)',
-                color: '#ffffff',
-                fontSize: '0.725rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}
-              title="Dispense Blood Bag"
-            >
-              <CheckCircle size={14} weight="bold" />
-              <span>Fulfill</span>
-            </button>
-          )}
-          <button
-            onClick={() => handleOpenEdit(row)}
-            style={{
-              padding: '6px',
-              borderRadius: '6px',
-              border: '1px solid #e2e8f0',
-              background: '#ffffff',
-              color: '#475569',
-              cursor: 'pointer'
-            }}
-            title="Edit Requisition"
-          >
-            <PencilSimple size={15} weight="bold" />
-          </button>
-          <button
-            onClick={() => {
-              openConfirm({
-                title: 'Delete Blood Requisition',
-                message: `Are you sure you want to remove this request for "${row.patient_name}"?`,
-                onConfirm: () => deleteBloodRequest(row.id)
-              })
-            }}
-            style={{
-              padding: '6px',
-              borderRadius: '6px',
-              border: '1px solid #fecaca',
-              background: '#fff',
-              color: '#ef4444',
-              cursor: 'pointer'
-            }}
-            title="Delete"
-          >
-            <Trash size={15} weight="bold" />
-          </button>
-        </div>
-      )
+      render: (_, row) => {
+        const isOwn = !isPatient || 
+          (row.patient_user_id && String(row.patient_user_id) === String(user?.id)) ||
+          (row.patient_name && row.patient_name.toLowerCase() === (user?.name || '').toLowerCase()) ||
+          (row.requester_name && row.requester_name.toLowerCase() === (user?.name || '').toLowerCase())
+
+        return (
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            {!isPatient && row.status !== 'Fulfilled' && (
+              <button
+                onClick={() => handleOpenFulfill(row)}
+                style={{
+                  padding: '6px 10px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: 'var(--ecare-primary)',
+                  color: '#ffffff',
+                  fontSize: '0.725rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+                title="Dispense Blood Bag"
+              >
+                <CheckCircle size={14} weight="bold" />
+                <span>Fulfill</span>
+              </button>
+            )}
+            {(!isPatient || (isOwn && row.status === 'Pending')) && (
+              <button
+                onClick={() => handleOpenEdit(row)}
+                style={{
+                  padding: '6px',
+                  borderRadius: '6px',
+                  border: '1px solid #e2e8f0',
+                  background: '#ffffff',
+                  color: '#475569',
+                  cursor: 'pointer'
+                }}
+                title="Edit Requisition"
+              >
+                <PencilSimple size={15} weight="bold" />
+              </button>
+            )}
+            {(!isPatient || (isOwn && row.status === 'Pending')) && (
+              <button
+                onClick={() => {
+                  openConfirm({
+                    title: isPatient ? 'Cancel Blood Requisition' : 'Delete Blood Requisition',
+                    message: isPatient
+                      ? `Are you sure you want to cancel your request for ${row.blood_group} blood?`
+                      : `Are you sure you want to remove this request for "${row.patient_name}"?`,
+                    onConfirm: () => isPatient ? updateBloodRequest(row.id, { ...row, status: 'Cancelled' }) : deleteBloodRequest(row.id)
+                  })
+                }}
+                style={{
+                  padding: '6px',
+                  borderRadius: '6px',
+                  border: '1px solid #fecaca',
+                  background: '#fff',
+                  color: '#ef4444',
+                  cursor: 'pointer'
+                }}
+                title={isPatient ? 'Cancel Requisition' : 'Delete'}
+              >
+                {isPatient ? <X size={15} weight="bold" /> : <Trash size={15} weight="bold" />}
+              </button>
+            )}
+          </div>
+        )
+      }
     }
   ]
 
@@ -331,12 +348,37 @@ const BloodRequests = () => {
 
   return (
     <div className="ecare-page-slide">
+      {isPatient && (
+        <div style={{
+          marginBottom: '1.25rem',
+          padding: '1rem 1.25rem',
+          borderRadius: '14px',
+          background: 'linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)',
+          border: '1px solid #bfdbfe',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#dbeafe', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb', flexShrink: 0 }}>
+            <FirstAid size={22} weight="duotone" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 800, color: '#1e40af' }}>
+              Patient Blood Requisition Center
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#475569', marginTop: '2px' }}>
+              Submit an emergency or scheduled blood request for yourself or family members. Hospital staff reviews compatibility, tests units, and coordinates delivery directly with your clinic or surgical ward.
+            </div>
+          </div>
+        </div>
+      )}
+
       <DataTable
         title="Blood Requisitions & Emergency Requests"
         columns={columns}
         data={bloodRequests || []}
         onAdd={handleOpenAdd}
-        addLabel="New Request"
+        addLabel={isPatient ? "New Blood Request" : "New Request"}
         filterOptions={filterOptions}
         searchPlaceholder="Search by patient, hospital, doctor, or blood group..."
       />
