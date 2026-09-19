@@ -258,6 +258,8 @@ const Sidebar = () => {
     const items = []
     items.push({ id: 'blood-bank', label: "Dashboard", action: () => setActivePage('blood-bank') })
     items.push({ id: 'blood-inventory', label: "Inventory", action: () => setActivePage('blood-inventory') })
+    items.push({ id: 'blood-donors', label: "Donors", action: () => setActivePage('blood-donors') })
+    items.push({ id: 'blood-requests', label: "Requests", action: () => setActivePage('blood-requests') })
     return items
   }, [setActivePage])
 

@@ -32,6 +32,8 @@ import Reviews from './pages/Reviews'
 import Cart from './pages/Cart'
 import BloodBankDashboard from './pages/bloodbank/BloodBankDashboard'
 import BloodInventory from './pages/bloodbank/BloodInventory'
+import BloodDonors from './pages/bloodbank/BloodDonors'
+import BloodRequests from './pages/bloodbank/BloodRequests'
 import AppointmentModal from './components/AppointmentModal'
 import CareProviderBookingModal from './components/CareProviderBookingModal'
 import ConfirmModal from './components/ConfirmModal'
@@ -326,6 +328,10 @@ function App() {
         return <BloodBankDashboard />
       case 'blood-inventory':
         return <BloodInventory />
+      case 'blood-donors':
+        return <BloodDonors />
+      case 'blood-requests':
+        return <BloodRequests />
       case 'care-providers':
       case 'care-bookings':
       case 'care-pending':
