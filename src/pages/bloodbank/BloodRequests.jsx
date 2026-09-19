@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FirstAid, Plus, PencilSimple, Trash, X, CheckCircle, Drop, WarningCircle, ArrowRight } from 'phosphor-react'
+import { FirstAid, Plus, PencilSimple, Trash, X, CheckCircle, Drop, WarningCircle, ArrowRight, Bell, PaperPlaneTilt } from 'phosphor-react'
 import DataTable from '../../components/DataTable'
 import CustomSelect from '../../components/CustomSelect'
 import useStore from '../../store/useStore'
@@ -9,6 +9,17 @@ import toast from 'react-hot-toast'
 
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 const BLOOD_GROUP_OPTIONS = BLOOD_GROUPS.map(g => ({ value: g, label: g }))
+
+const COMPATIBILITY_MAP = {
+  'A+': ['A+', 'A-', 'O+', 'O-'],
+  'A-': ['A-', 'O-'],
+  'B+': ['B+', 'B-', 'O+', 'O-'],
+  'B-': ['B-', 'O-'],
+  'AB+': ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+  'AB-': ['A-', 'B-', 'AB-', 'O-'],
+  'O+': ['O+', 'O-'],
+  'O-': ['O-']
+}
 
 const COMPONENT_OPTIONS = [
   { value: 'Whole Blood', label: 'Whole Blood' },
@@ -35,14 +46,18 @@ const BloodRequests = () => {
     user,
     bloodRequests, 
     bloodInventory, 
+    bloodDonors,
     addBloodRequest, 
     updateBloodRequest, 
     deleteBloodRequest, 
     updateBloodBag,
+    notifyDonors,
     openConfirm 
   } = useStore()
 
   const isPatient = user?.ecareRole === 'patient'
+  const [matchingRequest, setMatchingRequest] = useState(null)
+  const [notifyingDonors, setNotifyingDonors] = useState(false)
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingRequest, setEditingRequest] = useState(null)
@@ -201,6 +216,18 @@ const BloodRequests = () => {
     )
   }, [bloodRequests, isPatient, user])
 
+  const matchedDonors = useMemo(() => {
+    if (!matchingRequest?.blood_group) return []
+    const group = matchingRequest.blood_group
+    const allowed = COMPATIBILITY_MAP[group] || [group]
+    const safeDonors = Array.isArray(bloodDonors) ? bloodDonors : []
+    return safeDonors.filter(d => {
+      const dGroup = d.blood_group || d.bloodGroup
+      const status = (d.status || 'Eligible').toLowerCase()
+      return allowed.includes(dGroup) && status !== 'ineligible' && status !== 'banned'
+    })
+  }, [matchingRequest, bloodDonors])
+
   const columns = [
     { 
       key: 'patient_name', 
@@ -310,6 +337,28 @@ const BloodRequests = () => {
 
         return (
           <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            {!isPatient && row.status === 'Pending' && (
+              <button
+                onClick={() => setMatchingRequest(row)}
+                style={{
+                  padding: '6px 10px',
+                  borderRadius: '6px',
+                  border: '1px solid #fecaca',
+                  background: '#fef2f2',
+                  color: '#dc2626',
+                  fontSize: '0.725rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+                title="Match compatible donors & dispatch emergency alerts"
+              >
+                <Bell size={14} weight="bold" />
+                <span>Notify Donors</span>
+              </button>
+            )}
             {!isPatient && row.status !== 'Fulfilled' && (
               <button
                 onClick={() => handleOpenFulfill(row)}
@@ -672,6 +721,299 @@ const BloodRequests = () => {
             </div>
           )}
         </AnimatePresence>
+
+        {/* ─── Modal: Donor Matching & Alert Dispatch ──────────── */}
+        <AnimatePresence>
+          {matchingRequest && (
+            <div 
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(15, 23, 42, 0.65)',
+                backdropFilter: 'blur(4px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 99999,
+                padding: '1rem'
+              }}
+              onClick={() => setMatchingRequest(null)}
+            >
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                transition={{ duration: 0.2 }}
+                onClick={e => e.stopPropagation()}
+                className="ecare-card"
+                style={{
+                  width: '100%',
+                  maxWidth: '580px',
+                  maxHeight: '90vh',
+                  overflowY: 'auto',
+                  borderRadius: '16px',
+                  padding: 0,
+                  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
+                  border: '1px solid #e2e8f0',
+                  background: '#ffffff'
+                }}
+              >
+                {/* Header */}
+                <div style={{
+                  padding: '1.25rem 1.5rem',
+                  borderBottom: '1px solid #e2e8f0',
+                  background: 'linear-gradient(135deg, #fef2f2 0%, #ffffff 100%)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background: '#fee2e2',
+                      color: '#dc2626',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <Bell size={20} weight="fill" />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#0f172a' }}>
+                        Donor Matching Engine
+                      </h3>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
+                        Requisition #{matchingRequest.id?.slice(0, 8) || 'REQ'} • {matchingRequest.urgency}
+                      </div>
+                    </div>
+                  </div>
+                  <button 
+                    type="button" 
+                    onClick={() => setMatchingRequest(null)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: '4px' }}
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <div style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {/* Requisition Summary Banner */}
+                  <div style={{
+                    padding: '0.875rem 1rem',
+                    borderRadius: '10px',
+                    background: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '8px'
+                  }}>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>Requested For</div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0f172a' }}>
+                        {matchingRequest.patient_name || matchingRequest.requester_name}
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                        {matchingRequest.hospital_name || 'Clinical Unit'}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>Required</div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0f172a' }}>
+                          {matchingRequest.units_required || 1} Unit ({matchingRequest.component || 'Whole Blood'})
+                        </div>
+                      </div>
+                      <div style={{
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '50%',
+                        background: '#dc2626',
+                        color: '#fff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1rem',
+                        fontWeight: 900
+                      }}>
+                        {matchingRequest.blood_group}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Compatible Groups Tag */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', fontSize: '0.75rem' }}>
+                    <span style={{ color: '#64748b', fontWeight: 600 }}>Compatible Donor Types:</span>
+                    {(COMPATIBILITY_MAP[matchingRequest.blood_group] || [matchingRequest.blood_group]).map(grp => (
+                      <span 
+                        key={grp}
+                        style={{
+                          padding: '2px 8px',
+                          borderRadius: '6px',
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          background: grp === matchingRequest.blood_group ? '#fee2e2' : '#f1f5f9',
+                          color: grp === matchingRequest.blood_group ? '#dc2626' : '#475569',
+                          border: grp === matchingRequest.blood_group ? '1px solid #fecaca' : '1px solid #e2e8f0'
+                        }}
+                      >
+                        {grp}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Donor Match Results */}
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#0f172a' }}>
+                        Matched Registered Donors ({matchedDonors.length})
+                      </span>
+                      <span style={{ fontSize: '0.72rem', color: matchedDonors.length > 0 ? '#16a34a' : '#dc2626', fontWeight: 700 }}>
+                        {matchedDonors.length > 0 ? '✓ Ready to Alert' : 'No Compatible Donors in System'}
+                      </span>
+                    </div>
+
+                    {matchedDonors.length === 0 ? (
+                      <div style={{
+                        padding: '2rem 1rem',
+                        textAlign: 'center',
+                        background: '#f8fafc',
+                        borderRadius: '10px',
+                        border: '1px dashed #cbd5e1',
+                        color: '#64748b'
+                      }}>
+                        <WarningCircle size={28} color="#d97706" style={{ marginBottom: '6px' }} />
+                        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0f172a' }}>
+                          No Registered Eligible Donors Found
+                        </div>
+                        <div style={{ fontSize: '0.75rem', marginTop: '2px' }}>
+                          There are currently no active registered donors matching blood type {matchingRequest.blood_group} or compatible types.
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '220px', overflowY: 'auto', paddingRight: '4px' }}>
+                        {matchedDonors.map(donor => {
+                          const donorGroup = donor.blood_group || donor.bloodGroup
+                          const isExact = donorGroup === matchingRequest.blood_group
+                          return (
+                            <div 
+                              key={donor.id}
+                              style={{
+                                padding: '10px 12px',
+                                borderRadius: '8px',
+                                background: isExact ? '#ffffff' : '#f8fafc',
+                                border: isExact ? '1px solid #fed7aa' : '1px solid #e2e8f0',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: '8px'
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{
+                                  width: '32px',
+                                  height: '32px',
+                                  borderRadius: '50%',
+                                  background: isExact ? '#ea580c' : '#dc2626',
+                                  color: '#fff',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 800
+                                }}>
+                                  {donorGroup}
+                                </div>
+                                <div>
+                                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0f172a' }}>
+                                    {donor.name}
+                                  </div>
+                                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                                    {donor.contact_number || donor.phone || 'No phone'} • {donor.city || 'Local Area'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <span style={{
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                fontSize: '0.675rem',
+                                fontWeight: 700,
+                                background: isExact ? '#ffedd5' : '#e0f2fe',
+                                color: isExact ? '#c2410c' : '#0369a1'
+                              }}>
+                                {isExact ? 'Exact Match' : 'Universal Match'}
+                              </span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Modal Footer Buttons */}
+                  <div style={{
+                    display: 'flex',
+                    gap: '0.75rem',
+                    paddingTop: '0.75rem',
+                    borderTop: '1px solid #f1f5f9',
+                    marginTop: '0.5rem'
+                  }}>
+                    <button 
+                      type="button" 
+                      onClick={() => setMatchingRequest(null)} 
+                      className="ecare-btn-secondary" 
+                      style={{ flex: 1, padding: '0.65rem' }}
+                    >
+                      Close
+                    </button>
+                    <button 
+                      type="button" 
+                      disabled={matchedDonors.length === 0 || notifyingDonors}
+                      onClick={async () => {
+                        setNotifyingDonors(true)
+                        await notifyDonors({
+                          request_id: matchingRequest.id,
+                          blood_group: matchingRequest.blood_group,
+                          urgency: matchingRequest.urgency,
+                          patient_name: matchingRequest.patient_name || matchingRequest.requester_name,
+                          hospital_name: matchingRequest.hospital_name,
+                          units_required: matchingRequest.units_required,
+                          component: matchingRequest.component
+                        })
+                        setNotifyingDonors(false)
+                        setMatchingRequest(null)
+                      }}
+                      className="ecare-button" 
+                      style={{
+                        flex: 2,
+                        padding: '0.65rem',
+                        width: 'auto',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        background: matchedDonors.length === 0 ? '#94a3b8' : '#dc2626',
+                        cursor: (matchedDonors.length === 0 || notifyingDonors) ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      <PaperPlaneTilt size={16} weight="bold" />
+                      {notifyingDonors ? 'Dispatching Alerts...' : `Send Alerts to ${matchedDonors.length} Donors`}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
       </Portal>
     </div>
   )

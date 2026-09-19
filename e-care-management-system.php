@@ -288,6 +288,7 @@ $ecare_core_files = [
     'includes/class-ecare-lab-booking.php',
     'includes/class-ecare-care-provider-booking.php',
     'includes/class-ecare-blood-bank-page.php',
+    'includes/class-ecare-blood-alerts.php',
     'includes/services/class-ecare-agora-service.php',
     'includes/class-ecare-api.php',
     'includes/class-ecare-elementor.php',
@@ -358,6 +359,7 @@ class ECARE_Management_System {
         new ECARE_CareProviderBooking();
         new ECARE_Setup();
         new ECARE_Reminders();
+        new ECARE_BloodAlerts();
         new ECARE_AppointmentLifecycle();
         new ECARE_FloatingWidget();
         new ECARE_Privacy();

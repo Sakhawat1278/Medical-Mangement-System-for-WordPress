@@ -257,15 +257,17 @@ const Sidebar = () => {
   const bloodBankSubmenuItems = useMemo(() => {
     const items = []
     if (isPatient) {
-      items.push({ id: 'blood-bank', label: "Blood Stock", action: () => setActivePage('blood-bank') })
-      items.push({ id: 'blood-requests', label: "Request Blood", action: () => setActivePage('blood-requests') })
-      items.push({ id: 'blood-donors', label: "Donate Blood", action: () => setActivePage('blood-donors') })
+      items.push({ id: 'blood-bank',     label: "Blood Stock",    action: () => setActivePage('blood-bank') })
+      items.push({ id: 'blood-requests', label: "Request Blood",  action: () => setActivePage('blood-requests') })
+      items.push({ id: 'blood-donors',   label: "Donate Blood",   action: () => setActivePage('blood-donors') })
+      items.push({ id: 'blood-camps',    label: "Donation Camps", action: () => setActivePage('blood-camps') })
       return items
     }
-    items.push({ id: 'blood-bank', label: "Dashboard", action: () => setActivePage('blood-bank') })
-    items.push({ id: 'blood-inventory', label: "Inventory", action: () => setActivePage('blood-inventory') })
-    items.push({ id: 'blood-donors', label: "Donors", action: () => setActivePage('blood-donors') })
-    items.push({ id: 'blood-requests', label: "Requests", action: () => setActivePage('blood-requests') })
+    items.push({ id: 'blood-bank',          label: "Dashboard",    action: () => setActivePage('blood-bank') })
+    items.push({ id: 'blood-inventory',     label: "Inventory",    action: () => setActivePage('blood-inventory') })
+    items.push({ id: 'blood-donors',        label: "Donors",       action: () => setActivePage('blood-donors') })
+    items.push({ id: 'blood-requests',      label: "Requests",     action: () => setActivePage('blood-requests') })
+    items.push({ id: 'blood-camps',         label: "Blood Camps",  action: () => setActivePage('blood-camps') })
     return items
   }, [isPatient, setActivePage])
 

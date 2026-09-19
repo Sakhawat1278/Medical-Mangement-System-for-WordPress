@@ -69,7 +69,9 @@ class ECARE_API
             'reviews',
             'blood-inventory',
             'blood-donors',
-            'blood-requests'
+            'blood-requests',
+            'blood-camps',
+            'blood-expiry-alerts'
         );
 
         register_rest_route('ecare/v1', '/bootstrap', array(
@@ -867,7 +869,7 @@ class ECARE_API
             return true;
         }
 
-        $public_read_modules = array('doctors', 'specialities', 'services', 'lab-tests', 'lab-locations', 'settings', 'stats', 'blood-inventory', 'blood-donors');
+        $public_read_modules = array('doctors', 'specialities', 'services', 'lab-tests', 'lab-locations', 'settings', 'stats', 'blood-inventory', 'blood-donors', 'blood-camps');
         if ($action === 'read' && in_array($module, $public_read_modules, true)) {
             return true;
         }
@@ -896,6 +898,10 @@ class ECARE_API
                 return true;
             }
             if ($module === 'blood-donors') {
+                return true;
+            }
+            // Patients can read blood camps and POST camp registrations (handled via update)
+            if ($module === 'blood-camps') {
                 return true;
             }
             if ($module === 'billing') {
@@ -1111,8 +1117,10 @@ class ECARE_API
             'promo-codes' => 'ecare_promo_codes',
             'reviews' => 'ecare_reviews',
             'blood-inventory' => 'ecare_blood_inventory',
-            'blood-donors' => 'ecare_blood_donors',
-            'blood-requests' => 'ecare_blood_requests'
+            'blood-donors'    => 'ecare_blood_donors',
+            'blood-requests'  => 'ecare_blood_requests',
+            'blood-camps'     => 'ecare_blood_camps',
+            'blood-expiry-alerts' => 'ecare_blood_expiry_alerts'
         );
         return isset($map[$module]) ? $map[$module] : null;
     }

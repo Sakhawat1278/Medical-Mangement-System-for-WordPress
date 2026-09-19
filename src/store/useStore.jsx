@@ -735,6 +735,8 @@ const useStore = create(
       bloodInventory: [],
       bloodDonors: [],
       bloodRequests: [],
+      bloodCamps: [],
+      bloodExpiryAlerts: [],
       careProviderBookings: [],
       careProviders: [],
       pendingCareProviders: [],
@@ -1151,6 +1153,8 @@ const useStore = create(
             bloodInventory       = { data: b['blood-inventory'] || [] };
             bloodDonors          = { data: b['blood-donors'] || [] };
             bloodRequests        = { data: b['blood-requests'] || [] };
+            bloodCamps           = { data: b['blood-camps'] || [] };
+            bloodExpiryAlerts    = { data: b['blood-expiry-alerts'] || [] };
           } else {
             [
               stats, patients, staff, doctors, specialities, services, 
@@ -1159,7 +1163,8 @@ const useStore = create(
               labTests, labOrders, labLocations, telemedRooms, telemedMessages, 
               doctorAvailability, consultationNotes, staffAttendance, settings,
               supportTickets, supportMessages, notificationsResp, payoutsResp,
-              reviews, bloodInventory, bloodDonors, bloodRequests
+              reviews, bloodInventory, bloodDonors, bloodRequests,
+              bloodCamps, bloodExpiryAlerts
             ] = await Promise.all([
               getEndpointPromise('stats', true),
               getEndpointPromise('patients'),
@@ -1191,7 +1196,9 @@ const useStore = create(
               getEndpointPromise('reviews'),
               getEndpointPromise('blood-inventory'),
               getEndpointPromise('blood-donors'),
-              getEndpointPromise('blood-requests')
+              getEndpointPromise('blood-requests'),
+              getEndpointPromise('blood-camps'),
+              getEndpointPromise('blood-expiry-alerts')
             ]);
           }
 
@@ -1272,6 +1279,8 @@ const useStore = create(
             bloodInventory: Array.isArray(bloodInventory.data) ? bloodInventory.data : [],
             bloodDonors: Array.isArray(bloodDonors.data) ? bloodDonors.data : [],
             bloodRequests: Array.isArray(bloodRequests.data) ? bloodRequests.data : [],
+            bloodCamps: Array.isArray(bloodCamps.data) ? bloodCamps.data : [],
+            bloodExpiryAlerts: Array.isArray(bloodExpiryAlerts.data) ? bloodExpiryAlerts.data : [],
             refunds: Array.isArray(refunds.data) ? refunds.data : [],
             manualVerifications: Array.isArray(manualVerifications.data) ? manualVerifications.data : [],
             labTests: Array.isArray(labTests.data) ? labTests.data : [],
@@ -1360,19 +1369,22 @@ const useStore = create(
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
             'telemed-rooms', 'support-tickets', 'support-messages', 
             'care-provider-bookings', 'ambulance-bookings', 'telemed-messages',
-            'patients', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'
+            'patients', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests',
+            'blood-camps'
           ];
           const allowedForDoctor = [
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
             'telemed-rooms', 'support-tickets', 'support-messages', 'telemed-messages',
-            'patients', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'
+            'patients', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests',
+            'blood-camps'
           ];
           const allowedForAdmin = [
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
             'telemed-rooms', 'support-tickets', 'support-messages', 
             'care-providers', 'ambulance', 'manual-verifications',
             'care-provider-bookings', 'ambulance-bookings', 'telemed-messages',
-            'patients', 'staff', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'
+            'patients', 'staff', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests',
+            'blood-camps', 'blood-expiry-alerts'
           ];
 
           let modulesToSync = [];
@@ -1415,6 +1427,8 @@ const useStore = create(
           const bloodInventoryData = Array.isArray(data['blood-inventory']) ? data['blood-inventory'] : [];
           const bloodDonorsData = Array.isArray(data['blood-donors']) ? data['blood-donors'] : [];
           const bloodRequestsData = Array.isArray(data['blood-requests']) ? data['blood-requests'] : [];
+          const bloodCampsData = Array.isArray(data['blood-camps']) ? data['blood-camps'] : (get().bloodCamps || []);
+          const bloodExpiryAlertsData = Array.isArray(data['blood-expiry-alerts']) ? data['blood-expiry-alerts'] : (get().bloodExpiryAlerts || []);
 
           const allDoctors = doctorsData;
 
@@ -1446,6 +1460,8 @@ const useStore = create(
             bloodInventory: bloodInventoryData,
             bloodDonors: bloodDonorsData,
             bloodRequests: bloodRequestsData,
+            bloodCamps: bloodCampsData,
+            bloodExpiryAlerts: bloodExpiryAlertsData,
             transactions: billingData,
             notifications: combinedNotifs,
             telemedRooms: telemedRoomsData,
@@ -1574,6 +1590,50 @@ const useStore = create(
       addBloodRequest: (data) => get().handleOp('blood-requests', 'post', data, 'Blood requested successfully', 'bloodRequests'),
       updateBloodRequest: (id, data) => get().handleOp('blood-requests', 'put', data, 'Request updated', 'bloodRequests', id),
       deleteBloodRequest: (id) => get().handleOp('blood-requests', 'delete', null, 'Request removed', 'bloodRequests', id),
+
+      // Blood Camps (Donation Drive Management)
+      addBloodCamp: (data) => get().handleOp('blood-camps', 'post', data, 'Blood camp created', 'bloodCamps'),
+      updateBloodCamp: (id, data) => get().handleOp('blood-camps', 'put', data, 'Camp updated', 'bloodCamps', id),
+      deleteBloodCamp: (id) => get().handleOp('blood-camps', 'delete', null, 'Camp removed', 'bloodCamps', id),
+
+      // Blood Expiry Alerts
+      dismissExpiryAlert: (id, data) => get().handleOp('blood-expiry-alerts', 'put', { ...data, dismissed: true }, 'Alert dismissed', 'bloodExpiryAlerts', id),
+
+      // Donor Matching Engine — POST to /ecare/v1/blood-donor-notify
+      notifyDonors: async (data) => {
+        try {
+          const res = await api.post('blood-donor-notify', data);
+          if (res?.data?.success) {
+            const count = res.data.notified || 0;
+            toast.success(`✅ ${count} donor(s) notified successfully`);
+            await get().initStore(true);
+          }
+          return res?.data;
+        } catch (e) {
+          toast.error('Failed to send donor notifications');
+          return null;
+        }
+      },
+
+      // Manual Expiry Scan — POST to /ecare/v1/blood-expiry-scan
+      runExpiryScan: async () => {
+        try {
+          const res = await api.post('blood-expiry-scan', {});
+          if (res?.data?.success) {
+            const newAlerts = res.data.new_alerts || 0;
+            if (newAlerts > 0) {
+              toast.success(`⚠️ ${newAlerts} new expiry alert(s) flagged`);
+            } else {
+              toast.success('Expiry scan complete — no new alerts');
+            }
+            await get().initStore(true);
+          }
+          return res?.data;
+        } catch (e) {
+          toast.error('Expiry scan failed');
+          return null;
+        }
+      },
 
 
       // Lab Management

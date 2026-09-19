@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Drop, Heart, FirstAid, CheckCircle, Warning, 
-  Calendar, Phone, Envelope, User, MapPin, X, ArrowRight, ShieldCheck, Clock, Check
+  Calendar, Phone, Envelope, User, MapPin, X, ArrowRight, ShieldCheck, Clock, Check,
+  CalendarBlank, Users, UserPlus
 } from 'phosphor-react'
 import toast from 'react-hot-toast'
 import CustomSelect from '../../components/CustomSelect'
@@ -70,6 +71,12 @@ const BloodBankPublicStandalone = () => {
   const [submittingDonor, setSubmittingDonor] = useState(false)
   const [submittingRequest, setSubmittingRequest] = useState(false)
 
+  // Blood Camps state
+  const [camps, setCamps] = useState([])
+  const [registeringCamp, setRegisteringCamp] = useState(null)
+  const [campRegForm, setCampRegForm] = useState({ name: '', phone: '', blood_group: 'O+', notes: '' })
+  const [submittingCampReg, setSubmittingCampReg] = useState(false)
+
   // Fetch live inventory
   const fetchStock = async () => {
     try {
@@ -90,9 +97,72 @@ const BloodBankPublicStandalone = () => {
     }
   }
 
+  // Fetch live camps
+  const fetchCamps = async () => {
+    try {
+      const baseUrl = window.ecareConfig?.apiUrl || '/wp-json/ecare/v1/'
+      const res = await fetch(`${baseUrl}blood-camps`, {
+        headers: {
+          'X-WP-Nonce': window.ecareConfig?.nonce || ''
+        }
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setCamps(Array.isArray(data) ? data : [])
+      }
+    } catch (e) {
+      console.warn('Failed to fetch blood camps', e)
+    }
+  }
+
   useEffect(() => {
     fetchStock()
+    fetchCamps()
   }, [])
+
+  const handleCampRegSubmit = async (e) => {
+    e.preventDefault()
+    if (!campRegForm.name || !campRegForm.phone) {
+      toast.error('Name and contact phone are required')
+      return
+    }
+    setSubmittingCampReg(true)
+    try {
+      const baseUrl = window.ecareConfig?.apiUrl || '/wp-json/ecare/v1/'
+      const existing = registeringCamp.registrations || []
+      const newReg = {
+        id: `reg_${Date.now()}`,
+        name: campRegForm.name,
+        phone: campRegForm.phone,
+        blood_group: campRegForm.blood_group,
+        notes: campRegForm.notes,
+        registered_at: new Date().toISOString()
+      }
+      const res = await fetch(`${baseUrl}blood-camps/${registeringCamp.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-WP-Nonce': window.ecareConfig?.nonce || ''
+        },
+        body: JSON.stringify({
+          ...registeringCamp,
+          registrations: [...existing, newReg]
+        })
+      })
+      if (res.ok) {
+        toast.success(`Registered for ${registeringCamp.name}!`)
+        setRegisteringCamp(null)
+        setCampRegForm({ name: '', phone: '', blood_group: 'O+', notes: '' })
+        fetchCamps()
+      } else {
+        toast.error('Registration failed. Please try again.')
+      }
+    } catch (err) {
+      toast.error('Network error during registration')
+    } finally {
+      setSubmittingCampReg(false)
+    }
+  }
 
   // Stock counts by blood group
   const stockByGroup = useMemo(() => {
@@ -530,6 +600,176 @@ const BloodBankPublicStandalone = () => {
         </div>
       </div>
 
+      {/* ─── Community Blood Donation Camps & Drives ────────────── */}
+      <div style={{
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: '16px',
+        padding: '1.75rem',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1.25rem'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Drop size={18} weight="fill" />
+              </div>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                Scheduled Blood Donation Camps
+              </h3>
+            </div>
+            <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: '4px 0 0 40px' }}>
+              Join upcoming neighborhood blood drives or register online to save lives together
+            </p>
+          </div>
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe' }}>
+            {camps.filter(c => c.status === 'Upcoming' || c.status === 'Ongoing').length} Active Drives
+          </span>
+        </div>
+
+        {camps.filter(c => c.status === 'Upcoming' || c.status === 'Ongoing').length === 0 ? (
+          <div style={{
+            padding: '2.5rem 1rem',
+            textAlign: 'center',
+            background: '#f8fafc',
+            borderRadius: '12px',
+            border: '1px dashed #cbd5e1'
+          }}>
+            <CalendarBlank size={36} color="#94a3b8" style={{ marginBottom: '8px' }} />
+            <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1e293b' }}>
+              No Scheduled Camps at this Moment
+            </div>
+            <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '4px', maxWidth: '420px', margin: '4px auto 0' }}>
+              New community donation drives are organized every month. You can also volunteer directly at our hospital center anytime!
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsDonorModalOpen(true)}
+              style={{
+                marginTop: '12px',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                background: '#dc2626',
+                color: '#fff',
+                border: 'none',
+                fontWeight: 700,
+                fontSize: '0.8rem',
+                cursor: 'pointer'
+              }}
+            >
+              Volunteer Directly as Donor
+            </button>
+          </div>
+        ) : (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: '1rem'
+          }}>
+            {camps.filter(c => c.status === 'Upcoming' || c.status === 'Ongoing').map(camp => {
+              const regCount = (camp.registrations || []).length
+              const cap = parseInt(camp.capacity) || 50
+              const spots = Math.max(0, cap - regCount)
+              const isOngoing = camp.status === 'Ongoing'
+
+              return (
+                <div
+                  key={camp.id}
+                  style={{
+                    padding: '1.25rem',
+                    borderRadius: '12px',
+                    border: isOngoing ? '1px solid #86efac' : '1px solid #e2e8f0',
+                    background: isOngoing ? '#f0fdf4' : '#f8fafc',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: '0.875rem'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                      <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800, color: '#0f172a' }}>
+                        {camp.name}
+                      </h4>
+                      <span style={{
+                        padding: '2px 8px',
+                        borderRadius: '12px',
+                        fontSize: '0.675rem',
+                        fontWeight: 800,
+                        background: isOngoing ? '#dcfce7' : '#dbeafe',
+                        color: isOngoing ? '#166534' : '#1d4ed8'
+                      }}>
+                        {camp.status}
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '8px', fontSize: '0.78rem', color: '#475569' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <CalendarBlank size={14} color="#dc2626" />
+                        <span>{camp.date} • {camp.time || '09:00'} - {camp.end_time || '17:00'}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <MapPin size={14} color="#dc2626" />
+                        <span>{camp.location}</span>
+                      </div>
+                      {camp.organizer && (
+                        <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                          By: {camp.organizer}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Capacity Bar */}
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#64748b', marginBottom: '3px' }}>
+                      <span><Users size={12} style={{ marginRight: 3 }} />{regCount} Registered</span>
+                      <span>{spots} spots left</span>
+                    </div>
+                    <div style={{ height: '5px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{
+                        height: '100%',
+                        width: `${Math.min(100, (regCount / cap) * 100)}%`,
+                        background: spots === 0 ? '#dc2626' : (spots < 10 ? '#f59e0b' : '#16a34a')
+                      }} />
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={spots === 0}
+                    onClick={() => {
+                      setRegisteringCamp(camp)
+                      setCampRegForm({ name: '', phone: '', blood_group: 'O+', notes: '' })
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '8px',
+                      borderRadius: '8px',
+                      background: spots === 0 ? '#cbd5e1' : '#dc2626',
+                      color: '#ffffff',
+                      border: 'none',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: spots === 0 ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <UserPlus size={14} weight="bold" />
+                    {spots === 0 ? 'Camp Capacity Full' : 'Register for this Drive'}
+                  </button>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
+
       {/* ─── Clinical FAQs & Donation Guidelines ───────────────────── */}
       <div style={{ 
         background: '#ffffff', 
@@ -892,6 +1132,112 @@ const BloodBankPublicStandalone = () => {
                     style={{ flex: 2, padding: '9px', borderRadius: '6px', border: 'none', background: '#dc2626', color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: '0.8125rem' }}
                   >
                     {submittingRequest ? 'Dispatching...' : 'Dispatch Request'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── MODAL 3: REGISTER FOR BLOOD CAMP ────────────────────── */}
+      <AnimatePresence>
+        {registeringCamp && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setRegisteringCamp(null)}
+              style={{ position: 'absolute', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)' }}
+            />
+            <motion.div 
+              initial={{ scale: 0.96, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.96, opacity: 0 }}
+              style={{ 
+                width: '100%', maxWidth: '460px', maxHeight: '90vh', position: 'relative', 
+                background: '#ffffff', borderRadius: '16px',
+                padding: 0, border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                overflow: 'hidden', display: 'flex', flexDirection: 'column', zIndex: 1
+              }}
+            >
+              <div style={{ padding: '1.25rem 1.5rem', background: '#fef2f2', borderBottom: '1px solid #fee2e2', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <CalendarBlank size={18} weight="fill" />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>Register for Donation Camp</h3>
+                    <p style={{ fontSize: '0.725rem', color: '#64748b', margin: 0 }}>{registeringCamp.name}</p>
+                  </div>
+                </div>
+                <button type="button" onClick={() => setRegisteringCamp(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
+                  <X size={18} weight="bold" />
+                </button>
+              </div>
+
+              <div style={{ padding: '0.75rem 1.5rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', fontSize: '0.75rem', color: '#475569' }}>
+                <div><strong>Location:</strong> {registeringCamp.location}</div>
+                <div style={{ marginTop: '2px' }}><strong>Date:</strong> {registeringCamp.date} ({registeringCamp.time || '09:00'} - {registeringCamp.end_time || '17:00'})</div>
+              </div>
+
+              <form onSubmit={handleCampRegSubmit} style={{ padding: '1.25rem 1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Your Name *</label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="Full Name"
+                    value={campRegForm.name}
+                    onChange={e => setCampRegForm({ ...campRegForm, name: e.target.value })}
+                    style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Phone Number *</label>
+                    <input 
+                      type="tel" 
+                      required
+                      placeholder="+880 1700-000000"
+                      value={campRegForm.phone}
+                      onChange={e => setCampRegForm({ ...campRegForm, phone: e.target.value })}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Blood Group *</label>
+                    <CustomSelect 
+                      value={campRegForm.blood_group}
+                      onChange={val => setCampRegForm({ ...campRegForm, blood_group: val })}
+                      options={BLOOD_GROUP_OPTIONS}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Health Notes (Optional)</label>
+                  <input 
+                    type="text" 
+                    placeholder="Any conditions or previous donations"
+                    value={campRegForm.notes}
+                    onChange={e => setCampRegForm({ ...campRegForm, notes: e.target.value })}
+                    style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                  <button 
+                    type="button" 
+                    onClick={() => setRegisteringCamp(null)}
+                    style={{ flex: 1, padding: '9px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff', color: '#475569', fontWeight: 700, cursor: 'pointer', fontSize: '0.8125rem' }}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    disabled={submittingCampReg}
+                    style={{ flex: 2, padding: '9px', borderRadius: '6px', border: 'none', background: '#dc2626', color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: '0.8125rem' }}
+                  >
+                    {submittingCampReg ? 'Registering...' : 'Confirm Camp Registration'}
                   </button>
                 </div>
               </form>

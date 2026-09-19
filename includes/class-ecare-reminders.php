@@ -136,6 +136,13 @@ class ECARE_Reminders {
             }
         }
 
+        // ── Blood Bank: Expiry Alert Scan ────────────────────────────────
+        if (class_exists('ECARE_BloodAlerts')) {
+            $expiry_result = ECARE_BloodAlerts::scan_expiry_alerts();
+            $summary['counts']['blood_expiry_alerts'] = $expiry_result['new_alerts'] ?? 0;
+            $summary['blood_expiry'] = $expiry_result;
+        }
+
         return $summary;
     }
 
