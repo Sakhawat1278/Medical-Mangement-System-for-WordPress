@@ -2,21 +2,21 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Drop, Heart, FirstAid, CheckCircle, Warning, 
-  Calendar, Phone, Envelope, User, MapPin, X, ArrowRight, ShieldCheck, Clock
+  Calendar, Phone, Envelope, User, MapPin, X, ArrowRight, ShieldCheck, Clock, Check
 } from 'phosphor-react'
 import toast from 'react-hot-toast'
 
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
 const COMPATIBILITY = {
-  'O-': { givesTo: 'Everyone (Universal RBC)', receivesFrom: 'O-' },
+  'O-': { givesTo: 'Universal Red Cell Donor (Everyone)', receivesFrom: 'O- only' },
   'O+': { givesTo: 'O+, A+, B+, AB+', receivesFrom: 'O+, O-' },
   'A-': { givesTo: 'A-, A+, AB-, AB+', receivesFrom: 'A-, O-' },
   'A+': { givesTo: 'A+, AB+', receivesFrom: 'A+, A-, O+, O-' },
   'B-': { givesTo: 'B-, B+, AB-, AB+', receivesFrom: 'B-, O-' },
   'B+': { givesTo: 'B+, AB+', receivesFrom: 'B+, B-, O+, O-' },
   'AB-': { givesTo: 'AB-, AB+', receivesFrom: 'AB-, A-, B-, O-' },
-  'AB+': { givesTo: 'AB+ Only', receivesFrom: 'Everyone (Universal Recipient)' },
+  'AB+': { givesTo: 'AB+ only', receivesFrom: 'Universal Recipient (All groups)' },
 }
 
 const BloodBankPublicStandalone = () => {
@@ -24,7 +24,7 @@ const BloodBankPublicStandalone = () => {
   const [loading, setLoading] = useState(true)
   const [isDonorModalOpen, setIsDonorModalOpen] = useState(false)
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
-  const [selectedGroupFilter, setSelectedGroupFilter] = useState('ALL')
+  const [activeGroupFilter, setActiveGroupFilter] = useState('ALL')
 
   // Form states
   const [donorForm, setDonorForm] = useState({
@@ -95,6 +95,11 @@ const BloodBankPublicStandalone = () => {
   const totalAvailable = useMemo(() => {
     return Object.values(stockByGroup).reduce((a, b) => a + b, 0)
   }, [stockByGroup])
+
+  const filteredGroups = useMemo(() => {
+    if (activeGroupFilter === 'ALL') return BLOOD_GROUPS
+    return BLOOD_GROUPS.filter(g => g.startsWith(activeGroupFilter))
+  }, [activeGroupFilter])
 
   const handleDonorSubmit = async (e) => {
     e.preventDefault()
@@ -191,312 +196,374 @@ const BloodBankPublicStandalone = () => {
   }
 
   return (
-    <div style={{ fontFamily: 'inherit', color: '#1e293b', width: '100%', padding: '1rem 0 4rem' }}>
-      {/* ─── Hero Header ─────────────────────────────────────────── */}
+    <div style={{ 
+      fontFamily: 'inherit', 
+      color: '#0f172a', 
+      width: '100%', 
+      boxSizing: 'border-box',
+      padding: '0 0 3rem 0'
+    }}>
+      {/* ─── Clean Medical Hero Section (Consistent with E-CARE templates) ─── */}
       <div 
         style={{ 
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-          borderRadius: '24px',
-          padding: '3rem 2rem',
-          color: '#ffffff',
-          position: 'relative',
-          overflow: 'hidden',
-          marginBottom: '2.5rem',
-          boxShadow: '0 20px 40px -15px rgba(15, 23, 42, 0.25)'
+          background: '#ffffff',
+          border: '1px solid #e2e8f0',
+          borderRadius: '16px',
+          padding: 'clamp(1.5rem, 3vw, 2.5rem)',
+          marginBottom: '2rem',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.03)'
         }}
       >
-        <div style={{ position: 'absolute', right: '-40px', top: '-40px', opacity: 0.08, pointerEvents: 'none' }}>
-          <Drop size={320} weight="fill" color="#ffffff" />
-        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
+          <div style={{ maxWidth: '680px' }}>
+            {/* Clinical tag */}
+            <div style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '6px', 
+              background: '#fee2e2', 
+              color: '#dc2626',
+              padding: '3px 10px', 
+              borderRadius: '99px',
+              fontSize: '0.725rem',
+              fontWeight: 800,
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              marginBottom: '0.875rem'
+            }}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#dc2626', display: 'inline-block' }} />
+              24/7 Verified Blood Bank & Requisition Portal
+            </div>
 
-        <div style={{ maxWidth: '800px', position: 'relative', zIndex: 1 }}>
-          <div style={{ 
-            display: 'inline-flex', 
-            alignItems: 'center', 
-            gap: '8px', 
-            background: 'rgba(239, 68, 68, 0.2)', 
-            border: '1px solid rgba(239, 68, 68, 0.4)',
-            padding: '6px 14px', 
-            borderRadius: '99px',
-            color: '#fca5a5',
-            fontSize: '0.8125rem',
-            fontWeight: 700,
-            marginBottom: '1rem',
-            letterSpacing: '0.04em',
-            textTransform: 'uppercase'
-          }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
-            24/7 Live Blood Bank Network
+            <h1 style={{ 
+              fontSize: 'clamp(1.5rem, 3vw, 2.15rem)', 
+              fontWeight: 800, 
+              color: '#0f172a', 
+              margin: '0 0 0.75rem', 
+              lineHeight: 1.25,
+              letterSpacing: '-0.02em'
+            }}>
+              Blood Bank Inventory & Emergency Transfusion
+            </h1>
+
+            <p style={{ 
+              fontSize: '0.9375rem', 
+              color: '#64748b', 
+              margin: '0 0 1.5rem', 
+              lineHeight: 1.6 
+            }}>
+              Check verified clinical reserves stored under certified cold-chain refrigeration, join our compassionate network of volunteer donors, or dispatch emergency hospital requisitions with priority clearance.
+            </p>
+
+            {/* Action buttons */}
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => setIsDonorModalOpen(true)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: '#dc2626',
+                  color: '#ffffff',
+                  border: 'none',
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  fontSize: '0.875rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+              >
+                <Heart size={16} weight="fill" />
+                Register as Blood Donor
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsRequestModalOpen(true)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: '#ffffff',
+                  color: '#0f172a',
+                  border: '1px solid #cbd5e1',
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  fontSize: '0.875rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+              >
+                <FirstAid size={16} weight="bold" color="#dc2626" />
+                Request Emergency Blood
+              </button>
+            </div>
           </div>
 
-          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 800, margin: '0 0 1rem', lineHeight: 1.2, color: '#ffffff' }}>
-            Give the Gift of Life. <br />
-            <span style={{ color: '#f87171' }}>Every Drop Counts.</span>
-          </h1>
+          {/* Quick Reserve Stat Card */}
+          <div style={{ 
+            background: '#f8fafc', 
+            border: '1px solid #e2e8f0', 
+            borderRadius: '12px', 
+            padding: '1.25rem 1.5rem',
+            minWidth: '220px',
+            flexShrink: 0
+          }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Active Blood Stock
+            </div>
+            <div style={{ fontSize: '2.25rem', fontWeight: 900, color: '#0f172a', marginTop: '4px', lineHeight: 1 }}>
+              {totalAvailable} <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#dc2626' }}>Bags</span>
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Check size={14} weight="bold" /> Tested & Available
+            </div>
+            <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '10px', paddingTop: '10px', fontSize: '0.7rem', color: '#94a3b8' }}>
+              Storage Temp: 2°C to 6°C
+            </div>
+          </div>
+        </div>
 
-          <p style={{ fontSize: '1.05rem', color: '#94a3b8', margin: '0 0 2rem', lineHeight: 1.6, maxWidth: '640px' }}>
-            Check verified real-time blood stock across hospital reserves, join our compassionate community of registered life savers, or request emergency units with immediate priority dispatch.
-          </p>
-
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => setIsDonorModalOpen(true)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: '#ef4444',
-                color: '#ffffff',
-                border: 'none',
-                padding: '0.875rem 1.75rem',
-                borderRadius: '12px',
-                fontSize: '0.95rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                boxShadow: '0 10px 20px -5px rgba(239, 68, 68, 0.5)',
-                transition: 'all 0.2s'
-              }}
-            >
-              <Heart size={20} weight="fill" />
-              Register as Blood Donor
-            </button>
-
-            <button
-              onClick={() => setIsRequestModalOpen(true)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                color: '#ffffff',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                padding: '0.875rem 1.75rem',
-                borderRadius: '12px',
-                fontSize: '0.95rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                backdropFilter: 'blur(8px)',
-                transition: 'all 0.2s'
-              }}
-            >
-              <FirstAid size={20} weight="bold" />
-              Request Emergency Blood
-            </button>
+        {/* Trust Badges Row */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+          gap: '1rem', 
+          marginTop: '2rem',
+          paddingTop: '1.5rem',
+          borderTop: '1px solid #f1f5f9'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8125rem', color: '#475569', fontWeight: 600 }}>
+            <ShieldCheck size={18} weight="fill" color="#16a34a" />
+            <span>100% Serology Cleared</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8125rem', color: '#475569', fontWeight: 600 }}>
+            <Clock size={18} weight="fill" color="#2563eb" />
+            <span>Instant Emergency Dispatch</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8125rem', color: '#475569', fontWeight: 600 }}>
+            <Heart size={18} weight="fill" color="#dc2626" />
+            <span>Voluntary & Safe Donation</span>
           </div>
         </div>
       </div>
 
-      {/* ─── Live Stock Section ──────────────────────────────────── */}
+      {/* ─── Blood Inventory Section ─────────────────────────────── */}
       <div style={{ marginBottom: '2.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Drop size={22} weight="fill" color="#ef4444" />
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>
-                Real-Time Blood Availability
-              </h2>
-            </div>
-            <p style={{ margin: '4px 0 0', fontSize: '0.875rem', color: '#64748b' }}>
-              Verified medical reserves stored under regulated cold chain refrigeration
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+              Live Blood Group Availability
+            </h2>
+            <p style={{ margin: '3px 0 0', fontSize: '0.8125rem', color: '#64748b' }}>
+              Real-time inventory levels categorized by ABO and Rhesus classification
             </p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Total Verified Stock:</span>
-            <span style={{ 
-              background: '#fee2e2', 
-              color: '#dc2626', 
-              padding: '6px 14px', 
-              borderRadius: '99px', 
-              fontSize: '0.9rem', 
-              fontWeight: 800 
-            }}>
-              {totalAvailable} Units Available
-            </span>
+          {/* Clean Segmented Filter */}
+          <div style={{ 
+            display: 'flex', 
+            background: '#f1f5f9', 
+            padding: '3px', 
+            borderRadius: '8px',
+            gap: '2px'
+          }}>
+            {['ALL', 'O', 'A', 'B', 'AB'].map(filterKey => (
+              <button
+                key={filterKey}
+                type="button"
+                onClick={() => setActiveGroupFilter(filterKey)}
+                style={{
+                  border: 'none',
+                  background: activeGroupFilter === filterKey ? '#ffffff' : 'transparent',
+                  color: activeGroupFilter === filterKey ? '#0f172a' : '#64748b',
+                  padding: '5px 12px',
+                  borderRadius: '6px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  boxShadow: activeGroupFilter === filterKey ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
+                  transition: 'all 0.15s'
+                }}
+              >
+                {filterKey === 'ALL' ? 'All Groups' : `${filterKey} Types`}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* 8 Grid Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
-          {BLOOD_GROUPS.map((group) => {
+        {/* 8 Cards Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))', gap: '1rem' }}>
+          {filteredGroups.map(group => {
             const count = stockByGroup[group] || 0
             const compat = COMPATIBILITY[group]
             const isCritical = count === 0
-            const isLow = count > 0 && count <= 3
-            const isSafe = count > 3
+            const isLow = count > 0 && count <= 2
+            const isAdequate = count > 2
 
-            let statusLabel = 'Adequate'
-            let statusColor = '#10b981'
+            let statusColor = '#16a34a'
             let statusBg = '#dcfce7'
+            let statusText = 'Adequate'
+
             if (isCritical) {
-              statusLabel = 'Critical Need'
-              statusColor = '#ef4444'
+              statusColor = '#dc2626'
               statusBg = '#fee2e2'
+              statusText = 'Shortage'
             } else if (isLow) {
-              statusLabel = 'Low Supply'
-              statusColor = '#f59e0b'
+              statusColor = '#d97706'
               statusBg = '#fef3c7'
+              statusText = 'Low Reserve'
             }
 
             return (
-              <motion.div
+              <div 
                 key={group}
-                whileHover={{ y: -4, boxShadow: '0 12px 25px -8px rgba(0,0,0,0.1)' }}
                 style={{
                   background: '#ffffff',
-                  border: isCritical ? '1.5px solid #fecaca' : '1px solid #e2e8f0',
-                  borderRadius: '16px',
-                  padding: '1.5rem',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '1.25rem',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '1rem',
-                  boxShadow: '0 4px 6px -2px rgba(15, 23, 42, 0.03)'
+                  gap: '0.875rem',
+                  boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.02)'
                 }}
               >
+                {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ 
-                    fontSize: '2rem', 
-                    fontWeight: 900, 
-                    color: '#dc2626', 
-                    lineHeight: 1,
-                    letterSpacing: '-0.02em'
+                    width: '42px', height: '42px', borderRadius: '10px', 
+                    background: '#fee2e2', color: '#dc2626',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '1.25rem', fontWeight: 900
                   }}>
                     {group}
                   </div>
                   <span style={{ 
                     background: statusBg, 
                     color: statusColor, 
-                    fontSize: '0.725rem', 
+                    fontSize: '0.7rem', 
                     fontWeight: 800, 
-                    padding: '4px 10px', 
-                    borderRadius: '99px',
+                    padding: '3px 8px', 
+                    borderRadius: '4px',
                     textTransform: 'uppercase'
                   }}>
-                    {statusLabel}
+                    {statusText}
                   </span>
                 </div>
 
+                {/* Count */}
                 <div>
-                  <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#1e293b' }}>
-                    {count} <span style={{ fontSize: '0.85rem', fontWeight: 500, color: '#64748b' }}>Bags Available</span>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a' }}>
+                    {count} <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#64748b' }}>Bags Available</span>
                   </div>
-                  <div style={{ 
-                    marginTop: '6px', 
-                    width: '100%', 
-                    height: '6px', 
-                    background: '#f1f5f9', 
-                    borderRadius: '99px', 
-                    overflow: 'hidden' 
-                  }}>
-                    <div 
-                      style={{ 
-                        height: '100%', 
-                        width: `${Math.min(100, (count / 10) * 100)}%`,
-                        background: statusColor,
-                        borderRadius: '99px',
-                        transition: 'width 0.4s'
-                      }} 
-                    />
+                  <div style={{ height: '5px', width: '100%', background: '#f1f5f9', borderRadius: '99px', overflow: 'hidden', marginTop: '6px' }}>
+                    <div style={{ height: '100%', width: `${Math.min(100, (count / 8) * 100)}%`, background: statusColor, borderRadius: '99px' }} />
                   </div>
                 </div>
 
-                <div style={{ borderTop: '1px dashed #e2e8f0', paddingTop: '0.75rem', fontSize: '0.75rem', color: '#64748b' }}>
-                  <div style={{ marginBottom: '4px' }}>
-                    <strong style={{ color: '#334155' }}>Can Give To:</strong> {compat.givesTo}
+                {/* Compatibility */}
+                <div style={{ fontSize: '0.725rem', color: '#64748b', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
+                  <div style={{ marginBottom: '3px' }}>
+                    <strong style={{ color: '#334155' }}>Gives To:</strong> {compat.givesTo}
                   </div>
                   <div>
-                    <strong style={{ color: '#334155' }}>Can Receive:</strong> {compat.receivesFrom}
+                    <strong style={{ color: '#334155' }}>Receives From:</strong> {compat.receivesFrom}
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: 'auto' }}>
+                {/* Action Buttons */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginTop: 'auto', paddingTop: '4px' }}>
                   <button
+                    type="button"
                     onClick={() => {
                       setDonorForm(prev => ({ ...prev, blood_group: group }))
                       setIsDonorModalOpen(true)
                     }}
                     style={{
-                      padding: '8px',
-                      borderRadius: '8px',
+                      padding: '7px 10px',
+                      borderRadius: '6px',
                       background: '#f8fafc',
-                      border: '1px solid #e2e8f0',
+                      border: '1px solid #cbd5e1',
                       fontSize: '0.75rem',
                       fontWeight: 700,
-                      color: '#0f172a',
-                      cursor: 'pointer',
-                      textAlign: 'center'
+                      color: '#334155',
+                      cursor: 'pointer'
                     }}
                   >
                     Donate {group}
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       setRequestForm(prev => ({ ...prev, blood_group: group }))
                       setIsRequestModalOpen(true)
                     }}
                     style={{
-                      padding: '8px',
-                      borderRadius: '8px',
+                      padding: '7px 10px',
+                      borderRadius: '6px',
                       background: '#fee2e2',
                       border: '1px solid #fca5a5',
                       fontSize: '0.75rem',
                       fontWeight: 700,
                       color: '#dc2626',
-                      cursor: 'pointer',
-                      textAlign: 'center'
+                      cursor: 'pointer'
                     }}
                   >
                     Request
                   </button>
                 </div>
-              </motion.div>
+              </div>
             )
           })}
         </div>
       </div>
 
-      {/* ─── Donation FAQs & Criteria ────────────────────────────── */}
+      {/* ─── Clinical FAQs & Donation Guidelines ───────────────────── */}
       <div style={{ 
-        background: '#f8fafc', 
+        background: '#ffffff', 
         border: '1px solid #e2e8f0', 
-        borderRadius: '20px', 
-        padding: '2rem',
+        borderRadius: '16px', 
+        padding: '1.75rem',
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '2rem'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+        gap: '1.5rem'
       }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0f172a', marginBottom: '8px' }}>
-            <ShieldCheck size={24} weight="fill" color="#10b981" />
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>Who Can Safely Donate?</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+            <ShieldCheck size={20} weight="fill" color="#16a34a" />
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Who Can Donate?</h3>
           </div>
-          <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.5, margin: 0 }}>
-            Donating blood is safe, sterile, and takes only 15 minutes. Volunteers must be between 18-65 years old, weigh at least 50 kg (110 lbs), and be in good general health without acute infection.
+          <p style={{ fontSize: '0.8125rem', color: '#64748b', lineHeight: 1.5, margin: 0 }}>
+            Volunteers aged 18 to 65 weighing at least 50 kg (110 lbs) in good general health. A quick mini-physical and hemoglobin check is conducted prior to collection.
           </p>
         </div>
 
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0f172a', marginBottom: '8px' }}>
-            <Clock size={24} weight="fill" color="#3b82f6" />
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>Donation Frequency</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+            <Clock size={20} weight="fill" color="#2563eb" />
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Donation Frequency</h3>
           </div>
-          <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.5, margin: 0 }}>
-            Whole blood can be donated every 56 days (8 weeks). Platelet donation can be performed up to 24 times a year. Your body replenishes blood volume within 24-48 hours.
+          <p style={{ fontSize: '0.8125rem', color: '#64748b', lineHeight: 1.5, margin: 0 }}>
+            Whole blood may be safely donated every 56 days (8 weeks). Your body naturally replenishes fluids within 24 to 48 hours, and red cells within a few weeks.
           </p>
         </div>
 
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0f172a', marginBottom: '8px' }}>
-            <FirstAid size={24} weight="fill" color="#ef4444" />
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>Emergency Dispatch Protocol</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+            <FirstAid size={20} weight="fill" color="#dc2626" />
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Emergency Transfusions</h3>
           </div>
-          <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.5, margin: 0 }}>
-            All emergency blood requests placed on this portal trigger immediate alerts to our clinical blood bank technician on duty for rapid cross-matching and courier transfer.
+          <p style={{ fontSize: '0.8125rem', color: '#64748b', lineHeight: 1.5, margin: 0 }}>
+            Urgent hospital requests receive priority processing with immediate cross-matching and specialized cold courier delivery directly to clinical ICUs.
           </p>
         </div>
       </div>
 
-      {/* ─── Modal 1: Register as Donor ──────────────────────────── */}
+      {/* ─── MODAL 1: REGISTER AS DONOR ──────────────────────────── */}
       <AnimatePresence>
         {isDonorModalOpen && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
@@ -506,31 +573,31 @@ const BloodBankPublicStandalone = () => {
               style={{ position: 'absolute', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)' }}
             />
             <motion.div 
-              initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+              initial={{ scale: 0.96, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.96, opacity: 0 }}
               style={{ 
-                width: '100%', maxWidth: '540px', maxHeight: '90vh', position: 'relative', 
-                background: '#ffffff', borderRadius: '20px',
-                padding: 0, border: '1px solid #e2e8f0', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                width: '100%', maxWidth: '500px', maxHeight: '90vh', position: 'relative', 
+                background: '#ffffff', borderRadius: '16px',
+                padding: 0, border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
                 overflow: 'hidden', display: 'flex', flexDirection: 'column', zIndex: 1
               }}
             >
               <div style={{ padding: '1.25rem 1.5rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#fee2e2', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Heart size={20} weight="fill" />
+                  <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Heart size={18} weight="fill" />
                   </div>
                   <div>
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>Register as Blood Donor</h3>
-                    <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>Join our volunteer life saver network</p>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>Register as Volunteer Donor</h3>
+                    <p style={{ fontSize: '0.725rem', color: '#64748b', margin: 0 }}>Enroll in our verified donor directory</p>
                   </div>
                 </div>
-                <button onClick={() => setIsDonorModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
-                  <X size={20} weight="bold" />
+                <button type="button" onClick={() => setIsDonorModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
+                  <X size={18} weight="bold" />
                 </button>
               </div>
 
-              <form onSubmit={handleDonorSubmit} style={{ padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <form onSubmit={handleDonorSubmit} style={{ padding: '1.25rem 1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Full Name *</label>
                     <input 
@@ -539,7 +606,7 @@ const BloodBankPublicStandalone = () => {
                       placeholder="e.g. John Doe"
                       value={donorForm.name}
                       onChange={e => setDonorForm({ ...donorForm, name: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                     />
                   </div>
                   <div>
@@ -547,15 +614,15 @@ const BloodBankPublicStandalone = () => {
                     <input 
                       type="tel" 
                       required
-                      placeholder="e.g. +880 1700-000000"
+                      placeholder="+880 1700-000000"
                       value={donorForm.phone}
                       onChange={e => setDonorForm({ ...donorForm, phone: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                     />
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Email Address</label>
                     <input 
@@ -563,7 +630,7 @@ const BloodBankPublicStandalone = () => {
                       placeholder="donor@example.com"
                       value={donorForm.email}
                       onChange={e => setDonorForm({ ...donorForm, email: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                     />
                   </div>
                   <div>
@@ -571,24 +638,23 @@ const BloodBankPublicStandalone = () => {
                     <select 
                       value={donorForm.blood_group}
                       onChange={e => setDonorForm({ ...donorForm, blood_group: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', background: '#fff' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem', background: '#fff' }}
                     >
                       {BLOOD_GROUPS.map(g => <option key={g} value={g}>{g}</option>)}
                     </select>
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.875rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Gender</label>
                     <select 
                       value={donorForm.gender}
                       onChange={e => setDonorForm({ ...donorForm, gender: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', background: '#fff' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem', background: '#fff' }}
                     >
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
-                      <option value="Other">Other</option>
                     </select>
                   </div>
                   <div>
@@ -597,10 +663,10 @@ const BloodBankPublicStandalone = () => {
                       type="number" 
                       min="18"
                       max="65"
-                      placeholder="e.g. 28"
+                      placeholder="28"
                       value={donorForm.age}
                       onChange={e => setDonorForm({ ...donorForm, age: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                     />
                   </div>
                   <div>
@@ -608,24 +674,23 @@ const BloodBankPublicStandalone = () => {
                     <input 
                       type="number" 
                       required
-                      min="40"
                       placeholder="Min 50"
                       value={donorForm.weight}
                       onChange={e => setDonorForm({ ...donorForm, weight: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                     />
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>City / Location</label>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Location / City</label>
                     <input 
                       type="text" 
-                      placeholder="e.g. Dhaka, Central"
+                      placeholder="e.g. Central City"
                       value={donorForm.city}
                       onChange={e => setDonorForm({ ...donorForm, city: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                     />
                   </div>
                   <div>
@@ -634,45 +699,25 @@ const BloodBankPublicStandalone = () => {
                       type="date" 
                       value={donorForm.last_donation_date}
                       onChange={e => setDonorForm({ ...donorForm, last_donation_date: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                     />
                   </div>
                 </div>
 
-                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '0.8rem', color: '#475569' }}>
-                  <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: '6px' }}>Health Screening Confirmation</div>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '6px' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={donorForm.has_tattoo === 'No'} 
-                      onChange={e => setDonorForm({ ...donorForm, has_tattoo: e.target.checked ? 'No' : 'Yes' })}
-                    />
-                    I have not had any tattoos or body piercings in the last 6 months.
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={donorForm.has_illness === 'No'} 
-                      onChange={e => setDonorForm({ ...donorForm, has_illness: e.target.checked ? 'No' : 'Yes' })}
-                    />
-                    I am not currently taking heavy antibiotics or suffering from transmissible illness.
-                  </label>
-                </div>
-
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
                   <button 
                     type="button" 
                     onClick={() => setIsDonorModalOpen(false)}
-                    style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid #cbd5e1', background: '#fff', color: '#475569', fontWeight: 700, cursor: 'pointer' }}
+                    style={{ flex: 1, padding: '9px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff', color: '#475569', fontWeight: 700, cursor: 'pointer', fontSize: '0.8125rem' }}
                   >
                     Cancel
                   </button>
                   <button 
                     type="submit" 
                     disabled={submittingDonor}
-                    style={{ flex: 2, padding: '10px', borderRadius: '10px', border: 'none', background: '#ef4444', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
+                    style={{ flex: 2, padding: '9px', borderRadius: '6px', border: 'none', background: '#dc2626', color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: '0.8125rem' }}
                   >
-                    {submittingDonor ? 'Registering...' : 'Register as Donor'}
+                    {submittingDonor ? 'Enrolling...' : 'Confirm Registration'}
                   </button>
                 </div>
               </form>
@@ -681,7 +726,7 @@ const BloodBankPublicStandalone = () => {
         )}
       </AnimatePresence>
 
-      {/* ─── Modal 2: Request Emergency Blood ────────────────────── */}
+      {/* ─── MODAL 2: REQUEST EMERGENCY BLOOD ────────────────────── */}
       <AnimatePresence>
         {isRequestModalOpen && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
@@ -691,31 +736,31 @@ const BloodBankPublicStandalone = () => {
               style={{ position: 'absolute', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)' }}
             />
             <motion.div 
-              initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+              initial={{ scale: 0.96, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.96, opacity: 0 }}
               style={{ 
-                width: '100%', maxWidth: '540px', maxHeight: '90vh', position: 'relative', 
-                background: '#ffffff', borderRadius: '20px',
-                padding: 0, border: '1px solid #e2e8f0', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                width: '100%', maxWidth: '500px', maxHeight: '90vh', position: 'relative', 
+                background: '#ffffff', borderRadius: '16px',
+                padding: 0, border: '1px solid #e2e8f0', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
                 overflow: 'hidden', display: 'flex', flexDirection: 'column', zIndex: 1
               }}
             >
-              <div style={{ padding: '1.25rem 1.5rem', background: '#fef2f2', borderBottom: '1px solid #fecaca', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ padding: '1.25rem 1.5rem', background: '#fef2f2', borderBottom: '1px solid #fee2e2', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <FirstAid size={20} weight="fill" />
+                  <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <FirstAid size={18} weight="fill" />
                   </div>
                   <div>
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: '#991b1b' }}>Emergency Blood Request</h3>
-                    <p style={{ fontSize: '0.75rem', color: '#b91c1c', margin: 0 }}>Direct requisition to on-duty blood bank team</p>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: 0, color: '#991b1b' }}>Emergency Blood Request</h3>
+                    <p style={{ fontSize: '0.725rem', color: '#b91c1c', margin: 0 }}>Requisition to on-duty blood bank laboratory</p>
                   </div>
                 </div>
-                <button onClick={() => setIsRequestModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
-                  <X size={20} weight="bold" />
+                <button type="button" onClick={() => setIsRequestModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
+                  <X size={18} weight="bold" />
                 </button>
               </div>
 
-              <form onSubmit={handleRequestSubmit} style={{ padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <form onSubmit={handleRequestSubmit} style={{ padding: '1.25rem 1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Patient Name *</label>
                     <input 
@@ -724,7 +769,7 @@ const BloodBankPublicStandalone = () => {
                       placeholder="Patient Full Name"
                       value={requestForm.patient_name}
                       onChange={e => setRequestForm({ ...requestForm, patient_name: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                     />
                   </div>
                   <div>
@@ -735,21 +780,21 @@ const BloodBankPublicStandalone = () => {
                       placeholder="Attendant Phone"
                       value={requestForm.phone}
                       onChange={e => setRequestForm({ ...requestForm, phone: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                     />
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Hospital / Clinic *</label>
                     <input 
                       type="text" 
                       required
-                      placeholder="Hospital & Ward / Bed"
+                      placeholder="e.g. City Hospital, Bed 12"
                       value={requestForm.hospital_name}
                       onChange={e => setRequestForm({ ...requestForm, hospital_name: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                     />
                   </div>
                   <div>
@@ -759,18 +804,18 @@ const BloodBankPublicStandalone = () => {
                       placeholder="Your Name"
                       value={requestForm.requester_name}
                       onChange={e => setRequestForm({ ...requestForm, requester_name: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                     />
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.875rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Blood Group *</label>
                     <select 
                       value={requestForm.blood_group}
                       onChange={e => setRequestForm({ ...requestForm, blood_group: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', background: '#fff' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem', background: '#fff' }}
                     >
                       {BLOOD_GROUPS.map(g => <option key={g} value={g}>{g}</option>)}
                     </select>
@@ -780,7 +825,7 @@ const BloodBankPublicStandalone = () => {
                     <select 
                       value={requestForm.component}
                       onChange={e => setRequestForm({ ...requestForm, component: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', background: '#fff' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem', background: '#fff' }}
                     >
                       <option value="Whole Blood">Whole Blood</option>
                       <option value="Packed RBC">Packed RBC</option>
@@ -796,61 +841,61 @@ const BloodBankPublicStandalone = () => {
                       max="10"
                       value={requestForm.units_required}
                       onChange={e => setRequestForm({ ...requestForm, units_required: e.target.value })}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Urgency Level *</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
-                    {['Emergency', 'Urgent', 'Normal'].map((lvl) => (
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Urgency Priority *</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
+                    {['Emergency', 'Urgent', 'Normal'].map(lvl => (
                       <button
                         key={lvl}
                         type="button"
                         onClick={() => setRequestForm({ ...requestForm, urgency: lvl })}
                         style={{
-                          padding: '8px',
-                          borderRadius: '8px',
-                          border: requestForm.urgency === lvl ? '2px solid #ef4444' : '1px solid #cbd5e1',
-                          background: requestForm.urgency === lvl ? '#fee2e2' : '#fff',
-                          color: requestForm.urgency === lvl ? '#dc2626' : '#475569',
+                          padding: '7px 8px',
+                          borderRadius: '6px',
+                          border: requestForm.urgency === lvl ? '1.5px solid #dc2626' : '1px solid #cbd5e1',
+                          background: requestForm.urgency === lvl ? '#fee2e2' : '#ffffff',
+                          color: requestForm.urgency === lvl ? '#991b1b' : '#475569',
                           fontWeight: 700,
-                          fontSize: '0.8125rem',
+                          fontSize: '0.75rem',
                           cursor: 'pointer'
                         }}
                       >
-                        {lvl === 'Emergency' ? '🚨 Immediate (STAT)' : lvl === 'Urgent' ? '⚡ Within 4 Hrs' : '📅 Routine'}
+                        {lvl === 'Emergency' ? '🚨 STAT (Immediate)' : lvl === 'Urgent' ? '⚡ Within 4 Hrs' : '📅 Routine'}
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Clinical Notes / Diagnosis</label>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Diagnosis / Notes</label>
                   <textarea 
                     rows={2}
-                    placeholder="e.g. Scheduled for orthopedic surgery at 3 PM, severe trauma, cross-match required"
+                    placeholder="e.g. Scheduled for emergency surgery, cross-match required"
                     value={requestForm.notes}
                     onChange={e => setRequestForm({ ...requestForm, notes: e.target.value })}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', resize: 'vertical' }}
+                    style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem', resize: 'vertical' }}
                   />
                 </div>
 
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
                   <button 
                     type="button" 
                     onClick={() => setIsRequestModalOpen(false)}
-                    style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid #cbd5e1', background: '#fff', color: '#475569', fontWeight: 700, cursor: 'pointer' }}
+                    style={{ flex: 1, padding: '9px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff', color: '#475569', fontWeight: 700, cursor: 'pointer', fontSize: '0.8125rem' }}
                   >
                     Cancel
                   </button>
                   <button 
                     type="submit" 
                     disabled={submittingRequest}
-                    style={{ flex: 2, padding: '10px', borderRadius: '10px', border: 'none', background: '#dc2626', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
+                    style={{ flex: 2, padding: '9px', borderRadius: '6px', border: 'none', background: '#dc2626', color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: '0.8125rem' }}
                   >
-                    {submittingRequest ? 'Submitting...' : 'Dispatch Request'}
+                    {submittingRequest ? 'Dispatching...' : 'Dispatch Request'}
                   </button>
                 </div>
               </form>
