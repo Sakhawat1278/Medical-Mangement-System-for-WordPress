@@ -201,7 +201,7 @@ const BloodBankPublicStandalone = () => {
       color: '#0f172a', 
       width: '100%', 
       boxSizing: 'border-box',
-      padding: '0 0 3rem 0'
+      padding: '1.25rem 0'
     }}>
       {/* ─── Clean Medical Hero Section (Consistent with E-CARE templates) ─── */}
       <div 

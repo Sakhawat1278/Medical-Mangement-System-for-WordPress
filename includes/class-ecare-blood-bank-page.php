@@ -52,7 +52,11 @@ class ECARE_BloodBankPage {
             body.ecare-blood-bank-page-active .page-wrapper,
             body.ecare-blood-bank-page-active .site-inner,
             body.ecare-blood-bank-page-active .site-wrapper {
-                padding:    0 !important;
+                padding:        0 !important;
+                padding-top:    0 !important;
+                padding-bottom: 0 !important;
+                margin-top:     0 !important;
+                margin-bottom:  0 !important;
                 background: transparent !important;
                 border:     none !important;
                 box-shadow: none !important;
@@ -84,7 +88,11 @@ class ECARE_BloodBankPage {
             body.ecare-blood-bank-page-active .wp-block-post-content,
             body.ecare-blood-bank-page-active .is-layout-constrained,
             body.ecare-blood-bank-page-active .is-layout-flow {
-                padding:    0 !important;
+                padding:        0 !important;
+                padding-top:    0 !important;
+                padding-bottom: 0 !important;
+                margin-top:     0 !important;
+                margin-bottom:  0 !important;
                 background: transparent !important;
             }
             body.ecare-blood-bank-page-active {
@@ -92,7 +100,7 @@ class ECARE_BloodBankPage {
             }
             body.ecare-blood-bank-page-active .ecare-blood-bank-wrapper {
                 width:      100% !important;
-                max-width:  var(--ecare-container-width, 100%) !important;
+                max-width:  var(--ecare-container-width, 1180px) !important;
                 padding:    0 !important;
                 margin:     0 auto !important;
                 background: transparent !important;
@@ -103,9 +111,36 @@ class ECARE_BloodBankPage {
         $output .= '</style>' . "\n";
 
         /* ── Root mount point ── */
-        $output .= '<div class="ecare-blood-bank-wrapper">';
+        $output .= '<div class="ecare-blood-bank-wrapper" style="width:100%;max-width:' . ecare_get_container_width() . 'px;margin:0 auto;padding:0;">';
         $output .= '<div id="ecare-blood-bank-root"></div>';
         $output .= '</div>';
+
+        // ── JS: forcibly strip padding from every ancestor of our root ──
+        $output .= '<script>
+        (function() {
+            function stripAncestors() {
+                var el = document.getElementById("ecare-blood-bank-root");
+                if (!el) return;
+                var node = el.parentElement;
+                while (node && node !== document.body) {
+                    node.style.setProperty("padding",        "0",           "important");
+                    node.style.setProperty("padding-top",    "0",           "important");
+                    node.style.setProperty("padding-right",  "0",           "important");
+                    node.style.setProperty("padding-bottom", "0",           "important");
+                    node.style.setProperty("padding-left",   "0",           "important");
+                    node.style.setProperty("margin-top",     "0",           "important");
+                    node.style.setProperty("margin-bottom",  "0",           "important");
+                    node.style.setProperty("background",      "transparent", "important");
+                    node.style.setProperty("border",          "none",        "important");
+                    node.style.setProperty("box-shadow",      "none",        "important");
+                    node = node.parentElement;
+                }
+            }
+            stripAncestors();
+            document.addEventListener("DOMContentLoaded", stripAncestors);
+            window.addEventListener("load", stripAncestors);
+        })();
+        </script>' . "\n";
 
         /* ── Resolve Vite build JS & CSS paths from manifest.json ── */
         $plugin_url     = ECARE_URL;
