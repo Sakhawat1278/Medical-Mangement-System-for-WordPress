@@ -313,17 +313,20 @@ const BloodBankPublicStandalone = () => {
 
           {/* Quick Reserve Stat Card */}
           <div className="ecare-blood-stat-card">
-            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Active Blood Stock
-            </div>
-            <div style={{ fontSize: '2.25rem', fontWeight: 900, color: '#0f172a', marginTop: '4px', lineHeight: 1 }}>
-              {totalAvailable} <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#dc2626' }}>Bags</span>
-            </div>
-            <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Check size={14} weight="bold" /> Tested &amp; Available
-            </div>
-            <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '10px', paddingTop: '10px', fontSize: '0.7rem', color: '#94a3b8' }}>
-              Storage Temp: 2°C to 6°C
+            {/* Desktop layout: vertical */}
+            <div className="ecare-blood-stat-card-inner">
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+                Active Blood Stock
+              </div>
+              <div style={{ fontSize: '2.25rem', fontWeight: 900, color: '#0f172a', marginTop: '4px', lineHeight: 1 }}>
+                {totalAvailable} <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#dc2626' }}>Bags</span>
+              </div>
+              <div style={{ fontSize: '0.7rem', color: '#16a34a', fontWeight: 700, marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Check size={13} weight="bold" /> Tested &amp; Available
+              </div>
+              <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '10px', paddingTop: '8px', fontSize: '0.68rem', color: '#94a3b8' }}>
+                Storage Temp: 2°C to 6°C
+              </div>
             </div>
           </div>
         </div>
