@@ -117,9 +117,14 @@ const DoctorDashboard = () => {
   // Reviews for this doctor
   const myReviews = useMemo(() => {
     return (reviews || []).filter(r => 
-      r.status === 'Approved' && String(r.doctor_id) === String(user?.id)
+      r.status === 'Approved' && (
+        String(r.doctor_id) === String(user?.id) ||
+        (currentDoctor && String(r.doctor_id) === String(currentDoctor.id)) ||
+        (currentDoctor && currentDoctor.name && r.doctor_name === currentDoctor.name) ||
+        (user?.name && r.doctor_name === user.name)
+      )
     )
-  }, [reviews, user?.id])
+  }, [reviews, user?.id, user?.name, currentDoctor])
 
   const myAvgRating = useMemo(() => {
     if (myReviews.length === 0) return null

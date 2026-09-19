@@ -10,7 +10,7 @@ const ReviewModal = ({ isOpen, onClose, appointment }) => {
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { addReview, user, reviews } = useStore();
+  const { addReview, user, reviews, doctorList } = useStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,11 +25,27 @@ const ReviewModal = ({ isOpen, onClose, appointment }) => {
 
     setIsSubmitting(true);
     try {
+      const doc = (doctorList || []).find(d => 
+        (appointment?.doctorName && (d.name === appointment.doctorName || d.display_name === appointment.doctorName)) ||
+        (appointment?.doctor_name && (d.name === appointment.doctor_name || d.display_name === appointment.doctor_name)) ||
+        (appointment?.doctorId && (String(d.id) === String(appointment.doctorId) || String(d.user_id) === String(appointment.doctorId))) ||
+        (appointment?.doctor_user_id && (String(d.user_id) === String(appointment.doctor_user_id) || String(d.id) === String(appointment.doctor_user_id)))
+      );
+
+      const doctorId = appointment?.doctor_user_id || 
+                       appointment?.doctorUserId || 
+                       doc?.user_id || 
+                       appointment?.doctorId || 
+                       appointment?.doctor_id || 
+                       doc?.id || null;
+
+      const doctorName = appointment?.doctorName || appointment?.doctor_name || doc?.name || 'Doctor';
+
       await addReview({
         patient_id: user?.id,
         patient_name: user?.name,
-        doctor_id: appointment?.doctor_user_id || appointment?.doctorId,
-        doctor_name: appointment?.doctorName,
+        doctor_id: doctorId,
+        doctor_name: doctorName,
         appointment_id: appointment?.id,
         rating,
         review_text: reviewText,
@@ -69,7 +85,7 @@ const ReviewModal = ({ isOpen, onClose, appointment }) => {
             <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#1e293b' }}>Rate Doctor</h3>
-                <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>Leave a review for {appointment?.doctorName}</p>
+                <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>Leave a review for {appointment?.doctorName || appointment?.doctor_name || 'your doctor'}</p>
               </div>
               <button onClick={onClose} style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#94a3b8', padding: '4px' }}>
                 <X size={18} weight="bold" />

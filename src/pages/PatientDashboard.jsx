@@ -387,17 +387,29 @@ const PatientDashboard = () => {
             )}
           </div>
 
-          <button 
-            onClick={() => setActivePage('add-appointment')}
-            style={{ 
-              width: '100%', marginTop: '1rem', padding: '0.75rem', borderRadius: '10px', 
-              background: 'var(--ecare-primary)', color: 'white', border: 'none', 
-              fontWeight: 800, cursor: 'pointer', fontSize: '0.8125rem',
-              transition: 'all 0.2s', boxShadow: '0 4px 12px var(--ecare-primary-shadow)'
-            }}
-          >
-            Book New Visit
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+            <button 
+              onClick={() => setActivePage('add-appointment')}
+              style={{ 
+                flex: 1, padding: '0.75rem', borderRadius: '10px', 
+                background: 'var(--ecare-primary)', color: 'white', border: 'none', 
+                fontWeight: 800, cursor: 'pointer', fontSize: '0.8125rem',
+                transition: 'all 0.2s', boxShadow: '0 4px 12px var(--ecare-primary-shadow)'
+              }}
+            >
+              Book New Visit
+            </button>
+            <button 
+              onClick={() => setActivePage('appointments')}
+              className="ecare-btn-secondary"
+              style={{ 
+                padding: '0.75rem 1rem', borderRadius: '10px', 
+                fontWeight: 700, fontSize: '0.8125rem'
+              }}
+            >
+              My Appointments
+            </button>
+          </div>
         </motion.div>
 
         {/* Lab Test Bookings */}
@@ -586,15 +598,15 @@ const PatientDashboard = () => {
                 <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, margin: 0, color: 'var(--ecare-text-main)' }}>Bookings</h3>
                 <p style={{ fontSize: '0.75rem', color: 'var(--ecare-text-muted)', margin: '0.35rem 0 0' }}>Visits, lab orders, care support, and ambulance requests.</p>
               </div>
-              <button onClick={() => setActivePage('lab-orders')} className="ecare-btn-secondary" style={{ borderRadius: '10px', padding: '0.55rem 0.9rem', fontSize: '0.75rem', fontWeight: 700 }}>
-                Bookings
+              <button onClick={() => setActivePage('appointments')} className="ecare-btn-secondary" style={{ borderRadius: '10px', padding: '0.55rem 0.9rem', fontSize: '0.75rem', fontWeight: 700 }}>
+                Appointments
               </button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
               {recentBookings.map((item) => {
                 const Icon = item.icon
                 return (
-                  <div key={item.id} className="ecare-flex-responsive" style={{ padding: '0.9rem', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#f8fafc', gap: '0.5rem' }}>
+                  <div key={item.id} onClick={() => setActivePage(item.page || 'appointments')} className="ecare-flex-responsive" style={{ padding: '0.9rem', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#f8fafc', gap: '0.5rem', cursor: 'pointer' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
                       <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: `${item.accent}14`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.accent, flexShrink: 0 }}>
                         <Icon size={18} weight="duotone" />

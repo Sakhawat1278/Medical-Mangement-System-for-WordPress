@@ -382,7 +382,47 @@ const Appointments = () => {
       key: 'operationalAction',
       label: 'Operational Action',
       render: (_, row) => {
-        // --- ADMIN / STAFF INTERFACE (CAN REBOOK ANYTIME) ---
+        const rawStatus = String(row.status || '').trim();
+        const st = rawStatus.toLowerCase();
+
+        // 1. Finished/Concluded consultations (Completed, Closed)
+        if (st === 'completed' || st === 'closed') {
+          const hasReviewed = (useStore.getState().reviews || []).some(r => String(r.appointment_id) === String(row.id));
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }} onClick={(e) => e.stopPropagation()}>
+              <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <CheckCircle size={14} weight="bold" /> {st === 'closed' ? 'Concluded' : 'Completed'}
+              </span>
+              {isPatient && !hasReviewed && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setReviewAppointment(row);
+                    setIsReviewModalOpen(true);
+                  }}
+                  style={{
+                    padding: '4px 10px', borderRadius: '6px',
+                    background: '#fef3c7', color: '#d97706',
+                    border: '1px solid #fde68a',
+                    fontSize: '0.68rem', fontWeight: 700, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '4px',
+                    justifyContent: 'center', transition: 'all 0.2s',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                  }}
+                >
+                  <Star size={12} weight="fill" /> Rate Doctor
+                </button>
+              )}
+              {isPatient && hasReviewed && (
+                <span style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '2px' }}>
+                  <Star size={11} weight="fill" color="#f59e0b" /> Reviewed
+                </span>
+              )}
+            </div>
+          );
+        }
+
+        // 2. Admin / Staff Interface (can Rebook anytime)
         if (!isDoctor && !isPatient) {
           return (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }} onClick={(e) => e.stopPropagation()}>
@@ -403,62 +443,15 @@ const Appointments = () => {
           );
         }
 
-        const ended = isTimeslotEnded(row.date, row.time);
-        
-        if (!ended) {
-          return (
-            <span style={{ fontSize: '0.75rem', color: 'var(--ecare-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--ecare-primary)' }}></span>
-              Scheduled
-            </span>
-          );
-        }
-
-        if (row.status === 'Completed') {
-          const hasReviewed = (useStore.getState().reviews || []).some(r => String(r.appointment_id) === String(row.id));
-          return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--ecare-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <CheckCircle size={14} weight="bold" /> Completed
-              </span>
-              {isPatient && !hasReviewed && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setReviewAppointment(row);
-                    setIsReviewModalOpen(true);
-                  }}
-                  style={{
-                    padding: '4px 8px', borderRadius: '6px',
-                    background: '#fef3c7', color: '#d97706',
-                    border: '1px solid #fde68a',
-                    fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: '4px',
-                    justifyContent: 'center', transition: 'all 0.2s'
-                  }}
-                >
-                  <Star size={12} weight="fill" /> Rate Doctor
-                </button>
-              )}
-              {isPatient && hasReviewed && (
-                <span style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '2px' }}>
-                  <Star size={10} weight="fill" color="#f59e0b" /> Reviewed
-                </span>
-              )}
-            </div>
-          );
-        }
-
-        // --- DOCTOR INTERFACE ---
+        // 3. Doctor Interface for active/pending
         if (isDoctor) {
-          if (row.status === 'Pending') {
+          if (st === 'pending' || st === 'confirmed' || st === 'active') {
             if (row.missedBy === 'patient') {
               return <span style={{ fontSize: '0.75rem', color: '#dc2626', fontWeight: 700 }}>⚠️ Missed by Patient</span>;
             }
             if (row.missedBy === 'doctor') {
               return <span style={{ fontSize: '0.75rem', color: '#d97706', fontWeight: 700 }}>⚠️ Missed by Doctor</span>;
             }
-            
             return (
               <div style={{ display: 'flex', gap: '6px' }} onClick={(e) => e.stopPropagation()}>
                 <button
@@ -500,51 +493,97 @@ const Appointments = () => {
               </div>
             );
           }
+          return null;
         }
 
-        // --- PATIENT INTERFACE ---
+        // 4. Patient Interface for other statuses
         if (isPatient) {
-          if (row.status === 'Pending') {
-            if (row.missedBy === 'doctor') {
-              if (row.refundStatus === 'credit_used') {
-                return <span style={{ fontSize: '0.75rem', color: 'var(--ecare-primary)', fontWeight: 700 }}>🔄 Credit Used</span>;
-              }
-              if (row.refundStatus === 'pending_7_days') {
-                return <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 700 }}>💸 Refund Pending (7 Days)</span>;
-              }
+          if (st === 'expired') {
+            return (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }} onClick={(e) => e.stopPropagation()}>
+                <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600 }}>Expired</span>
+                <button
+                  onClick={() => handleRequestFollowup(row)}
+                  style={{
+                    padding: '3px 8px', borderRadius: '6px',
+                    background: 'var(--ecare-primary-bg)', color: 'var(--ecare-primary)',
+                    border: '1px solid var(--ecare-primary-border)',
+                    fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '3px'
+                  }}
+                >
+                  <Activity size={10} weight="bold" /> Rebook
+                </button>
+              </div>
+            );
+          }
 
-              return (
-                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
-                  <button
-                    onClick={() => handleRebookFree(row)}
-                    style={{
-                      padding: '5px 10px', borderRadius: '8px',
-                      background: '#eff6ff', color: '#2563eb',
-                      border: '1px solid #bfdbfe',
-                      fontSize: '0.68rem', fontWeight: 800, cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', gap: '4px',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    🔄 Free Rebook
-                  </button>
-                  <button
-                    onClick={() => requestMissedDoctorRefund(row)}
-                    style={{
-                      padding: '5px 10px', borderRadius: '8px',
-                      background: '#f1f5f9', color: '#475569',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.68rem', fontWeight: 700, cursor: 'pointer',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    💸 Request Refund
-                  </button>
-                </div>
-              );
+          if (st.includes('refund')) {
+            return (
+              <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 700 }}>
+                💸 Refund Pending
+              </span>
+            );
+          }
+
+          if (st === 'cancelled') {
+            return (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }} onClick={(e) => e.stopPropagation()}>
+                <span style={{ fontSize: '0.72rem', color: '#dc2626', fontWeight: 600 }}>Cancelled</span>
+                <button
+                  onClick={() => handleRequestFollowup(row)}
+                  style={{
+                    padding: '3px 8px', borderRadius: '6px',
+                    background: 'var(--ecare-primary-bg)', color: 'var(--ecare-primary)',
+                    border: '1px solid var(--ecare-primary-border)',
+                    fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer'
+                  }}
+                >
+                  Rebook
+                </button>
+              </div>
+            );
+          }
+
+          if (row.missedBy === 'doctor') {
+            if (row.refundStatus === 'credit_used') {
+              return <span style={{ fontSize: '0.75rem', color: 'var(--ecare-primary)', fontWeight: 700 }}>🔄 Credit Used</span>;
             }
+            if (row.refundStatus === 'pending_7_days') {
+              return <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 700 }}>💸 Refund Pending (7 Days)</span>;
+            }
+            return (
+              <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
+                <button
+                  onClick={() => handleRebookFree(row)}
+                  style={{
+                    padding: '5px 10px', borderRadius: '8px',
+                    background: '#eff6ff', color: '#2563eb',
+                    border: '1px solid #bfdbfe',
+                    fontSize: '0.68rem', fontWeight: 800, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '4px',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  🔄 Free Rebook
+                </button>
+                <button
+                  onClick={() => requestMissedDoctorRefund(row)}
+                  style={{
+                    padding: '5px 10px', borderRadius: '8px',
+                    background: '#f1f5f9', color: '#475569',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '0.68rem', fontWeight: 700, cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  💸 Request Refund
+                </button>
+              </div>
+            );
+          }
 
-            // Missed by Patient -> Must rebook
+          if (row.missedBy === 'patient') {
             return (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }} onClick={(e) => e.stopPropagation()}>
                 <span style={{ fontSize: '0.7rem', color: '#dc2626', fontWeight: 700 }}>⚠️ Missed (No-Show)</span>
@@ -563,23 +602,20 @@ const Appointments = () => {
               </div>
             );
           }
-        }
 
-        // --- ADMIN / GENERAL INTERFACE ---
-        if (row.status === 'Pending') {
-          if (row.missedBy === 'patient') {
-            return <span style={{ fontSize: '0.75rem', color: '#dc2626', fontWeight: 700 }}>⚠️ Missed by Patient</span>;
-          }
-          if (row.missedBy === 'doctor') {
+          const ended = isTimeslotEnded(row.date, row.time);
+          if (!ended) {
             return (
-              <span style={{ fontSize: '0.75rem', color: '#d97706', fontWeight: 700 }}>
-                ⚠️ Missed by Doctor ({row.refundStatus === 'credit_used' ? 'Credit Used' : (row.refundStatus === 'pending_7_days' ? 'Refund Pending' : 'Compensation Pending')})
+              <span style={{ fontSize: '0.75rem', color: 'var(--ecare-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--ecare-primary)' }}></span>
+                Scheduled
               </span>
             );
           }
+
           return (
-            <span style={{ fontSize: '0.75rem', color: 'var(--ecare-text-muted)', fontWeight: 600 }}>
-              ⏳ Unresolved Overdue Slot
+            <span style={{ fontSize: '0.75rem', color: '#d97706', fontWeight: 600 }}>
+              ⏳ Overdue
             </span>
           );
         }

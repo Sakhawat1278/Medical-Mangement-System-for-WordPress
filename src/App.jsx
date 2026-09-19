@@ -286,6 +286,8 @@ function App() {
 
     const res = await updateAppointment(appt.id, {
       doctorName: doctorName,
+      doctor_user_id: user?.id,
+      doctorId: currentDoctor?.id || user?.id,
       status: 'Active',
       started_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
     })
