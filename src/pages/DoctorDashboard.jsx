@@ -112,6 +112,20 @@ const DoctorDashboard = () => {
 
   
   const stats = useStore(state => state.stats || {})
+  const reviews = useStore(state => state.reviews || [])
+
+  // Reviews for this doctor
+  const myReviews = useMemo(() => {
+    return (reviews || []).filter(r => 
+      r.status === 'Approved' && String(r.doctor_id) === String(user?.id)
+    )
+  }, [reviews, user?.id])
+
+  const myAvgRating = useMemo(() => {
+    if (myReviews.length === 0) return null
+    const sum = myReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0)
+    return (sum / myReviews.length).toFixed(1)
+  }, [myReviews])
   
   const dashboardStats = [
     { title: "Today's Patients", value: stats.today_appointments || 0, icon: Users, trend: (stats.today_appointments || 0) > 0 ? `+${stats.today_appointments}` : "0", color: "var(--ecare-primary)", delay: 0.1 },
@@ -188,6 +202,43 @@ const DoctorDashboard = () => {
           <StatCard key={i} {...stat} />
         ))}
       </div>
+
+      {/* Rating Summary */}
+      {myAvgRating !== null && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          className="ecare-card"
+          style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '1.25rem 1.5rem', background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', borderColor: '#fde68a', marginBottom: '0' }}
+        >
+          <div style={{ textAlign: 'center', minWidth: '80px' }}>
+            <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#92400e', lineHeight: 1 }}>{myAvgRating}</div>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', color: '#f59e0b', marginTop: '4px' }}>
+              {[1,2,3,4,5].map(s => (
+                <span key={s} style={{ fontSize: '14px' }}>{s <= Math.round(Number(myAvgRating)) ? '★' : '☆'}</span>
+              ))}
+            </div>
+          </div>
+          <div style={{ flex: 1 }}>
+            <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#78350f' }}>Your Patient Rating</h4>
+            <p style={{ margin: '4px 0 0', fontSize: '0.875rem', color: '#92400e' }}>
+              Based on {myReviews.length} approved {myReviews.length === 1 ? 'review' : 'reviews'} from verified patients.
+            </p>
+          </div>
+          <button
+            onClick={() => useStore.getState().setActivePage('reviews')}
+            style={{ 
+              padding: '8px 16px', borderRadius: '10px',
+              background: '#f59e0b', color: '#fff', border: 'none',
+              fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            View All Reviews
+          </button>
+        </motion.div>
+      )}
 
       {/* Main Content Grid */}
       <div className="ecare-doctor-grid">

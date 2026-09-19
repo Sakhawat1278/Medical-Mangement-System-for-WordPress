@@ -4,7 +4,7 @@ import {
   UserCircle, Flask, FirstAid,
   CreditCard, Gear, UserGear, SignOut, CaretDown, CaretLeft, CaretRight,
   IdentificationCard, Truck, Heartbeat, TestTube,
-  VideoCamera, Chats, ShoppingCart
+  VideoCamera, Chats, ShoppingCart, Star
 } from 'phosphor-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useStore from '../store/useStore'
@@ -837,6 +837,11 @@ const Sidebar = () => {
             isCollapsed={isSidebarCollapsed} 
             hasDot={hasUnseenSupport}
           />
+        )}
+
+        {/* Reviews */}
+        {(isAdmin || isDoctor) && (
+          <NavItem id="reviews" icon={Star} label="Reviews" index={13.9} isCollapsed={isSidebarCollapsed} />
         )}
 
         {/* Settings & Admin Panel — admin or staff with settings ability */}

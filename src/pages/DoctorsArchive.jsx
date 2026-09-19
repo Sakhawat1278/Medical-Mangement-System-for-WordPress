@@ -342,13 +342,19 @@ const getDoctorLocation = (doc) => {
   return window.ecareConfig?.siteName || 'E-CARE Clinic'
 }
 
-function DoctorRegistryCard({ doc, currencySymbol, doctorAvailability, appointments, onConsult, index }) {
+function DoctorRegistryCard({ doc, currencySymbol, doctorAvailability, appointments, reviews, onConsult, index }) {
   const displayName = formatDoctorName(doc.name)
   const isAvailable = doc.status === 'Available'
   const isInSession = doc.status === 'In Session'
   const nextSlot = getNextAvailabilityLabel(doc, doctorAvailability, appointments)
   const location = getDoctorLocation(doc)
   const experience = parseInt(doc.experience || '3', 10) || 3
+
+  // Compute rating for this doctor from approved reviews
+  const docReviews = (reviews || []).filter(r => r.status === 'Approved' && String(r.doctor_id) === String(doc.user_id))
+  const avgRating = docReviews.length > 0
+    ? (docReviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / docReviews.length).toFixed(1)
+    : null
 
   return (
     <motion.article
@@ -376,6 +382,12 @@ function DoctorRegistryCard({ doc, currencySymbol, doctorAvailability, appointme
         <p className="ecare-doctors-card-details">
           {experience} yrs <span className="ecare-doctors-card-sep">•</span> {location}
         </p>
+        {avgRating !== null && (
+          <p style={{ margin: '4px 0 0', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#f59e0b', fontWeight: 700 }}>
+            ★ {avgRating}
+            <span style={{ color: '#94a3b8', fontWeight: 400 }}>({docReviews.length} {docReviews.length === 1 ? 'review' : 'reviews'})</span>
+          </p>
+        )}
         <p className="ecare-doctors-card-price">
           <strong>{currencySymbol}{Number(doc.fee || 0).toLocaleString()}</strong>
           <span>visit</span>
@@ -1982,6 +1994,7 @@ export default function DoctorsArchive() {
                     currencySymbol={currencySymbol}
                     doctorAvailability={doctorAvailability}
                     appointments={appointments}
+                    reviews={useStore.getState().reviews || []}
                     onConsult={openBookingFlow}
                   />
                 ))}

@@ -28,6 +28,7 @@ import Telemedicine from './pages/Telemedicine'
 import Availability from './pages/doctor/Availability'
 import DoctorFinance from './pages/doctor/DoctorFinance'
 import Support from './pages/Support'
+import Reviews from './pages/Reviews'
 import Cart from './pages/Cart'
 import AppointmentModal from './components/AppointmentModal'
 import CareProviderBookingModal from './components/CareProviderBookingModal'
@@ -344,6 +345,8 @@ function App() {
         )
       case 'appointments':
         return <Appointments />
+      case 'reviews':
+        return <Reviews />
       case 'add-appointment':
         return <AddAppointment />
 

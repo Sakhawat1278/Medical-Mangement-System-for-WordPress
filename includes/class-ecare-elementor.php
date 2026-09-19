@@ -27,6 +27,9 @@ class ECARE_Elementor {
 
         require_once ECARE_PATH . 'includes/widgets/class-cart-button-widget.php';
         $widgets_manager->register(new \ECARE_Cart_Button_Widget());
+
+        require_once ECARE_PATH . 'includes/widgets/class-reviews-carousel-widget.php';
+        $widgets_manager->register(new \ECARE_Reviews_Carousel_Widget());
     }
 }
 
