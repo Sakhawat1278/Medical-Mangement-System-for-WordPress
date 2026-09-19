@@ -339,7 +339,7 @@
 /* Table Styles */
 .ecare-table-container {
   overflow-x: auto;
-  border-radius: 14px;
+  border-radius: 4px;
   border: 1px solid #e2e8f0;
   background: white;
 }
@@ -3793,7 +3793,7 @@ textarea.ecare-input {
   overflow-x: auto !important;
   width: 100% !important;
   -webkit-overflow-scrolling: touch;
-  border-radius: 12px;
+  border-radius: 4px;
   border: 1px solid #e2e8f0;
 }
 

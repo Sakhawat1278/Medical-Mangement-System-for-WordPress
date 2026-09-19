@@ -193,7 +193,7 @@ const DataTable = ({
   }
 
   return (
-    <div className="ecare-card ecare-data-table-card" style={{ padding: 0, overflow: 'visible', border: '1px solid #e2e8f0' }}>
+    <div className="ecare-card ecare-data-table-card" style={{ padding: 0, overflow: 'visible', border: '1px solid #e2e8f0', borderRadius: '0px' }}>
       {/* Table Header Controls */}
       <div className="ecare-table-toolbar" style={{ 
         padding: '1.25rem', 
@@ -414,7 +414,7 @@ const DataTable = ({
       </div>
 
       {/* Table Main */}
-      <div className="ecare-table-container" style={{ overflowX: 'auto', width: '100%', WebkitOverflowScrolling: 'touch' }}>
+      <div className="ecare-table-container" style={{ overflowX: 'auto', width: '100%', WebkitOverflowScrolling: 'touch', borderRadius: '0px' }}>
         <table className="ecare-table" style={{ width: '100%', borderCollapse: 'collapse', minWidth: '850px' }}>
           <thead>
             <tr>
