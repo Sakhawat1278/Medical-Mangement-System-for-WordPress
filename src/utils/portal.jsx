@@ -12,6 +12,7 @@ export const getShadowContainer = () => {
     'ecare-doctors-root',
     'ecare-care-provider-booking-root',
     'ecare-ambulance-booking-root',
+    'ecare-blood-bank-root',
     'ecare-auth-root'
   ];
   for (const id of commonIds) {

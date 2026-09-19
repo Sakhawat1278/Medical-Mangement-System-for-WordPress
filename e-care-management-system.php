@@ -287,6 +287,7 @@ $ecare_core_files = [
     'includes/class-ecare-ambulance-booking.php',
     'includes/class-ecare-lab-booking.php',
     'includes/class-ecare-care-provider-booking.php',
+    'includes/class-ecare-blood-bank-page.php',
     'includes/services/class-ecare-agora-service.php',
     'includes/class-ecare-api.php',
     'includes/class-ecare-elementor.php',

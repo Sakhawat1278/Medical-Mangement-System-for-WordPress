@@ -30,6 +30,9 @@ class ECARE_Elementor {
 
         require_once ECARE_PATH . 'includes/widgets/class-reviews-carousel-widget.php';
         $widgets_manager->register(new \ECARE_Reviews_Carousel_Widget());
+
+        require_once ECARE_PATH . 'includes/widgets/class-blood-bank-widget.php';
+        $widgets_manager->register(new \ECARE_Blood_Bank_Widget());
     }
 }
 
