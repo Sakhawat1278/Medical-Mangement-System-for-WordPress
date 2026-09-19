@@ -6,7 +6,7 @@ import {
   FirstAid, Bell, HouseLine, ShieldCheck,
   TrendUp, ArrowRight, IdentificationCard,
   Truck, DownloadSimple, Receipt, Buildings, VideoCamera, ChatCenteredText,
-  Drop, Heart, X, Plus
+  Drop, Heart, X, Plus, Bed as BedIcon
 } from 'phosphor-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useStore from '../store/useStore'
@@ -94,8 +94,11 @@ const PatientDashboard = () => {
     user, appointments, labOrders, careProviderBookings, 
     ambulanceBookings, transactions, currencySymbol, setActivePage,
     supportTickets, supportMessages,
-    bloodInventory, bloodDonors, bloodRequests, addBloodRequest
+    bloodInventory, bloodDonors, bloodRequests, addBloodRequest,
+    ipdAdmissions
   } = useStore()
+
+  const [selectedIpdSlip, setSelectedIpdSlip] = React.useState(null)
 
   const [activeTab, setActiveTab] = React.useState('Overview')
   const [now] = React.useState(() => Date.now())
@@ -142,6 +145,15 @@ const PatientDashboard = () => {
       (user?.name && d.name === user.name)
     )
   }, [bloodDonors, currentUserId, user?.email, user?.phone, user?.name])
+
+  const myIpdBookings = useMemo(() => {
+    return (ipdAdmissions || []).filter(a => 
+      String(a.patient_user_id) === currentUserId || 
+      (user?.email && a.patient_email === user.email) ||
+      (user?.phone && a.patient_phone === user.phone) ||
+      (user?.name && a.patient_name === user.name)
+    )
+  }, [ipdAdmissions, currentUserId, user?.email, user?.phone, user?.name])
 
   const bloodSummaryByGroup = useMemo(() => {
     const groups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
@@ -371,7 +383,8 @@ const PatientDashboard = () => {
                     { title: 'Clinic Visit', icon: Buildings, color: '#7c3aed', desc: 'Book physical visit', link: '/doctor-appointment', page: 'doctor-appointment' },
                     { title: 'Lab Tests', icon: Flask, color: '#db2777', desc: 'Accurate clinical results', link: '/lab-test-booking', page: 'lab-orders' },
                     { title: 'Nursing Care', icon: HouseLine, color: '#059669', desc: 'In-home care support', link: '/home-care-booking', page: 'care-bookings' },
-                    { title: 'Blood Bank', icon: Drop, color: '#dc2626', desc: 'Find blood & donors', link: '/blood-bank', page: 'blood-bank' }
+                    { title: 'Blood Bank', icon: Drop, color: '#dc2626', desc: 'Find blood & donors', link: '/blood-bank', page: 'blood-bank' },
+                    { title: 'Cabins & Wards', icon: BedIcon, color: '#0284c7', desc: 'Book hospital cabins', link: '/ecare-ward-booking' }
                   ].map((svc, i) => (
                     <motion.div
                       key={i}
@@ -620,6 +633,144 @@ const PatientDashboard = () => {
           >
             {paymentLabel}
           </button>
+        </div>
+      )}
+
+      {activeTab === 'Overview' && (
+        <div className="ecare-card" style={{ marginTop: '1.25rem', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#e0f2fe', color: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <BedIcon size={20} weight="duotone" />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, margin: 0, color: 'var(--ecare-text-main)' }}>
+                  My Inpatient Bed & Cabin Bookings
+                </h3>
+                <p style={{ fontSize: '0.72rem', color: 'var(--ecare-text-muted)', margin: 0 }}>
+                  Active and past hospital cabin stays, room reservations, and admission vouchers.
+                </p>
+              </div>
+            </div>
+
+            <a
+              href={window.location.origin + '/ecare-ward-booking'}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'var(--ecare-primary, #0284c7)',
+                color: '#ffffff',
+                padding: '6px 14px',
+                borderRadius: '8px',
+                fontSize: '0.76rem',
+                fontWeight: 700,
+                textDecoration: 'none'
+              }}
+            >
+              + Book Cabin Online
+              <ArrowRight size={14} weight="bold" />
+            </a>
+          </div>
+
+          {myIpdBookings.length > 0 ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '10px' }}>
+              {myIpdBookings.map((b, idx) => {
+                const isReserved = (b.status || 'Reserved') === 'Reserved'
+                const isAdmitted = b.status === 'Admitted'
+                const badgeBg = isAdmitted ? '#fee2e2' : isReserved ? '#dbeafe' : '#d1fae5'
+                const badgeText = isAdmitted ? '#991b1b' : isReserved ? '#1e40af' : '#065f46'
+
+                return (
+                  <div 
+                    key={b.id || idx}
+                    style={{
+                      background: '#f8fafc',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      padding: '14px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#0f172a' }}>
+                        {b.bed_number}
+                      </div>
+                      <span style={{
+                        fontSize: '0.68rem',
+                        fontWeight: 800,
+                        padding: '2px 8px',
+                        borderRadius: '999px',
+                        background: badgeBg,
+                        color: badgeText,
+                        textTransform: 'uppercase'
+                      }}>
+                        {b.status || 'Reserved'}
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: '0.74rem', color: '#64748b' }}>
+                      {b.ward_name || 'Ward 4 East'} • Room {b.room_number || '401'}
+                    </div>
+
+                    <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '6px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.72rem' }}>
+                      <div>
+                        <span style={{ color: '#94a3b8' }}>Check-in:</span>
+                        <div style={{ fontWeight: 700, color: '#334155' }}>{b.admit_date || 'Scheduled'}</div>
+                      </div>
+                      <div>
+                        <span style={{ color: '#94a3b8' }}>Stay Duration:</span>
+                        <div style={{ fontWeight: 700, color: '#334155' }}>{b.expected_stay_days || b.days_stayed || 1} Days</div>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '8px', marginTop: '2px' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0f172a' }}>
+                        ৳{Number(b.total_charges || (b.daily_rate * (b.expected_stay_days || 1)) || 1500).toLocaleString()}
+                      </span>
+
+                      <button
+                        onClick={() => setSelectedIpdSlip(b)}
+                        style={{
+                          background: '#ffffff',
+                          border: '1.5px solid #cbd5e1',
+                          borderRadius: '6px',
+                          padding: '4px 10px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          color: '#334155',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        View Voucher
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div style={{
+              background: '#f8fafc',
+              border: '1px dashed #cbd5e1',
+              borderRadius: '12px',
+              padding: '24px',
+              textAlign: 'center',
+              color: '#64748b'
+            }}>
+              <BedIcon size={32} color="#94a3b8" weight="duotone" style={{ margin: '0 auto 6px' }} />
+              <div style={{ fontWeight: 700, fontSize: '0.86rem', color: '#334155' }}>
+                No active hospital cabin or ward reservations
+              </div>
+              <div style={{ fontSize: '0.74rem', marginTop: '2px' }}>
+                When you reserve a cabin or hospital bed, your booking details and admission voucher will appear here.
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -1016,6 +1167,102 @@ const PatientDashboard = () => {
                     {isSubmittingBloodReq ? 'Submitting Requisition...' : 'Submit Blood Request'}
                   </button>
                 </form>
+              </motion.div>
+            </div>
+          </AnimatePresence>
+        </Portal>
+      )}
+
+      {/* Inpatient Reservation Slip Modal */}
+      {selectedIpdSlip && (
+        <Portal>
+          <AnimatePresence>
+            <div 
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(15, 23, 42, 0.55)',
+                backdropFilter: 'blur(4px)',
+                zIndex: 10001,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '20px'
+              }}
+              onClick={() => setSelectedIpdSlip(null)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.94 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.94 }}
+                style={{
+                  background: '#ffffff',
+                  borderRadius: '16px',
+                  width: '100%',
+                  maxWidth: '500px',
+                  maxHeight: '90vh',
+                  overflowY: 'auto',
+                  boxShadow: '0 25px 35px -5px rgba(0, 0, 0, 0.25)',
+                  padding: '24px'
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '16px' }}>
+                  <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#0f172a' }}>
+                    Inpatient Admission Slip
+                  </div>
+                  <button onClick={() => setSelectedIpdSlip(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '10px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.8rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#64748b' }}>Booking Reference:</span>
+                    <strong>#{selectedIpdSlip.id}</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#64748b' }}>Reserved Cabin / Bed:</span>
+                    <strong>{selectedIpdSlip.bed_number} (RM {selectedIpdSlip.room_number})</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#64748b' }}>Ward / Wing:</span>
+                    <span>{selectedIpdSlip.ward_name || 'Ward 4 East'}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#64748b' }}>Check-in Date:</span>
+                    <span>{selectedIpdSlip.admit_date || 'Scheduled'}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#64748b' }}>Stay Duration:</span>
+                    <span>{selectedIpdSlip.expected_stay_days || selectedIpdSlip.days_stayed || 1} Days</span>
+                  </div>
+                  <div style={{ borderTop: '1px dashed #cbd5e1', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 700, color: '#0f172a' }}>Total Estimated Charges:</span>
+                    <strong style={{ fontSize: '1.1rem', color: '#0284c7' }}>
+                      ৳{Number(selectedIpdSlip.total_charges || 1500).toLocaleString()}
+                    </strong>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between' }}>
+                  <button
+                    onClick={() => window.print()}
+                    style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 16px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <Printer size={15} weight="bold" />
+                    Print Voucher
+                  </button>
+                  <button
+                    onClick={() => setSelectedIpdSlip(null)}
+                    style={{ background: '#0f172a', color: '#ffffff', border: 'none', borderRadius: '8px', padding: '8px 18px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
+                  >
+                    Close
+                  </button>
+                </div>
               </motion.div>
             </div>
           </AnimatePresence>

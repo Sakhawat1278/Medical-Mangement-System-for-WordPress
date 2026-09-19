@@ -19,6 +19,7 @@ export default defineConfig({
         labBooking: './src/labBooking.jsx',
         careProviderBooking: './src/careProviderBooking.jsx',
         bloodBankPage: './src/bloodBankPage.jsx',
+        wardBooking: './src/wardBooking.jsx',
       },
     },
   },

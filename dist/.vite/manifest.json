@@ -63,8 +63,8 @@
       "assets/cg_physiotherapist-Be_W5OUl.png"
     ]
   },
-  "_Cart-DqisHPo_.js": {
-    "file": "assets/Cart-DqisHPo_.js",
+  "_Cart-D_9HT7Fa.js": {
+    "file": "assets/Cart-D_9HT7Fa.js",
     "name": "Cart",
     "imports": [
       "_src-Dg4Cn4P2.js",
@@ -77,10 +77,11 @@
       "_CheckCircle.esm-CmQJ-ftr.js",
       "_ClipboardText.esm-DGBSEJT_.js",
       "_MapPin.esm-HvfSri8l.js",
+      "_Heartbeat.esm-CvwCwNWY.js",
       "_ShieldCheck.esm-CSm08RLU.js",
       "_CustomTimePicker-BVgn8F7d.js",
       "_useAuth-D0OEbeTT.js",
-      "_portal-DUfEYA4m.js"
+      "_portal-D-3YQq3h.js"
     ]
   },
   "_CheckCircle.esm-CmQJ-ftr.js": {
@@ -132,8 +133,24 @@
       "_x-D5AfofKV.js"
     ]
   },
-  "_InstantBooking-CIymFHIE.js": {
-    "file": "assets/InstantBooking-CIymFHIE.js",
+  "_FirstAid.esm-QuM-W5Rm.js": {
+    "file": "assets/FirstAid.esm-QuM-W5Rm.js",
+    "name": "FirstAid.esm",
+    "imports": [
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js"
+    ]
+  },
+  "_Heartbeat.esm-CvwCwNWY.js": {
+    "file": "assets/Heartbeat.esm-CvwCwNWY.js",
+    "name": "Heartbeat.esm",
+    "imports": [
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js"
+    ]
+  },
+  "_InstantBooking-DHOVn0s8.js": {
+    "file": "assets/InstantBooking-DHOVn0s8.js",
     "name": "InstantBooking",
     "imports": [
       "_src-Dg4Cn4P2.js",
@@ -147,7 +164,7 @@
       "_ShieldCheck.esm-CSm08RLU.js",
       "_UploadSimple.esm-O3Lv6-ge.js",
       "_Users.esm-DCgXAOcX.js",
-      "_portal-DUfEYA4m.js"
+      "_portal-D-3YQq3h.js"
     ]
   },
   "_LabBookingRequest-BcCPJqRo.js": {
@@ -184,8 +201,8 @@
       "_CustomSelect-BNwUCgJg.js"
     ]
   },
-  "_UserPlus.esm-BF0olXcS.js": {
-    "file": "assets/UserPlus.esm-BF0olXcS.js",
+  "_UserPlus.esm-dnqiAqRe.js": {
+    "file": "assets/UserPlus.esm-dnqiAqRe.js",
     "name": "UserPlus.esm",
     "imports": [
       "_src-Dg4Cn4P2.js",
@@ -198,6 +215,18 @@
     "imports": [
       "_src-Dg4Cn4P2.js",
       "_CustomSelect-BNwUCgJg.js"
+    ]
+  },
+  "_WardFloorPlan-DP2znty6.js": {
+    "file": "assets/WardFloorPlan-DP2znty6.js",
+    "name": "WardFloorPlan",
+    "imports": [
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_CheckCircle.esm-CmQJ-ftr.js",
+      "_FirstAid.esm-QuM-W5Rm.js",
+      "_Heartbeat.esm-CvwCwNWY.js",
+      "_ShieldCheck.esm-CSm08RLU.js"
     ]
   },
   "_arrow-right-BRPSBI3c.js": {
@@ -221,8 +250,8 @@
       "_src-Dg4Cn4P2.js"
     ]
   },
-  "_portal-DUfEYA4m.js": {
-    "file": "assets/portal-DUfEYA4m.js",
+  "_portal-D-3YQq3h.js": {
+    "file": "assets/portal-D-3YQq3h.js",
     "name": "portal",
     "imports": [
       "_src-Dg4Cn4P2.js"
@@ -324,7 +353,7 @@
     ]
   },
   "src/bloodBankPage.jsx": {
-    "file": "assets/bloodBankPage-fVEAlzg_.js",
+    "file": "assets/bloodBankPage-ChmnhZqt.js",
     "name": "bloodBankPage",
     "src": "src/bloodBankPage.jsx",
     "isEntry": true,
@@ -334,7 +363,8 @@
       "_EcareToaster-BPK8NY-s.js",
       "_CalendarBlank.esm-DG-MZfL0.js",
       "_MapPin.esm-HvfSri8l.js",
-      "_UserPlus.esm-BF0olXcS.js",
+      "_UserPlus.esm-dnqiAqRe.js",
+      "_FirstAid.esm-QuM-W5Rm.js",
       "_ShieldCheck.esm-CSm08RLU.js",
       "_Users.esm-DCgXAOcX.js"
     ]
@@ -353,7 +383,7 @@
     ]
   },
   "src/cartPage.jsx": {
-    "file": "assets/cartPage-972JjIK-.js",
+    "file": "assets/cartPage-Bjh-2c5F.js",
     "name": "cartPage",
     "src": "src/cartPage.jsx",
     "isEntry": true,
@@ -362,11 +392,11 @@
       "_useStore-CTM5ehBM.js",
       "_CustomSelect-BNwUCgJg.js",
       "_EcareToaster-BPK8NY-s.js",
-      "_Cart-DqisHPo_.js"
+      "_Cart-D_9HT7Fa.js"
     ]
   },
   "src/doctorsPage.jsx": {
-    "file": "assets/doctorsPage-CpE0SMih.js",
+    "file": "assets/doctorsPage-Dzz9Cwi2.js",
     "name": "doctorsPage",
     "src": "src/doctorsPage.jsx",
     "isEntry": true,
@@ -380,11 +410,11 @@
       "_arrow-right-BRPSBI3c.js",
       "_clock-BwCx9b9f.js",
       "_useAuth-D0OEbeTT.js",
-      "_portal-DUfEYA4m.js"
+      "_portal-D-3YQq3h.js"
     ]
   },
   "src/instantBooking.jsx": {
-    "file": "assets/instantBooking-DihjrAav.js",
+    "file": "assets/instantBooking-CJddl7cy.js",
     "name": "instantBooking",
     "src": "src/instantBooking.jsx",
     "isEntry": true,
@@ -393,7 +423,7 @@
       "_useStore-CTM5ehBM.js",
       "_CustomSelect-BNwUCgJg.js",
       "_EcareToaster-BPK8NY-s.js",
-      "_InstantBooking-CIymFHIE.js"
+      "_InstantBooking-DHOVn0s8.js"
     ]
   },
   "src/labBooking.jsx": {
@@ -410,7 +440,7 @@
     ]
   },
   "src/main.jsx": {
-    "file": "assets/main-Bj7Xz6zY.js",
+    "file": "assets/main-BLVBXQeG.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
@@ -428,23 +458,26 @@
       "_clock-BwCx9b9f.js",
       "_triangle-alert-BnY7Nk8Y.js",
       "_truck-BEoZaPHy.js",
+      "_WardFloorPlan-DP2znty6.js",
       "_CareProviderBookingRequest-34_zfqdo.js",
       "_ArrowRight.esm-vm3Wxy-V.js",
-      "_Cart-DqisHPo_.js",
+      "_Cart-D_9HT7Fa.js",
       "_CalendarBlank.esm-DG-MZfL0.js",
       "_CustomDatePicker-xUZ0OgvH.js",
       "_CheckCircle.esm-CmQJ-ftr.js",
       "_ClipboardText.esm-DGBSEJT_.js",
       "_MapPin.esm-HvfSri8l.js",
-      "_UserPlus.esm-BF0olXcS.js",
-      "_InstantBooking-CIymFHIE.js",
+      "_UserPlus.esm-dnqiAqRe.js",
+      "_InstantBooking-DHOVn0s8.js",
+      "_FirstAid.esm-QuM-W5Rm.js",
       "_LabBookingRequest-BcCPJqRo.js",
+      "_Heartbeat.esm-CvwCwNWY.js",
       "_ShieldCheck.esm-CSm08RLU.js",
       "_UploadSimple.esm-O3Lv6-ge.js",
       "_Users.esm-DCgXAOcX.js",
       "_CustomTimePicker-BVgn8F7d.js",
       "_useAuth-D0OEbeTT.js",
-      "_portal-DUfEYA4m.js"
+      "_portal-D-3YQq3h.js"
     ]
   },
   "src/registration.jsx": {
@@ -461,6 +494,21 @@
       "_truck-BEoZaPHy.js",
       "_CustomDatePicker-xUZ0OgvH.js",
       "_UploadSimple.esm-O3Lv6-ge.js"
+    ]
+  },
+  "src/wardBooking.jsx": {
+    "file": "assets/wardBooking-B8loEfAn.js",
+    "name": "wardBooking",
+    "src": "src/wardBooking.jsx",
+    "isEntry": true,
+    "imports": [
+      "_src-Dg4Cn4P2.js",
+      "_useStore-CTM5ehBM.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_WardFloorPlan-DP2znty6.js",
+      "_CheckCircle.esm-CmQJ-ftr.js",
+      "_portal-D-3YQq3h.js"
     ]
   }
 }

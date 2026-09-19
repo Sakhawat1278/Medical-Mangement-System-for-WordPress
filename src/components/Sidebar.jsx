@@ -797,13 +797,13 @@ const Sidebar = () => {
           </>
         )}
 
-        {/* Inpatient (IPD) - Wards & Bed Management */}
-        {(isAdmin || isDoctor || isReceptionist || isPatient || canAccess('ipd-beds') || canAccess('ipd-admissions')) && (
+        {/* Inpatient (IPD) - Hospital Clinical Management (Staff, Doctor, Admin) */}
+        {(isAdmin || isDoctor || isReceptionist || canAccess('ipd-beds') || canAccess('ipd-admissions')) && !isPatient && (
           <>
             <NavItem
               id="ipd-beds" 
               icon={Bed} 
-              label={isPatient ? "Hospital Beds" : "Inpatient (IPD)"} 
+              label="Inpatient (IPD)" 
               index={9.5}
               isCollapsed={isSidebarCollapsed} 
               hasSubmenu={ipdSubmenuItems.length > 1} 
