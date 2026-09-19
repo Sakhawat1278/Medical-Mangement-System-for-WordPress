@@ -30,6 +30,8 @@ import DoctorFinance from './pages/doctor/DoctorFinance'
 import Support from './pages/Support'
 import Reviews from './pages/Reviews'
 import Cart from './pages/Cart'
+import BloodBankDashboard from './pages/bloodbank/BloodBankDashboard'
+import BloodInventory from './pages/bloodbank/BloodInventory'
 import AppointmentModal from './components/AppointmentModal'
 import CareProviderBookingModal from './components/CareProviderBookingModal'
 import ConfirmModal from './components/ConfirmModal'
@@ -320,6 +322,10 @@ function App() {
         return <Specialities />
       case 'services':
         return <Services />
+      case 'blood-bank':
+        return <BloodBankDashboard />
+      case 'blood-inventory':
+        return <BloodInventory />
       case 'care-providers':
       case 'care-bookings':
       case 'care-pending':

@@ -4,7 +4,7 @@ import {
   UserCircle, Flask, FirstAid,
   CreditCard, Gear, UserGear, SignOut, CaretDown, CaretLeft, CaretRight,
   IdentificationCard, Truck, Heartbeat, TestTube,
-  VideoCamera, Chats, ShoppingCart, Star
+  VideoCamera, Chats, ShoppingCart, Star, Drop
 } from 'phosphor-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useStore from '../store/useStore'
@@ -174,6 +174,7 @@ const Sidebar = () => {
   const [isAmbulanceOpen,    setIsAmbulanceOpen]    = useState(false)
   const [isPaymentOpen,      setIsPaymentOpen]      = useState(false)
   const [isLabOpen,          setIsLabOpen]          = useState(false)
+  const [isBloodBankOpen,    setIsBloodBankOpen]    = useState(false)
   const [isStaffOpen,        setIsStaffOpen]        = useState(false)
 
   // Dynamic Submenu List Generator with Role & Permission Filtering
@@ -252,6 +253,13 @@ const Sidebar = () => {
     }
     return items
   }, [isPatient, setActivePage, setLabBookingModal, isLabBookingModalOpen])
+
+  const bloodBankSubmenuItems = useMemo(() => {
+    const items = []
+    items.push({ id: 'blood-bank', label: "Dashboard", action: () => setActivePage('blood-bank') })
+    items.push({ id: 'blood-inventory', label: "Inventory", action: () => setActivePage('blood-inventory') })
+    return items
+  }, [setActivePage])
 
   const staffSubmenuItems = useMemo(() => {
     const items = []
@@ -726,6 +734,50 @@ const Sidebar = () => {
           </>
         )}
 
+        {/* Blood Bank */}
+        {(isAdmin || canAccess('bloodbank')) && bloodBankSubmenuItems.length > 0 && (
+          <>
+            <NavItem
+              id="blood-bank" 
+              icon={Drop} 
+              label="Blood Bank" 
+              index={9}
+              isCollapsed={isSidebarCollapsed} 
+              hasSubmenu={bloodBankSubmenuItems.length > 1} 
+              isOpen={bloodBankSubmenuItems.length > 1 && isBloodBankOpen}
+              onClick={bloodBankSubmenuItems.length > 1 ? () => setIsBloodBankOpen(!isBloodBankOpen) : bloodBankSubmenuItems[0]?.action}
+              active={isSubmenuActive(bloodBankSubmenuItems)}
+            />
+            <AnimatePresence>
+              {bloodBankSubmenuItems.length > 1 && isBloodBankOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }} 
+                  animate={{ opacity: 1, height: 'auto' }} 
+                  exit={{ opacity: 0, height: 0 }} 
+                  style={{
+                    overflow: 'visible',
+                    display: 'flex',
+                    flexDirection: isSidebarCollapsed ? 'row' : 'column',
+                    justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
+                    alignItems: 'center',
+                    gap: isSidebarCollapsed ? '6px' : '0',
+                    padding: isSidebarCollapsed ? '4px 0 8px' : '0'
+                  }}
+                >
+                  {isSidebarCollapsed ? (
+                    bloodBankSubmenuItems.map((item, idx) => (
+                      <MiniDot key={idx} isActive={activePage === item.id} onClick={item.action} />
+                    ))
+                  ) : (
+                    bloodBankSubmenuItems.map((item, idx) => (
+                      <SubItem key={idx} label={item.label} isActive={activePage === item.id} onClick={item.action} />
+                    ))
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>
+        )}
 
 
         <div className="ecare-divider" />

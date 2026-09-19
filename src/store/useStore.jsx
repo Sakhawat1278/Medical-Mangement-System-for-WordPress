@@ -732,6 +732,9 @@ const useStore = create(
       services: [],
       appointments: [],
       reviews: [],
+      bloodInventory: [],
+      bloodDonors: [],
+      bloodRequests: [],
       careProviderBookings: [],
       careProviders: [],
       pendingCareProviders: [],
@@ -1342,19 +1345,19 @@ const useStore = create(
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
             'telemed-rooms', 'support-tickets', 'support-messages', 
             'care-provider-bookings', 'ambulance-bookings', 'telemed-messages',
-            'patients', 'reviews'
+            'patients', 'reviews', 'blood-donors', 'blood-requests'
           ];
           const allowedForDoctor = [
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
             'telemed-rooms', 'support-tickets', 'support-messages', 'telemed-messages',
-            'patients', 'reviews'
+            'patients', 'reviews', 'blood-inventory', 'blood-requests'
           ];
           const allowedForAdmin = [
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
             'telemed-rooms', 'support-tickets', 'support-messages', 
             'care-providers', 'ambulance', 'manual-verifications',
             'care-provider-bookings', 'ambulance-bookings', 'telemed-messages',
-            'patients', 'staff', 'reviews'
+            'patients', 'staff', 'reviews', 'blood-inventory', 'blood-donors', 'blood-requests'
           ];
 
           let modulesToSync = [];
@@ -1394,6 +1397,9 @@ const useStore = create(
           const staffData = Array.isArray(data['staff']) ? data['staff'] : [];
           const labOrdersData = Array.isArray(data['lab-orders']) ? data['lab-orders'] : (get().labOrders || []);
           const reviewsData = Array.isArray(data['reviews']) ? data['reviews'] : [];
+          const bloodInventoryData = Array.isArray(data['blood-inventory']) ? data['blood-inventory'] : [];
+          const bloodDonorsData = Array.isArray(data['blood-donors']) ? data['blood-donors'] : [];
+          const bloodRequestsData = Array.isArray(data['blood-requests']) ? data['blood-requests'] : [];
 
           const allDoctors = doctorsData;
 
@@ -1422,6 +1428,9 @@ const useStore = create(
             pendingDoctors: allDoctors.filter(d => d.status === 'Pending'),
             appointments: appointmentsData,
             reviews: reviewsData,
+            bloodInventory: bloodInventoryData,
+            bloodDonors: bloodDonorsData,
+            bloodRequests: bloodRequestsData,
             transactions: billingData,
             notifications: combinedNotifs,
             telemedRooms: telemedRoomsData,
@@ -1539,6 +1548,18 @@ const useStore = create(
       addReview: (data) => get().handleOp('reviews', 'post', data, 'Review submitted successfully', 'reviews'),
       updateReview: (id, data) => get().handleOp('reviews', 'put', data, 'Review updated', 'reviews', id),
       deleteReview: (id) => get().handleOp('reviews', 'delete', null, 'Review removed', 'reviews', id),
+
+      // Blood Bank Management
+      addBloodBag: (data) => get().handleOp('blood-inventory', 'post', data, 'Blood bag added', 'bloodInventory'),
+      updateBloodBag: (id, data) => get().handleOp('blood-inventory', 'put', data, 'Blood bag updated', 'bloodInventory', id),
+      deleteBloodBag: (id) => get().handleOp('blood-inventory', 'delete', null, 'Blood bag removed', 'bloodInventory', id),
+      addBloodDonor: (data) => get().handleOp('blood-donors', 'post', data, 'Donor registered', 'bloodDonors'),
+      updateBloodDonor: (id, data) => get().handleOp('blood-donors', 'put', data, 'Donor updated', 'bloodDonors', id),
+      deleteBloodDonor: (id) => get().handleOp('blood-donors', 'delete', null, 'Donor removed', 'bloodDonors', id),
+      addBloodRequest: (data) => get().handleOp('blood-requests', 'post', data, 'Blood requested successfully', 'bloodRequests'),
+      updateBloodRequest: (id, data) => get().handleOp('blood-requests', 'put', data, 'Request updated', 'bloodRequests', id),
+      deleteBloodRequest: (id) => get().handleOp('blood-requests', 'delete', null, 'Request removed', 'bloodRequests', id),
+
 
       // Lab Management
       addLabTest: (data) => get().handleOp('lab-tests', 'post', data, 'Lab test added', 'labTests'),

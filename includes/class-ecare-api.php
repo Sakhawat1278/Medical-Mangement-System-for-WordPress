@@ -66,7 +66,10 @@ class ECARE_API
             'support-tickets',
             'support-messages',
             'promo-codes',
-            'reviews'
+            'reviews',
+            'blood-inventory',
+            'blood-donors',
+            'blood-requests'
         );
 
         register_rest_route('ecare/v1', '/bootstrap', array(
@@ -1051,7 +1054,10 @@ class ECARE_API
             'support-tickets' => 'ecare_support_tickets',
             'support-messages' => 'ecare_support_messages',
             'promo-codes' => 'ecare_promo_codes',
-            'reviews' => 'ecare_reviews'
+            'reviews' => 'ecare_reviews',
+            'blood-inventory' => 'ecare_blood_inventory',
+            'blood-donors' => 'ecare_blood_donors',
+            'blood-requests' => 'ecare_blood_requests'
         );
         return isset($map[$module]) ? $map[$module] : null;
     }
