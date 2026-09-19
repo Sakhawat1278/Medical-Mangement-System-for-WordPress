@@ -43,13 +43,47 @@ const ManualVerification = () => {
   }
 
   // Helper: parse the combined "Sender: X | TrxID: Y" string stored in transactionId column
-  const parseTxField = (raw) => {
+  const parseTxField = (raw, row = {}) => {
+    if (row && typeof row === 'object') {
+      const rowTrx = row.trxId || row.rawTrxId || row.trx_id
+      const rowSender = row.senderNumber || row.paymentNumber || row.sender_number
+      if (rowTrx || rowSender) {
+        return {
+          sender: rowSender || '—',
+          trxId: rowTrx || (row.transactionId && !String(row.transactionId).includes('Sender:') ? row.transactionId : '—')
+        }
+      }
+    }
+
     if (!raw) return { sender: '—', trxId: '—' }
-    const senderMatch = raw.match(/Sender:\s*([^|]+)/i)
-    const trxMatch   = raw.match(/TrxID:\s*(\S+)/i)
+    const str = String(raw).trim()
+    if (!str) return { sender: '—', trxId: '—' }
+
+    const senderMatch = str.match(/Sender:\s*([^|]+)/i)
+    const trxMatch = str.match(/(?:TrxID|TRX\s*ID|TRX|Transaction\s*ID):\s*(.+)$/i)
+
+    let sender = senderMatch ? senderMatch[1].trim() : ''
+    let trxId = trxMatch ? trxMatch[1].trim() : ''
+
+    if (!sender && !trxId) {
+      if (str.includes('|')) {
+        const parts = str.split('|').map(s => s.trim())
+        sender = parts[0] || '—'
+        trxId = parts.slice(1).join(' | ').trim() || '—'
+      } else {
+        if (/^01[3-9]\d{8}$/.test(str)) {
+          sender = str
+          trxId = '—'
+        } else {
+          trxId = str
+          sender = '—'
+        }
+      }
+    }
+
     return {
-      sender: senderMatch ? senderMatch[1].trim() : raw,
-      trxId:  trxMatch   ? trxMatch[1].trim()  : '—'
+      sender: sender || '—',
+      trxId: trxId || '—'
     }
   }
 
@@ -59,13 +93,13 @@ const ManualVerification = () => {
       const colors = { bKash: '#E2136E', Rocket: '#8C3494', Nagad: '#F6921E', Upay: '#6C3AD5', 'Sure Cash': '#0072bc' }
       return <span style={{ fontSize: '0.8rem', fontWeight: 700, color: colors[clean] || '#475569' }}>{clean || '—'}</span>
     }},
-    { key: 'transactionId', label: 'Sender', render: (val) => {
-      const { sender } = parseTxField(val)
+    { key: 'transactionId', label: 'Sender', render: (val, row) => {
+      const { sender } = parseTxField(val, row)
       return <span style={{ fontWeight: 600, fontSize: '0.8125rem', fontFamily: 'monospace' }}>{sender}</span>
     }},
-    { key: 'transactionId', label: 'TRX ID', render: (val) => {
-      const { trxId } = parseTxField(val)
-      return <span style={{ fontWeight: 700, fontSize: '0.8rem', color: 'var(--ecare-primary)', fontFamily: 'monospace' }}>{trxId}</span>
+    { key: 'transactionId', label: 'TRX ID', render: (val, row) => {
+      const { trxId } = parseTxField(val, row)
+      return <span style={{ fontWeight: 700, fontSize: '0.8rem', color: 'var(--ecare-primary)', fontFamily: 'monospace', wordBreak: 'break-all' }}>{trxId}</span>
     }},
     { key: 'amount', label: 'Amount', render: (val) => {
       const num = parseFloat(val)
@@ -216,7 +250,7 @@ const ManualVerification = () => {
                   <div style={{ padding: '1.5rem', overflowY: 'auto' }} className="ecare-scrollbar">
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.5rem' }}>
                       {(() => {
-                        const { sender, trxId } = parseTxField(selectedItem.transactionId)
+                        const { sender, trxId } = parseTxField(selectedItem.transactionId, selectedItem)
                         const amount = parseFloat(selectedItem.amount)
                         const createdAt = selectedItem.created_at
                         const dateDisplay = createdAt ? new Date(createdAt).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : (selectedItem.date || '—')
@@ -232,7 +266,7 @@ const ManualVerification = () => {
                         ].map(([label, value]) => (
                           <div key={label} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '0.75rem 1rem', borderRadius: '10px' }}>
                             <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '4px' }}>{label}</div>
-                            <div style={{ fontSize: '0.875rem', fontWeight: 700, color: '#1e293b' }}>{value}</div>
+                            <div style={{ fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', wordBreak: 'break-all' }}>{value}</div>
                           </div>
                         ))
                       })()}

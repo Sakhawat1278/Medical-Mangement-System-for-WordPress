@@ -3351,11 +3351,16 @@ class ECARE_API
 
                 // If this is a mobile manual gateway, insert a manual verification log and update bookings
                 if ($is_woo_manual) {
+                    $clean_sender = sanitize_text_field(trim($paymentNumber));
+                    $clean_trx = sanitize_text_field(trim($transactionId));
+
                     ECARE_DB_Client::insert('ecare_manual_verifications', array(
                         'invoiceNo'     => $invoiceNo,
                         'patientName'   => $user->display_name,
                         'method'        => $gateway_label,
-                        'transactionId' => 'Sender: ' . $paymentNumber . ' | TrxID: ' . $transactionId,
+                        'transactionId' => 'Sender: ' . $clean_sender . ' | TrxID: ' . $clean_trx,
+                        'senderNumber'  => $clean_sender,
+                        'trxId'         => $clean_trx,
                         'amount'        => $totalPayable,
                         'status'        => 'Pending',
                         'date'          => current_time('Y-m-d')

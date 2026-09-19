@@ -692,8 +692,8 @@ export default function Cart() {
         paymentMethod,
         paymentType,
         partialAmount: paymentType === 'partial' ? depositAmount : totalPayable,
-        paymentNumber,
-        transactionId
+        paymentNumber: paymentNumber ? paymentNumber.trim() : '',
+        transactionId: transactionId ? transactionId.trim() : ''
       })
 
       const result = response.data

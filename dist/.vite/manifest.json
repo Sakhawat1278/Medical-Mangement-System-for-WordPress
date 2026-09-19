@@ -51,8 +51,8 @@
       "assets/cg_physiotherapist-Be_W5OUl.png"
     ]
   },
-  "_Cart-BsxK1wEK.js": {
-    "file": "assets/Cart-BsxK1wEK.js",
+  "_Cart-kzRB5mYQ.js": {
+    "file": "assets/Cart-kzRB5mYQ.js",
     "name": "Cart",
     "imports": [
       "_src-T_6SmMzL.js",
@@ -277,7 +277,7 @@
     ]
   },
   "src/cartPage.jsx": {
-    "file": "assets/cartPage-MfYK4ppT.js",
+    "file": "assets/cartPage-jR1e6O8T.js",
     "name": "cartPage",
     "src": "src/cartPage.jsx",
     "isEntry": true,
@@ -285,7 +285,7 @@
       "_src-T_6SmMzL.js",
       "_EcareToaster-CGz1Nv0p.js",
       "_CustomSelect-CyKuVvyg.js",
-      "_Cart-BsxK1wEK.js"
+      "_Cart-kzRB5mYQ.js"
     ]
   },
   "src/doctorsPage.jsx": {
@@ -330,7 +330,7 @@
     ]
   },
   "src/main.jsx": {
-    "file": "assets/main-DVxiPx7r.js",
+    "file": "assets/main-g3vie6Xc.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
@@ -348,7 +348,7 @@
       "_truck-CL4IYJkg.js",
       "_CareProviderBookingRequest-0UEW81Pt.js",
       "_ArrowRight.esm-CyLyEQ5i.js",
-      "_Cart-BsxK1wEK.js",
+      "_Cart-kzRB5mYQ.js",
       "_CustomDatePicker-B-ZHe253.js",
       "_CheckCircle.esm-Dg8xCgRg.js",
       "_ClipboardText.esm-DpHWo-W9.js",
