@@ -2,11 +2,33 @@ import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FirstAid, Plus, PencilSimple, Trash, X, CheckCircle, Drop, WarningCircle, ArrowRight } from 'phosphor-react'
 import DataTable from '../../components/DataTable'
+import CustomSelect from '../../components/CustomSelect'
 import useStore from '../../store/useStore'
 import { Portal } from '../../utils/portal'
 import toast from 'react-hot-toast'
 
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+const BLOOD_GROUP_OPTIONS = BLOOD_GROUPS.map(g => ({ value: g, label: g }))
+
+const COMPONENT_OPTIONS = [
+  { value: 'Whole Blood', label: 'Whole Blood' },
+  { value: 'Packed RBC', label: 'Packed RBC' },
+  { value: 'Platelets', label: 'Platelets' },
+  { value: 'Fresh Frozen Plasma', label: 'Fresh Frozen Plasma' }
+]
+
+const URGENCY_OPTIONS = [
+  { value: 'Emergency', label: 'Emergency (STAT)' },
+  { value: 'Urgent', label: 'Urgent (Within 4h)' },
+  { value: 'Normal', label: 'Routine (Scheduled)' }
+]
+
+const STATUS_OPTIONS = [
+  { value: 'Pending', label: 'Pending' },
+  { value: 'Fulfilled', label: 'Fulfilled' },
+  { value: 'Rejected', label: 'Rejected' },
+  { value: 'Cancelled', label: 'Cancelled' }
+]
 
 const BloodRequests = () => {
   const { 
@@ -161,6 +183,23 @@ const BloodRequests = () => {
       b.blood_group === fulfillingRequest.blood_group
     )
   }, [fulfillingRequest, bloodInventory])
+
+  const matchingBagOptions = useMemo(() => {
+    return matchingBags.map(bag => ({
+      value: bag.id,
+      label: `Bag #${bag.bag_number} — ${bag.component || 'Whole Blood'} (${bag.volume || 450}ml) • Exp: ${bag.expiry_date || 'N/A'} • ${bag.storage_location || 'Fridge'}`
+    }))
+  }, [matchingBags])
+
+  const patientRequests = useMemo(() => {
+    if (!isPatient) return bloodRequests || []
+    return (bloodRequests || []).filter(r => 
+      (r.patient_user_id && String(r.patient_user_id) === String(user?.id)) ||
+      (r.user_id && String(r.user_id) === String(user?.id)) ||
+      (r.patient_name && r.patient_name.toLowerCase() === (user?.name || '').toLowerCase()) ||
+      (r.requester_name && r.requester_name.toLowerCase() === (user?.name || '').toLowerCase())
+    )
+  }, [bloodRequests, isPatient, user])
 
   const columns = [
     { 
@@ -374,13 +413,13 @@ const BloodRequests = () => {
       )}
 
       <DataTable
-        title="Blood Requisitions & Emergency Requests"
+        title={isPatient ? "My Blood Requisitions" : "Blood Requisitions & Emergency Requests"}
         columns={columns}
-        data={bloodRequests || []}
+        data={isPatient ? patientRequests : (bloodRequests || [])}
         onAdd={handleOpenAdd}
         addLabel={isPatient ? "New Blood Request" : "New Request"}
         filterOptions={filterOptions}
-        searchPlaceholder="Search by patient, hospital, doctor, or blood group..."
+        searchPlaceholder={isPatient ? "Search my requisitions..." : "Search by patient, hospital, doctor, or blood group..."}
       />
 
       {/* ─── Add / Edit Request Modal ──────────────────────────────── */}
@@ -471,14 +510,11 @@ const BloodRequests = () => {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Blood Group *</label>
-                      <select 
-                        className="ecare-input" 
+                      <CustomSelect 
                         value={formData.blood_group} 
-                        onChange={e => setFormData({ ...formData, blood_group: e.target.value })}
-                        style={{ height: '38px' }}
-                      >
-                        {BLOOD_GROUPS.map(g => <option key={g} value={g}>{g}</option>)}
-                      </select>
+                        onChange={val => setFormData({ ...formData, blood_group: val })}
+                        options={BLOOD_GROUP_OPTIONS}
+                      />
                     </div>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Units (Bags)</label>
@@ -493,48 +529,33 @@ const BloodRequests = () => {
                     </div>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Urgency</label>
-                      <select 
-                        className="ecare-input" 
+                      <CustomSelect 
                         value={formData.urgency} 
-                        onChange={e => setFormData({ ...formData, urgency: e.target.value })}
-                        style={{ height: '38px' }}
-                      >
-                        <option value="Emergency">Emergency (STAT)</option>
-                        <option value="Urgent">Urgent (Within 4h)</option>
-                        <option value="Normal">Routine (Scheduled)</option>
-                      </select>
+                        onChange={val => setFormData({ ...formData, urgency: val })}
+                        options={URGENCY_OPTIONS}
+                      />
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: isPatient ? '1fr' : '1fr 1fr', gap: '1rem' }}>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Component</label>
-                      <select 
-                        className="ecare-input" 
+                      <CustomSelect 
                         value={formData.component} 
-                        onChange={e => setFormData({ ...formData, component: e.target.value })}
-                        style={{ height: '38px' }}
-                      >
-                        <option value="Whole Blood">Whole Blood</option>
-                        <option value="Packed RBC">Packed RBC</option>
-                        <option value="Platelets">Platelets</option>
-                        <option value="Fresh Frozen Plasma">Plasma</option>
-                      </select>
+                        onChange={val => setFormData({ ...formData, component: val })}
+                        options={COMPONENT_OPTIONS}
+                      />
                     </div>
-                    <div className="ecare-form-group">
-                      <label className="ecare-label">Request Status</label>
-                      <select 
-                        className="ecare-input" 
-                        value={formData.status} 
-                        onChange={e => setFormData({ ...formData, status: e.target.value })}
-                        style={{ height: '38px' }}
-                      >
-                        <option value="Pending">Pending</option>
-                        <option value="Fulfilled">Fulfilled</option>
-                        <option value="Rejected">Rejected</option>
-                        <option value="Cancelled">Cancelled</option>
-                      </select>
-                    </div>
+                    {!isPatient && (
+                      <div className="ecare-form-group">
+                        <label className="ecare-label">Request Status</label>
+                        <CustomSelect 
+                          value={formData.status} 
+                          onChange={val => setFormData({ ...formData, status: val })}
+                          options={STATUS_OPTIONS}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="ecare-form-group">
@@ -619,18 +640,12 @@ const BloodRequests = () => {
                   ) : (
                     <div className="ecare-form-group">
                       <label className="ecare-label">Select Blood Bag to Dispense *</label>
-                      <select
-                        className="ecare-input"
+                      <CustomSelect
                         value={selectedBagToDispense}
-                        onChange={e => setSelectedBagToDispense(e.target.value)}
-                        style={{ height: '42px', fontSize: '0.875rem' }}
-                      >
-                        {matchingBags.map(bag => (
-                          <option key={bag.id} value={bag.id}>
-                            Bag #{bag.bag_number} — {bag.component || 'Whole Blood'} ({bag.volume || 450}ml) • Exp: {bag.expiry_date} • {bag.storage_location || 'Fridge'}
-                          </option>
-                        ))}
-                      </select>
+                        onChange={val => setSelectedBagToDispense(val)}
+                        options={matchingBagOptions}
+                        placeholder="Select available blood bag..."
+                      />
                       <div style={{ fontSize: '0.725rem', color: '#64748b', marginTop: '4px' }}>
                         {matchingBags.length} compatible units available in inventory.
                       </div>

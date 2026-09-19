@@ -5,8 +5,22 @@ import {
   Calendar, Phone, Envelope, User, MapPin, X, ArrowRight, ShieldCheck, Clock, Check
 } from 'phosphor-react'
 import toast from 'react-hot-toast'
+import CustomSelect from '../../components/CustomSelect'
 
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+const BLOOD_GROUP_OPTIONS = BLOOD_GROUPS.map(g => ({ value: g, label: g }))
+
+const GENDER_OPTIONS = [
+  { value: 'Male', label: 'Male' },
+  { value: 'Female', label: 'Female' }
+]
+
+const COMPONENT_OPTIONS = [
+  { value: 'Whole Blood', label: 'Whole Blood' },
+  { value: 'Packed RBC', label: 'Packed RBC' },
+  { value: 'Platelets', label: 'Platelets' },
+  { value: 'Fresh Frozen Plasma', label: 'Plasma (FFP)' }
+]
 
 const COMPATIBILITY = {
   'O-': { givesTo: 'Universal Red Cell Donor (Everyone)', receivesFrom: 'O- only' },
@@ -635,27 +649,22 @@ const BloodBankPublicStandalone = () => {
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Blood Group *</label>
-                    <select 
+                    <CustomSelect 
                       value={donorForm.blood_group}
-                      onChange={e => setDonorForm({ ...donorForm, blood_group: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem', background: '#fff' }}
-                    >
-                      {BLOOD_GROUPS.map(g => <option key={g} value={g}>{g}</option>)}
-                    </select>
+                      onChange={val => setDonorForm({ ...donorForm, blood_group: val })}
+                      options={BLOOD_GROUP_OPTIONS}
+                    />
                   </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.875rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Gender</label>
-                    <select 
+                    <CustomSelect 
                       value={donorForm.gender}
-                      onChange={e => setDonorForm({ ...donorForm, gender: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem', background: '#fff' }}
-                    >
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                    </select>
+                      onChange={val => setDonorForm({ ...donorForm, gender: val })}
+                      options={GENDER_OPTIONS}
+                    />
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Age (18-65)</label>
@@ -812,26 +821,19 @@ const BloodBankPublicStandalone = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.875rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Blood Group *</label>
-                    <select 
+                    <CustomSelect 
                       value={requestForm.blood_group}
-                      onChange={e => setRequestForm({ ...requestForm, blood_group: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem', background: '#fff' }}
-                    >
-                      {BLOOD_GROUPS.map(g => <option key={g} value={g}>{g}</option>)}
-                    </select>
+                      onChange={val => setRequestForm({ ...requestForm, blood_group: val })}
+                      options={BLOOD_GROUP_OPTIONS}
+                    />
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Component</label>
-                    <select 
+                    <CustomSelect 
                       value={requestForm.component}
-                      onChange={e => setRequestForm({ ...requestForm, component: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8125rem', background: '#fff' }}
-                    >
-                      <option value="Whole Blood">Whole Blood</option>
-                      <option value="Packed RBC">Packed RBC</option>
-                      <option value="Platelets">Platelets</option>
-                      <option value="Fresh Frozen Plasma">Plasma (FFP)</option>
-                    </select>
+                      onChange={val => setRequestForm({ ...requestForm, component: val })}
+                      options={COMPONENT_OPTIONS}
+                    />
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Units (Bags)</label>

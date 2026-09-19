@@ -2,11 +2,27 @@ import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Drop, Plus, PencilSimple, Trash, X, WarningCircle, CheckCircle, Clock } from 'phosphor-react'
 import DataTable from '../../components/DataTable'
+import CustomSelect from '../../components/CustomSelect'
 import useStore from '../../store/useStore'
 import { Portal } from '../../utils/portal'
 import toast from 'react-hot-toast'
 
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+const BLOOD_GROUP_OPTIONS = BLOOD_GROUPS.map(g => ({ value: g, label: g }))
+
+const COMPONENT_OPTIONS = [
+  { value: 'Whole Blood', label: 'Whole Blood (35 Days)' },
+  { value: 'Packed RBC', label: 'Packed RBC (42 Days)' },
+  { value: 'Platelets', label: 'Platelets (5 Days)' },
+  { value: 'Fresh Frozen Plasma', label: 'Fresh Frozen Plasma (365 Days)' }
+]
+
+const STATUS_OPTIONS = [
+  { value: 'Available', label: 'Available' },
+  { value: 'Reserved', label: 'Reserved' },
+  { value: 'Dispensed', label: 'Dispensed' },
+  { value: 'Discarded', label: 'Discarded' }
+]
 
 const BloodInventory = () => {
   const { user, bloodInventory, addBloodBag, updateBloodBag, deleteBloodBag, openConfirm } = useStore()
@@ -371,31 +387,22 @@ const BloodInventory = () => {
                     </div>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Blood Group *</label>
-                      <select 
-                        className="ecare-input" 
+                      <CustomSelect 
                         value={formData.blood_group} 
-                        onChange={e => setFormData({ ...formData, blood_group: e.target.value })}
-                        style={{ height: '38px' }}
-                      >
-                        {BLOOD_GROUPS.map(g => <option key={g} value={g}>{g}</option>)}
-                      </select>
+                        onChange={val => setFormData({ ...formData, blood_group: val })}
+                        options={BLOOD_GROUP_OPTIONS}
+                      />
                     </div>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Component Type</label>
-                      <select 
-                        className="ecare-input" 
+                      <CustomSelect 
                         value={formData.component} 
-                        onChange={e => handleComponentChange(e.target.value)}
-                        style={{ height: '38px' }}
-                      >
-                        <option value="Whole Blood">Whole Blood (35 Days)</option>
-                        <option value="Packed RBC">Packed RBC (42 Days)</option>
-                        <option value="Platelets">Platelets (5 Days)</option>
-                        <option value="Fresh Frozen Plasma">Fresh Frozen Plasma (365 Days)</option>
-                      </select>
+                        onChange={val => handleComponentChange(val)}
+                        options={COMPONENT_OPTIONS}
+                      />
                     </div>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Volume (mL)</label>
@@ -442,17 +449,11 @@ const BloodInventory = () => {
                     </div>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Current Status</label>
-                      <select 
-                        className="ecare-input" 
+                      <CustomSelect 
                         value={formData.status} 
-                        onChange={e => setFormData({ ...formData, status: e.target.value })}
-                        style={{ height: '38px' }}
-                      >
-                        <option value="Available">Available</option>
-                        <option value="Reserved">Reserved</option>
-                        <option value="Dispensed">Dispensed</option>
-                        <option value="Discarded">Discarded</option>
-                      </select>
+                        onChange={val => setFormData({ ...formData, status: val })}
+                        options={STATUS_OPTIONS}
+                      />
                     </div>
                   </div>
 

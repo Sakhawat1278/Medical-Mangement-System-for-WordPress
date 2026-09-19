@@ -2,11 +2,32 @@ import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Heart, Plus, PencilSimple, Trash, X, Drop, ShieldCheck, CheckCircle } from 'phosphor-react'
 import DataTable from '../../components/DataTable'
+import CustomSelect from '../../components/CustomSelect'
 import useStore from '../../store/useStore'
 import { Portal } from '../../utils/portal'
 import toast from 'react-hot-toast'
 
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+const BLOOD_GROUP_OPTIONS = BLOOD_GROUPS.map(g => ({ value: g, label: g }))
+
+const GENDER_OPTIONS = [
+  { value: 'Male', label: 'Male' },
+  { value: 'Female', label: 'Female' },
+  { value: 'Other', label: 'Other' }
+]
+
+const ELIGIBILITY_OPTIONS = [
+  { value: 'Eligible', label: 'Eligible' },
+  { value: 'Deferred', label: 'Deferred (Temporary)' },
+  { value: 'Ineligible', label: 'Ineligible' }
+]
+
+const DONATION_COMPONENT_OPTIONS = [
+  { value: 'Whole Blood', label: 'Whole Blood (450ml)' },
+  { value: 'Packed RBC', label: 'Packed RBC (250ml)' },
+  { value: 'Platelets', label: 'Platelets (50ml)' },
+  { value: 'Fresh Frozen Plasma', label: 'Plasma (200ml)' }
+]
 
 const BloodDonors = () => {
   const { 
@@ -465,30 +486,22 @@ const BloodDonors = () => {
                     </div>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Blood Group *</label>
-                      <select 
-                        className="ecare-input" 
+                      <CustomSelect 
                         value={formData.blood_group} 
-                        onChange={e => setFormData({ ...formData, blood_group: e.target.value })}
-                        style={{ height: '38px' }}
-                      >
-                        {BLOOD_GROUPS.map(g => <option key={g} value={g}>{g}</option>)}
-                      </select>
+                        onChange={val => setFormData({ ...formData, blood_group: val })}
+                        options={BLOOD_GROUP_OPTIONS}
+                      />
                     </div>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Gender</label>
-                      <select 
-                        className="ecare-input" 
+                      <CustomSelect 
                         value={formData.gender} 
-                        onChange={e => setFormData({ ...formData, gender: e.target.value })}
-                        style={{ height: '38px' }}
-                      >
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                      </select>
+                        onChange={val => setFormData({ ...formData, gender: val })}
+                        options={GENDER_OPTIONS}
+                      />
                     </div>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Age</label>
@@ -512,7 +525,7 @@ const BloodDonors = () => {
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: isPatient ? '1fr' : '1fr 1fr', gap: '1rem' }}>
                     <div className="ecare-form-group">
                       <label className="ecare-label">City / Location</label>
                       <input 
@@ -523,19 +536,16 @@ const BloodDonors = () => {
                         onChange={e => setFormData({ ...formData, city: e.target.value })} 
                       />
                     </div>
-                    <div className="ecare-form-group">
-                      <label className="ecare-label">Eligibility Status</label>
-                      <select 
-                        className="ecare-input" 
-                        value={formData.status} 
-                        onChange={e => setFormData({ ...formData, status: e.target.value })}
-                        style={{ height: '38px' }}
-                      >
-                        <option value="Eligible">Eligible</option>
-                        <option value="Deferred">Deferred (Temporary)</option>
-                        <option value="Ineligible">Ineligible</option>
-                      </select>
-                    </div>
+                    {!isPatient && (
+                      <div className="ecare-form-group">
+                        <label className="ecare-label">Eligibility Status</label>
+                        <CustomSelect 
+                          value={formData.status} 
+                          onChange={val => setFormData({ ...formData, status: val })}
+                          options={ELIGIBILITY_OPTIONS}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -627,17 +637,11 @@ const BloodDonors = () => {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Component Type</label>
-                      <select 
-                        className="ecare-input" 
+                      <CustomSelect 
                         value={donationForm.component} 
-                        onChange={e => setDonationForm({ ...donationForm, component: e.target.value })}
-                        style={{ height: '38px' }}
-                      >
-                        <option value="Whole Blood">Whole Blood (450ml)</option>
-                        <option value="Packed RBC">Packed RBC (250ml)</option>
-                        <option value="Platelets">Platelets (50ml)</option>
-                        <option value="Fresh Frozen Plasma">Plasma (200ml)</option>
-                      </select>
+                        onChange={val => setDonationForm({ ...donationForm, component: val })}
+                        options={DONATION_COMPONENT_OPTIONS}
+                      />
                     </div>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Storage Location</label>
