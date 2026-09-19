@@ -1,0 +1,4250 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:host {
+  display: block;
+}
+
+#ecare-shadow-inner {
+  display: block;
+  width: 100%;
+  background: transparent;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  
+  /* Brand Palette (E-CARE Green Theme) */
+  --ecare-primary: #1b3b2b;
+  --ecare-primary-hover: #142b1f;
+  --ecare-primary-light: #6e8d7c;
+  --ecare-primary-bg: #eef3f0;
+  --ecare-primary-border: rgba(27, 59, 43, 0.2);
+  --ecare-primary-shadow: rgba(27, 59, 43, 0.1);
+  --ecare-accent: #ffb800;
+  --ecare-text-main: #1e293b;
+  --ecare-text-muted: #6e8d7c;
+  --ecare-font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+#ecare-shadow-inner,
+#ecare-shadow-inner *,
+#ecare-shadow-inner *::before,
+#ecare-shadow-inner *::after,
+#ecare-shadow-inner button,
+#ecare-shadow-inner input,
+#ecare-shadow-inner select,
+#ecare-shadow-inner textarea {
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Inherit the host/theme font across the app surface */
+.ecare-dashboard,
+.ecare-dashboard div,
+.ecare-dashboard section,
+.ecare-dashboard aside,
+.ecare-dashboard nav,
+.ecare-dashboard header,
+.ecare-dashboard main,
+.ecare-dashboard footer,
+.ecare-dashboard h1,
+.ecare-dashboard h2,
+.ecare-dashboard h3,
+.ecare-dashboard h4,
+.ecare-dashboard h5,
+.ecare-dashboard h6,
+.ecare-dashboard p,
+.ecare-dashboard ul,
+.ecare-dashboard ol,
+.ecare-dashboard li,
+.ecare-dashboard button,
+.ecare-dashboard input,
+.ecare-dashboard select,
+.ecare-dashboard textarea {
+  font-family: inherit !important;
+  box-sizing: border-box;
+}
+
+.ecare-dashboard {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.ecare-sidebar {
+  background: white;
+  border-right: 1px solid #f1f5f9;
+  padding: 0.75rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  overflow-y: auto;
+  height: 100vh;
+  flex-shrink: 0;
+}
+
+.ecare-sidebar-search {
+  background: #f4f7fa;
+  border-radius: 14px;
+  padding: 0.45rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0.25rem;
+  color: var(--ecare-text-muted);
+  font-size: 0.75rem;
+}
+
+.ecare-section-title {
+  color: #c0ccda;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  letter-spacing: 0.01em;
+  margin: 1rem 0.75rem 0.25rem;
+}
+
+.ecare-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  border-radius: 6px;
+  color: var(--ecare-text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 1px solid transparent;
+  margin: 2px 0.5rem;
+}
+
+.ecare-nav-item.active {
+  background: var(--ecare-primary-bg);
+  color: var(--ecare-primary);
+  border: 1px solid rgba(27, 59, 43, 0.15);
+  box-shadow: 0 4px 12px rgba(27, 59, 43, 0.05);
+  font-weight: 700;
+}
+
+/* Animations */
+@keyframes ecare-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ecare-loader {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f1f5f9;
+  border-top-color: var(--ecare-primary);
+  border-radius: 50%;
+  animation: ecare-spin 0.8s linear infinite;
+}
+
+.ecare-nav-item:hover:not(.active) {
+  background: #f1f5f9;
+  color: var(--ecare-text-main);
+  padding-left: 1.25rem;
+}
+
+.ecare-sub-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 0.75rem 0.45rem 2.5rem;
+  color: var(--ecare-text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  margin: 1px 0.5rem;
+}
+
+.ecare-sub-item:hover:not(.active) {
+  background: #f8fafc;
+  color: var(--ecare-text-main);
+  padding-left: 2.75rem;
+}
+
+.ecare-sub-item.active {
+  color: var(--ecare-primary);
+  background: var(--ecare-primary-bg);
+  font-weight: 700;
+}
+
+.ecare-sub-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  transition: all 0.2s ease;
+}
+
+.ecare-sub-item.active .ecare-sub-dot {
+  background: var(--ecare-primary);
+  box-shadow: 0 0 8px var(--ecare-primary);
+  transform: scale(1.2);
+}
+
+.ecare-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 1rem 0.5rem;
+}
+
+.ecare-main {
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.ecare-card {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  padding: 1rem;
+  transition: border-color 0.2s;
+}
+
+.ecare-card:hover {
+  border-color: var(--ecare-primary);
+}
+
+.ecare-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--stat-grid-cols, 5), 1fr);
+  gap: 0.75rem;
+  margin-bottom: 0 !important;
+}
+
+.ecare-dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem !important;
+}
+
+.ecare-dashboard-page > .ecare-stat-grid,
+.ecare-dashboard-page > .ecare-dashboard-grid-2col,
+.ecare-dashboard-page > .ecare-doctor-grid,
+.ecare-dashboard-page > .ecare-dashboard-grid-4col,
+.ecare-dashboard-page > .ecare-grid-2col-equal,
+.ecare-dashboard-page > .ecare-patient-actions-grid {
+  margin-bottom: 0 !important;
+}
+
+.ecare-dashboard-page .ecare-dashboard-grid-2col,
+.ecare-dashboard-page .ecare-doctor-grid,
+.ecare-dashboard-page .ecare-dashboard-grid-4col,
+.ecare-dashboard-page .ecare-grid-2col-equal,
+.ecare-dashboard-page .ecare-patient-actions-grid {
+  gap: 1rem !important;
+}
+
+.ecare-dashboard-page .ecare-stat-grid {
+  gap: 0.875rem !important;
+  margin-top: 0 !important;
+}
+
+@media (max-width: 1400px) {
+  .ecare-stat-grid {
+    grid-template-columns: repeat(var(--stat-grid-cols-md, 3), 1fr);
+  }
+}
+
+.ecare-widget-grid {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 1200px) {
+  .ecare-widget-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ecare-activity-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ecare-activity-item:last-child {
+  border-bottom: none;
+}
+
+.ecare-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+@media (max-width: 1024px) {
+  .ecare-stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .ecare-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+.ecare-button {
+  background: var(--ecare-primary);
+  color: white;
+  border: none;
+  padding: 0.875rem 1.75rem;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ecare-button svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ecare-button:hover {
+  background: var(--ecare-primary-hover);
+}
+
+.ecare-button:hover svg {
+  transform: rotate(90deg);
+}
+
+
+
+.ecare-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 14px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-success { background: #dcfce7; color: #166534; }
+.badge-warning { background: #fef9c3; color: #854d0e; }
+.badge-error { background: #fee2e2; color: #991b1b; }
+.badge-info { background: #e0f2fe; color: #075985; }
+
+/* Table Styles */
+.ecare-table-container {
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  background: white;
+}
+
+.ecare-data-table-card {
+  margin: 0 !important;
+  margin-top: 0 !important;
+}
+
+.ecare-stat-grid + .ecare-data-table-card,
+.ecare-dashboard-grid-4col + .ecare-data-table-card,
+.ecare-dashboard-grid-2col + .ecare-data-table-card,
+.ecare-grid-2col + .ecare-data-table-card,
+.ecare-grid-3col + .ecare-data-table-card,
+.ecare-grid-4col + .ecare-data-table-card {
+  margin-top: 0 !important;
+}
+
+.ecare-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ecare-table th {
+  padding: 0.75rem 1.25rem;
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ecare-table td {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.875rem;
+}
+
+.ecare-table tr:last-child td {
+  border-bottom: none;
+}
+/* ──────────────────────────────────────────────────────────────────
+   Pagination Footer  (DataTable)
+   ─────────────────────────────────────────────────────────────────── */
+.ecare-pagination-footer {
+  padding: 0.875rem 1.25rem;
+  border-top: 1px solid #f1f5f9;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+/* "Showing 1 to 10 of 16 results" */
+.ecare-pagination-info {
+  font-size: 0.8rem;
+  color: #64748b;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ecare-pagination-info b {
+  color: #334155;
+  font-weight: 700;
+}
+
+/* Right-side cluster: rows-per-page + divider + page buttons */
+.ecare-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* "Rows: [select]" group */
+.ecare-pagination-rpp {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.ecare-pagination-rpp-label {
+  font-size: 0.8rem;
+  color: #64748b;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* Thin vertical divider between rows-per-page and page buttons */
+.ecare-pagination-divider {
+  width: 1px;
+  height: 20px;
+  background: #e2e8f0;
+  flex-shrink: 0;
+}
+
+/* Page buttons container */
+.ecare-pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Individual page button */
+.ecare-pagination-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 10px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ecare-pagination-btn:hover:not(:disabled) {
+  border-color: var(--ecare-primary);
+  color: var(--ecare-primary);
+  background: var(--ecare-primary-bg);
+}
+
+.ecare-pagination-btn.active {
+  background: var(--ecare-primary);
+  color: white;
+  border-color: var(--ecare-primary);
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.12);
+}
+
+.ecare-pagination-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+/* Ellipsis "…" */
+.ecare-pagination-ellipsis {
+  width: 28px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* ── 640 px (mobile) ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .ecare-pagination-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.625rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .ecare-pagination-info {
+    text-align: center;
+    font-size: 0.76rem;
+    white-space: normal;
+  }
+
+  .ecare-pagination-controls {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    width: 100%;
+  }
+
+  .ecare-pagination-divider {
+    display: none;
+  }
+
+  .ecare-pagination-rpp {
+    order: 2;
+    flex: 0 0 auto;
+  }
+
+  .ecare-pagination-pages {
+    order: 1;
+    flex: 0 0 100%;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .ecare-pagination-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    font-size: 0.8125rem;
+  }
+
+  .ecare-pagination-rpp-label {
+    font-size: 0.75rem;
+  }
+}
+
+/* ── 420 px (small phones) ────────────────────────────────────────── */
+@media (max-width: 420px) {
+  .ecare-pagination-footer {
+    padding: 0.625rem 0.75rem;
+  }
+
+  .ecare-pagination-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    font-size: 0.75rem;
+  }
+
+  .ecare-pagination-ellipsis {
+    width: 22px;
+    font-size: 0.75rem;
+  }
+}
+
+
+.ecare-btn-secondary {
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  padding: 0.625rem 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.ecare-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: var(--ecare-primary);
+  color: var(--ecare-primary);
+  box-shadow: 0 4px 6px -1px var(--ecare-primary-shadow);
+  transform: translateY(-1px);
+}
+
+
+.ecare-table tr.selected {
+  background: var(--ecare-primary-bg) !important;
+}
+
+/* Responsive table filtering/toolbars */
+.ecare-table-toolbar,
+.ecare-table-toolbar-controls,
+.ecare-table-toolbar-title,
+.ecare-table-search {
+  min-width: 0;
+}
+
+.ecare-table-toolbar {
+  max-width: 100%;
+}
+
+.ecare-table-toolbar-title h2 {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ecare-table-total-badge {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ecare-table-toolbar-controls > * {
+  min-width: 0;
+}
+
+.ecare-table-toolbar-controls .ecare-btn-secondary,
+.ecare-table-toolbar-controls .ecare-button,
+.ecare-table-toolbar-controls button {
+  max-width: 100%;
+}
+
+.ecare-table-search input {
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .ecare-table-toolbar {
+    align-items: stretch !important;
+    padding: 1rem !important;
+  }
+
+  .ecare-table-toolbar-title {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .ecare-table-toolbar-controls {
+    width: 100%;
+    flex: 1 1 100% !important;
+    justify-content: flex-start !important;
+    gap: 0.5rem !important;
+  }
+
+  .ecare-table-search {
+    flex: 1 1 260px !important;
+    max-width: none !important;
+  }
+
+  .ecare-table-toolbar-controls .ecare-button {
+    margin-left: 0 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .ecare-data-table-card,
+  .ecare-stat-grid + .ecare-data-table-card,
+  .ecare-dashboard-grid-4col + .ecare-data-table-card,
+  .ecare-dashboard-grid-2col + .ecare-data-table-card,
+  .ecare-grid-2col + .ecare-data-table-card,
+  .ecare-grid-3col + .ecare-data-table-card,
+  .ecare-grid-4col + .ecare-data-table-card {
+    margin-top: 0 !important;
+  }
+
+  .ecare-table-toolbar {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    padding: 0.75rem !important;
+    gap: 0.625rem !important;
+  }
+
+  .ecare-table-toolbar-title {
+    order: 2 !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    gap: 0 !important;
+    width: 100% !important;
+    justify-content: flex-start;
+    align-items: stretch !important;
+    margin: 0 !important;
+  }
+
+  .ecare-table-toolbar-title h2 {
+    display: none !important;
+  }
+
+  .ecare-table-total-badge {
+    width: 100% !important;
+    height: 38px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.8125rem !important;
+    font-weight: 600 !important;
+    padding: 0 0.5rem !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  .ecare-table-toolbar-controls {
+    display: contents !important;
+  }
+
+  .ecare-table-search {
+    grid-column: 1 / -1 !important;
+    order: 1 !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .ecare-table-search input {
+    height: 38px !important;
+    font-size: 0.8125rem !important;
+    border-radius: 10px !important;
+  }
+
+  .ecare-table-toolbar-controls > *:not(.ecare-table-search) {
+    order: 3 !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    display: flex !important;
+    margin: 0 !important;
+  }
+
+  .ecare-table-toolbar-controls .ecare-dropdown-trigger {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: flex !important;
+  }
+
+  .ecare-table-toolbar-controls > button,
+  .ecare-table-toolbar-controls > .ecare-button,
+  .ecare-table-toolbar-controls .ecare-dropdown-trigger button,
+  .ecare-table-toolbar-controls .ecare-dropdown-trigger .ecare-btn-secondary,
+  .ecare-table-toolbar-controls .ecare-dropdown-trigger .ecare-button {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 38px !important;
+    padding: 0 0.75rem !important;
+    font-size: 0.8125rem !important;
+    font-weight: 600 !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    margin-left: 0 !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  .ecare-table-toolbar-controls > button span,
+  .ecare-table-toolbar-controls .ecare-dropdown-trigger button span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ecare-dropdown-menu {
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 190px !important;
+    width: max-content !important;
+    max-width: calc(100vw - 2rem) !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+    box-sizing: border-box !important;
+    gap: 2px !important;
+  }
+
+  .ecare-dropdown-menu > div,
+  .ecare-dropdown-menu .ecare-dropdown-item-wrapper {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .ecare-dropdown-menu button.ecare-dropdown-item {
+    height: auto !important;
+    min-height: 36px !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    padding: 0.625rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 6px !important;
+    box-sizing: border-box !important;
+    background: transparent !important;
+    white-space: nowrap !important;
+  }
+
+  .ecare-dropdown-menu button.ecare-dropdown-item.active {
+    background: var(--ecare-primary-bg, #f0fdf4) !important;
+    color: var(--ecare-primary, #16a34a) !important;
+    font-weight: 600 !important;
+  }
+
+  .ecare-table-export-dropdown .ecare-dropdown-menu {
+    left: 0 !important;
+    right: auto !important;
+  }
+
+  .ecare-table-filter-dropdown .ecare-dropdown-menu {
+    right: 0 !important;
+    left: auto !important;
+  }
+
+}
+
+@media (max-width: 420px) {
+  .ecare-table-toolbar-title {
+    align-items: stretch !important;
+    flex-direction: row;
+  }
+
+  .ecare-table-toolbar-controls > button,
+  .ecare-table-toolbar-controls > .ecare-button,
+  .ecare-table-toolbar-controls .ecare-dropdown-trigger button,
+  .ecare-table-toolbar-controls .ecare-dropdown-trigger .ecare-btn-secondary,
+  .ecare-table-toolbar-controls .ecare-dropdown-trigger .ecare-button {
+    padding: 0 0.5rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .ecare-table-total-badge {
+    font-size: 0.75rem !important;
+    padding: 0 0.375rem !important;
+  }
+}
+
+/* Universal Dropdown Menu Specification */
+.ecare-dropdown-menu,
+.ecare-select-dropdown {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.ecare-dropdown-menu .ecare-dropdown-item-wrapper,
+.ecare-select-dropdown .ecare-select-options {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+}
+
+.ecare-select-dropdown .ecare-dropdown-item,
+.ecare-select-dropdown .ecare-select-option {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+}
+
+/* Universal Custom Checkbox Design */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cbd5e1;
+  border-radius: 5px;
+  background: white;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0;
+  vertical-align: middle;
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--ecare-primary);
+  border-color: var(--ecare-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+  background-size: 11px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--ecare-primary);
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  border-color: var(--ecare-primary);
+}
+
+input[type="checkbox"]:indeterminate {
+  background-color: var(--ecare-primary);
+  border-color: var(--ecare-primary);
+}
+
+input[type="checkbox"]:indeterminate::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 2px;
+  background: white;
+  left: 3px;
+  top: 6px;
+}
+
+/* Universal Custom Select Design */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  height: 2.5rem;
+  padding: 0 2.5rem 0 1rem;
+  font-size: 0.875rem;
+  color: var(--ecare-text-main);
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 14px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+select:hover {
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+}
+
+select:focus {
+  border-color: var(--ecare-primary);
+  background-color: white;
+}
+
+select:disabled {
+  background-color: #f1f5f9;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+
+.ecare-dropdown-item {
+  background-color: transparent;
+  color: #475569;
+}
+
+.ecare-dropdown-item:hover {
+  background-color: #f8fafc;
+  color: #1e293b !important;
+}
+
+.ecare-dropdown-item.active {
+  background-color: var(--ecare-primary-bg) !important;
+  color: var(--ecare-primary) !important;
+}
+
+.ecare-dropdown-item:active {
+  background-color: #f1f5f9;
+}
+
+/* Form Styles */
+.ecare-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.ecare-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.ecare-label span {
+  color: #ef4444; /* required asterisk */
+  margin-right: 4px;
+}
+
+.ecare-input {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  font-size: 0.875rem;
+  color: #1e293b;
+  background-color: white;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  /* Inherit font from theme so registration inputs match the site */
+  font-family: inherit;
+}
+
+.ecare-input:hover {
+  border-color: #cbd5e1;
+}
+
+.ecare-input:focus {
+  border-color: var(--ecare-primary);
+  box-shadow: 0 0 0 3px var(--ecare-primary-bg);
+}
+
+textarea.ecare-input {
+  border-radius: 14px;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.ecare-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.ecare-form-grid > * {
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .ecare-form-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .ecare-form-grid > *[style*="span 3"],
+  .ecare-form-grid > *[style*="span-3"],
+  .ecare-form-grid > *[style*="span 2"],
+  .ecare-form-grid > *[style*="span-2"] {
+    grid-column: span 1 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .ecare-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ecare-form-grid > * {
+    min-width: 0;
+  }
+  .ecare-form-grid > *[style*="span 3"],
+  .ecare-form-grid > *[style*="span-3"],
+  .ecare-form-grid > *[style*="span 2"],
+  .ecare-form-grid > *[style*="span-2"] {
+    grid-column: span 1 !important;
+  }
+}
+
+.ecare-span-3 {
+  grid-column: span 3;
+}
+
+.ecare-span-2 {
+  grid-column: span 2;
+}
+
+.ecare-span-full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1024px) {
+  .ecare-span-3,
+  .ecare-span-2 {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .ecare-span-3,
+  .ecare-span-2 {
+    grid-column: span 1;
+  }
+}
+
+.ecare-registration-content-wrapper {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 0;
+}
+
+@media (max-width: 640px) {
+  .ecare-registration-content-wrapper {
+    padding: 1rem 0;
+  }
+}
+
+.ecare-card-row,
+.ecare-grid-2col,
+.ecare-grid-3col,
+.ecare-grid-4col,
+.ecare-package-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.ecare-card-row,
+.ecare-grid-2col {
+  grid-template-columns: 1fr 1fr;
+}
+
+.ecare-grid-3col {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.ecare-grid-4col {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.ecare-package-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.ecare-action-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .ecare-card-row,
+  .ecare-grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1024px) {
+  .ecare-grid-3col {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ecare-grid-4col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .ecare-grid-3col,
+  .ecare-grid-4col,
+  .ecare-package-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ecare-action-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ecare-action-row .ecare-button {
+    width: 100%;
+  }
+}
+
+.ecare-button {
+  min-width: max-content;
+}
+
+@media (max-width: 640px) {
+  .ecare-button {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+.ecare-card {
+  min-width: 0;
+}
+
+.ecare-form-group {
+  margin-bottom: 0.75rem;
+}
+
+.ecare-input {
+  min-height: 2.25rem;
+}
+
+.ecare-card {
+  overflow: hidden;
+}
+
+.ecare-card h3 {
+  line-height: 1.2;
+}
+
+.ecare-card p,
+.ecare-card span,
+.ecare-card label {
+  word-break: break-word;
+}
+
+.ecare-form-grid .ecare-form-group {
+  min-width: 0;
+}
+
+.ecare-card-row .ecare-card,
+.ecare-grid-2col .ecare-card,
+.ecare-grid-3col .ecare-card,
+.ecare-grid-4col .ecare-card {
+  width: 100%;
+}
+
+.ecare-package-grid > * {
+  min-width: 0;
+}
+
+.ecare-card-row > .ecare-card,
+.ecare-grid-2col > .ecare-card,
+.ecare-grid-3col > .ecare-card,
+.ecare-grid-4col > .ecare-card {
+  width: 100%;
+}
+
+.ecare-input,
+textarea.ecare-input {
+  box-sizing: border-box;
+}
+
+.ecare-card-row {
+  align-items: stretch;
+}
+
+.ecare-card-row > *,
+.ecare-grid-2col > *,
+.ecare-grid-3col > *,
+.ecare-grid-4col > * {
+  min-width: 0;
+}
+
+.ecare-package-grid > * {
+  min-width: 0;
+}
+
+.ecare-card-row .ecare-form-grid,
+.ecare-grid-2col .ecare-form-grid,
+.ecare-grid-3col .ecare-form-grid,
+.ecare-grid-4col .ecare-form-grid {
+  width: 100%;
+}
+
+.ecare-form-grid input,
+.ecare-form-grid textarea,
+.ecare-form-grid .react-select__control {
+  width: 100%;
+}
+
+.ecare-card-row .ecare-button,
+.ecare-action-row .ecare-button {
+  width: auto;
+}
+
+.ecare-action-row > * {
+  flex: 1;
+}
+
+.ecare-action-row > *:not(.ecare-button) {
+  width: 100%;
+}
+
+.ecare-card-row .ecare-card {
+  min-height: 0;
+}
+
+.ecare-button.ecare-primary {
+  white-space: nowrap;
+}
+
+.ecare-card .ecare-input {
+  width: 100%;
+}
+
+.ecare-card-row .ecare-input {
+  width: 100%;
+}
+
+.ecare-grid-2col .ecare-input,
+.ecare-grid-3col .ecare-input,
+.ecare-grid-4col .ecare-input,
+.ecare-package-grid .ecare-input {
+  width: 100%;
+}
+
+.ecare-radio-group {
+  background: #f8fafc;
+  padding: 0.25rem;
+  border-radius: 99px;
+  border: 1px solid #e2e8f0;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+}
+
+.ecare-radio-btn {
+  padding: 0.375rem 1.25rem;
+  border-radius: 99px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background: transparent;
+}
+
+.ecare-radio-btn.active {
+  background: white;
+  color: var(--ecare-primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.ecare-doctors-detail-grid {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .ecare-doctors-detail-grid {
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .ecare-doctors-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .ecare-doctors-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ecare-doctors-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+.ecare-booking-payment-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .ecare-booking-payment-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .ecare-booking-payment-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ecare-booking-payment-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+.ecare-booking-footer-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+@media (max-width: 480px) {
+  .ecare-booking-footer-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    text-align: center;
+  }
+  .ecare-booking-footer-grid button {
+    width: 100%;
+  }
+}
+
+/* ─── Doctors Registry Container & Filter Layout ─────────────────────────── */
+/* Default: no horizontal padding (desktop) - add padding for smaller viewports */
+.ecare-doctors-container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Scoped rules for shadow host / higher specificity to override admin styles */
+#ecare-shadow-inner .ecare-doctors-container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (max-width: 1024px) {
+  #ecare-shadow-inner .ecare-doctors-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #ecare-shadow-inner .ecare-doctors-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #ecare-shadow-inner .ecare-doctors-container {
+    padding-left: 0.875rem !important;
+    padding-right: 0.875rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #ecare-shadow-inner .ecare-doctors-container {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+}
+
+/* Filter row: 4 columns on desktop, 2 columns on tablet/mobile */
+.ecare-doctors-search-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding-bottom: 1rem;
+}
+
+.ecare-doctors-filter-row {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 1024px) {
+  .ecare-doctors-filter-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ecare-doctors-filter-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+
+/* ─── Make plugin UI fully flexible to parent container width ───────────── */
+/* Ensure the shadow host and root container do not enforce a fixed width */
+:host, #ecare-shadow-inner {
+  width: 100% !important;
+  max-width: inherit !important;
+  box-sizing: border-box;
+}
+
+/* Root container should inherit whatever width the admin/theme gives the page */
+.ecare-doctors-container {
+  width: 100% !important;
+  max-width: inherit !important;
+}
+
+/* Cards and main components should never exceed the available width */
+.ecare-card,
+.ecare-card * {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* Make grids adapt automatically to available width using auto-fit/minmax */
+.ecare-doctors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* ─── Doctor Registry Cards (horizontal list style) ─────────────────────── */
+.ecare-doctors-card {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  padding: 1rem 1.125rem;
+  min-width: 0;
+  transition: border-color 0.2s ease;
+}
+
+.ecare-doctors-card:hover {
+  border-color: #cbd5e1;
+}
+
+.ecare-doctors-card-photo {
+  position: relative;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.ecare-doctors-card-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 5px;
+  background: var(--ecare-primary-bg);
+  color: var(--ecare-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.25rem;
+  overflow: hidden;
+  border: 1px solid #eef2f7;
+}
+
+.ecare-doctors-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ecare-doctors-card-online-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
+}
+
+.ecare-doctors-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.125rem 0;
+}
+
+.ecare-doctors-card-name {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ecare-doctors-card-specialty {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ecare-primary-light);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ecare-doctors-card-details {
+  margin: 0.125rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #94a3b8;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ecare-doctors-card-sep {
+  margin: 0 0.2rem;
+  color: #cbd5e1;
+}
+
+.ecare-doctors-card-price {
+  margin: 0.375rem 0 0;
+  font-size: 0.8125rem;
+  color: #94a3b8;
+  line-height: 1.2;
+}
+
+.ecare-doctors-card-price strong {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-right: 0.25rem;
+}
+
+.ecare-doctors-card-action {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: 96px;
+  padding: 0.125rem 0;
+}
+
+.ecare-doctors-card-availability {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ecare-primary-light);
+  text-align: right;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.ecare-doctors-card-book {
+  appearance: none;
+  border: none;
+  background: var(--ecare-primary);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 0.5rem 1.125rem;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.15s ease;
+  width: auto !important;
+  min-width: 72px;
+}
+
+.ecare-doctors-card-book:hover {
+  background: var(--ecare-primary-hover);
+}
+
+.ecare-doctors-card-book.is-muted,
+.ecare-doctors-card-book.is-session {
+  background: #e8f0ec;
+  color: var(--ecare-primary-light);
+}
+
+.ecare-doctors-card-book.is-muted:hover,
+.ecare-doctors-card-book.is-session:hover {
+  background: #dce8e2;
+}
+
+@media (max-width: 1100px) {
+  .ecare-doctors-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .ecare-doctors-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ecare-doctors-card {
+    gap: 0.875rem;
+    padding: 0.875rem 1rem;
+  }
+
+  .ecare-doctors-card-avatar {
+    width: 64px;
+    height: 64px;
+    font-size: 1.1rem;
+  }
+
+  .ecare-doctors-card-action {
+    min-width: 84px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ecare-doctors-card {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .ecare-doctors-card-info {
+    flex: 1 1 calc(100% - 88px);
+  }
+
+  .ecare-doctors-card-action {
+    flex: 1 1 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 0;
+    padding-top: 0.25rem;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  .ecare-doctors-card-availability {
+    text-align: left;
+  }
+}
+
+
+
+/* Ensure images and avatars scale down inside flexible containers */
+.ecare-card img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Keep icon SVGs compact without shrinking chart surfaces */
+.ecare-card svg:not(.recharts-surface):not([class*="recharts-"]) {
+  max-width: 100%;
+  height: auto;
+}
+
+.recharts-responsive-container,
+.recharts-wrapper {
+  width: 100% !important;
+}
+
+.recharts-wrapper {
+  overflow: visible !important;
+}
+
+.recharts-surface {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.ecare-chart-frame {
+  min-height: 160px;
+  position: relative;
+}
+
+.ecare-chart-frame .recharts-responsive-container,
+.ecare-chart-frame .recharts-wrapper {
+  min-height: inherit !important;
+}
+
+/* Allow select/filter rows to wrap naturally when parent width changes */
+.ecare-doctors-filter-row {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+/* Ensure inputs and buttons expand to fill available width */
+.ecare-input,
+.ecare-button {
+  width: 100%;
+  max-width: 100%;
+}
+
+
+/* ─── Doctors Registry Container ─────────────────────────────────────────── */
+.ecare-doctors-container {
+  padding: 1.5rem 1rem;
+}
+
+@media (max-width: 1024px) {
+  .ecare-doctors-container {
+    padding: 1.25rem 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .ecare-doctors-container {
+    padding: 1rem 1rem;
+  }
+  /* Stack doctor single page columns vertically */
+  .ecare-doctors-detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .ecare-doctors-container {
+    padding: 0.875rem 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ecare-doctors-container {
+    padding: 0.75rem 0.75rem;
+  }
+}
+
+/* ─── Print Optimization ─────────────────────────────────────────────────── */
+@media print {
+  /* Reset background and layout for print */
+  :host, body, #ecare-shadow-inner {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Explicitly hide navigation and non-essential UI */
+  .ecare-sidebar, 
+  header, 
+  .no-print,
+  .ecare-pagination-btn,
+  .ecare-pagination-footer {
+    display: none !important;
+  }
+
+  /* Force containers to be visible and expand */
+  .ecare-dashboard {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .ecare-main {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  /* The modal wrapper should now be the only thing with visible content */
+  #invoice-modal-wrapper {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    background: white !important;
+    z-index: 99999 !important;
+  }
+
+  /* Expand invoice card to full height */
+  #printable-invoice {
+    max-height: none !important;
+    height: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    position: static !important;
+    overflow: visible !important;
+    display: block !important;
+    padding: 0 !important;
+  }
+
+  /* Remove scrollbar and fixed height from internal containers */
+  #printable-invoice > div, 
+  #printable-invoice .invoice-content {
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+    flex: none !important;
+  }
+
+  /* Ensure the main table/list behind the modal is hidden */
+  .ecare-table-container, .ecare-card:not(#printable-invoice) {
+    display: none !important;
+  }
+
+  /* Adjust page breaks if needed */
+  table { page-break-inside: auto; }
+  tr { page-break-inside: avoid; page-break-after: auto; }
+  thead { display: table-header-group; }
+  tfoot { display: table-footer-group; }
+  
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  #printable-invoice {
+    width: 210mm !important;
+    max-width: 210mm !important;
+    min-height: 297mm !important; 
+    display: flex !important;
+    flex-direction: column !important;
+    margin: 0 auto !important;
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    overflow: visible !important;
+  }
+
+  .invoice-body-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    min-height: 297mm !important;
+    width: 100% !important;
+  }
+
+  .invoice-footer-section {
+    margin-top: auto !important;
+    page-break-inside: avoid !important;
+  }
+}
+
+/* ── WooCommerce Native Embedded Checkout Styles ── */
+#ecare-wc-payment-container #payment {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 1.25rem !important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02) !important;
+}
+#ecare-wc-payment-container ul.payment_methods {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+}
+#ecare-wc-payment-container li.payment_method {
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 14px 16px !important;
+    transition: all 0.15s ease-in-out !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+}
+#ecare-wc-payment-container li.payment_method:hover {
+    border-color: var(--ecare-primary) !important;
+}
+#ecare-wc-payment-container li.payment_method input[type="radio"] {
+    margin-right: 8px !important;
+    accent-color: var(--ecare-primary) !important;
+    cursor: pointer !important;
+}
+#ecare-wc-payment-container li.payment_method label {
+    font-size: 0.8125rem !important;
+    font-weight: 700 !important;
+    color: var(--ecare-text-main) !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+}
+#ecare-wc-payment-container .payment_box {
+    margin-top: 10px !important;
+    padding: 12px !important;
+    background: #f8fafc !important;
+    border-radius: 8px !important;
+    font-size: 0.78rem !important;
+    color: #475569 !important;
+    border: 1px solid #e2e8f0 !important;
+    line-height: 1.5 !important;
+}
+#ecare-wc-payment-container .place-order {
+    display: none !important; /* Hide WooCommerce native submit button */
+}
+#ecare-wc-payment-container .woocommerce-privacy-policy-text {
+    display: none !important; /* Hide redundant policy text */
+}
+#ecare-wc-payment-container .payment_method img {
+    max-height: 24px !important;
+    margin-left: 8px !important;
+    vertical-align: middle !important;
+    display: inline-block !important;
+}
+
+/* Active (selected) WooCommerce payment method highlight */
+#ecare-wc-payment-container li.payment_method:has(input[type="radio"]:checked) {
+    border-color: var(--ecare-primary) !important;
+    background: #f0fdf4 !important;
+    box-shadow: 0 0 0 1px var(--ecare-primary) !important;
+}
+
+/* Spin keyframe for the loading state spinner */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* Constrain WooCommerce gateway logos inside the E-CARE custom gateway grid */
+.ecare-gateway-icon-html img {
+    max-height: 24px !important;
+    max-width: 80px !important;
+    object-fit: contain !important;
+    height: auto !important;
+    width: auto !important;
+    display: block !important;
+}
+
+/* ── Consolidation of Dashboard Responsive Styles ── */
+.ecare-header {
+  height: 70px;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+.ecare-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* Responsive Dashboard Grids */
+.ecare-dashboard-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.ecare-dashboard-grid-4col {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  align-items: stretch;
+}
+
+.ecare-doctor-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1.5rem;
+}
+
+.ecare-patient-services-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.ecare-patient-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.ecare-patient-dashboard .ecare-dashboard-grid-2col,
+.ecare-patient-dashboard .ecare-patient-actions-grid {
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ecare-patient-dashboard .ecare-dashboard-grid-2col > .ecare-card,
+.ecare-patient-dashboard .ecare-patient-actions-grid > .ecare-card {
+  padding: 0.875rem !important;
+}
+
+.ecare-patient-dashboard .ecare-dashboard-grid-2col h3,
+.ecare-patient-dashboard .ecare-patient-actions-grid h4 {
+  margin-bottom: 0.625rem !important;
+}
+
+.ecare-patient-dashboard .ecare-patient-services-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.ecare-patient-dashboard .ecare-patient-services-grid a {
+  padding: 0.75rem !important;
+  border-radius: 10px !important;
+}
+
+.ecare-patient-dashboard .ecare-patient-services-grid a > div:first-child {
+  width: 38px !important;
+  height: 38px !important;
+  margin-bottom: 0.5rem !important;
+  border-radius: 10px !important;
+}
+
+.ecare-patient-dashboard .ecare-patient-services-grid svg {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.ecare-patient-dashboard .ecare-patient-actions-grid > .ecare-card {
+  min-height: 170px !important;
+}
+
+.ecare-patient-dashboard .ecare-patient-actions-grid > .ecare-card > div {
+  gap: 0.5rem !important;
+}
+
+.ecare-patient-dashboard .ecare-patient-actions-grid button {
+  margin-top: 0.625rem !important;
+  padding: 0.625rem !important;
+  border-radius: 8px !important;
+}
+
+/* Profile panel responsiveness */
+.ecare-profile-page {
+  max-width: 100%;
+}
+
+.ecare-profile-grid,
+.ecare-profile-finance-grid,
+.ecare-profile-payout-grid {
+  min-width: 0;
+}
+
+.ecare-profile-field,
+.ecare-profile-card,
+.ecare-profile-grid > *,
+.ecare-profile-finance-grid > *,
+.ecare-profile-payout-grid > * {
+  min-width: 0;
+}
+
+.ecare-profile-card .ecare-input,
+.ecare-profile-card input,
+.ecare-profile-card button {
+  max-width: 100%;
+}
+
+.ecare-profile-card [class*="select"],
+.ecare-profile-card [class*="Select"],
+.ecare-profile-card [class*="date"],
+.ecare-profile-card [class*="Date"] {
+  max-width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .ecare-profile-grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1rem !important;
+  }
+
+  .ecare-profile-finance-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .ecare-profile-payout-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .ecare-profile-vitals-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1rem !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .ecare-profile-identity-layout {
+    align-items: stretch !important;
+    flex-direction: column-reverse !important;
+    gap: 1rem !important;
+  }
+
+  .ecare-profile-photo-panel {
+    width: 100% !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    padding-bottom: 1rem !important;
+    border-left: 0 !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    text-align: left !important;
+  }
+
+  .ecare-profile-avatar {
+    width: 88px !important;
+    height: 88px !important;
+    margin: 0 !important;
+    flex: 0 0 88px !important;
+  }
+
+  .ecare-profile-photo-panel .ecare-btn-secondary {
+    margin: 0 !important;
+    width: fit-content !important;
+  }
+
+  .ecare-profile-payout-header {
+    align-items: stretch !important;
+    flex-direction: column !important;
+    gap: 0.625rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .ecare-profile-page {
+    padding: 0.25rem 0 !important;
+  }
+
+  .ecare-profile-toolbar {
+    align-items: stretch !important;
+    flex-direction: column !important;
+    gap: 0.625rem !important;
+    margin-bottom: 0.75rem !important;
+    padding: 0 0.25rem !important;
+  }
+
+  .ecare-profile-toolbar h2 {
+    font-size: 1rem !important;
+  }
+
+  .ecare-profile-actions {
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .ecare-profile-actions button {
+    flex: 1 1 0 !important;
+    padding: 0.55rem 0.625rem !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap !important;
+  }
+
+  .ecare-profile-card {
+    margin: 0 0.25rem 0.75rem !important;
+    padding: 0.875rem !important;
+    border-radius: 10px !important;
+  }
+
+  .ecare-profile-section-title {
+    font-size: 0.8125rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .ecare-profile-grid-3,
+  .ecare-profile-vitals-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+
+  .ecare-profile-payout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .ecare-profile-grid > *,
+  .ecare-profile-span-full {
+    grid-column: auto !important;
+    width: 100% !important;
+  }
+
+  .ecare-profile-field,
+  .ecare-profile-vitals-grid > div {
+    margin-bottom: 0.625rem !important;
+    width: 100% !important;
+  }
+
+  .ecare-profile-field label,
+  .ecare-profile-card label {
+    font-size: 0.6875rem !important;
+    margin-bottom: 0.3125rem !important;
+  }
+
+  .ecare-profile-card .ecare-input,
+  .ecare-profile-card input {
+    width: 100% !important;
+    min-height: 36px !important;
+    padding: 0.5rem 0.625rem !important;
+    font-size: 0.75rem !important;
+    border-radius: 7px !important;
+  }
+
+  .ecare-profile-field > div,
+  .ecare-profile-field > button,
+  .ecare-profile-field [style*="width: 100%"],
+  .ecare-profile-card .ecare-profile-grid > div > div,
+  .ecare-profile-card .ecare-profile-grid > div > button {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .ecare-profile-toggle > div {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .ecare-profile-toggle button {
+    padding: 5px 8px !important;
+    font-size: 0.6875rem !important;
+  }
+
+  .ecare-profile-photo-panel {
+    gap: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  .ecare-profile-avatar {
+    width: 64px !important;
+    height: 64px !important;
+    flex-basis: 64px !important;
+  }
+
+  .ecare-profile-avatar svg {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .ecare-profile-photo-title {
+    font-size: 0.7rem !important;
+  }
+
+  .ecare-profile-photo-help {
+    display: none !important;
+  }
+
+  .ecare-profile-photo-panel .ecare-btn-secondary {
+    padding: 5px 10px !important;
+    font-size: 0.6875rem !important;
+  }
+
+  .ecare-profile-finance-grid {
+    padding: 0 0.25rem !important;
+    gap: 0.75rem !important;
+  }
+
+  .ecare-profile-payout-header > div:last-child {
+    width: 100% !important;
+  }
+
+  .ecare-profile-payout-header button {
+    flex: 1 !important;
+    padding: 7px 8px !important;
+    font-size: 0.6875rem !important;
+  }
+
+  .ecare-profile-payout-option {
+    padding: 0.75rem !important;
+    border-radius: 10px !important;
+  }
+
+  .ecare-profile-upload-zone {
+    padding: 1rem !important;
+    border-radius: 10px !important;
+  }
+
+  .ecare-profile-upload-zone svg {
+    width: 30px !important;
+    height: 30px !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .ecare-profile-doc-list {
+    margin-top: 0.75rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .ecare-profile-doc-list > div {
+    padding: 0.625rem 0.75rem !important;
+    border-radius: 9px !important;
+  }
+
+  .ecare-profile-vitals-grid .ecare-btn-primary {
+    padding: 0.625rem !important;
+    border-radius: 8px !important;
+  }
+}
+
+/* Media Query overrides for desktop screens */
+@media (min-width: 1025px) {
+  /* On desktop: ensure collapsed sidebar width works with layout */
+  .ecare-dashboard.collapsed .ecare-sidebar {
+    width: 70px !important;
+  }
+}
+
+/* Media Query overrides for medium screens (tablets / small laptops) */
+@media (max-width: 1200px) {
+  .ecare-dashboard-grid-4col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .ecare-patient-services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .ecare-header {
+    padding: 0 1.5rem !important;
+  }
+  
+  .ecare-mobile-toggle {
+    display: inline-flex !important;
+  }
+
+  .ecare-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    height: 100vh !important;
+    z-index: 1000 !important;
+    width: 285px !important;
+    transform: translateX(0) !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Hide sidebar close button on mobile, overlay handles it */
+  .ecare-sidebar button[title="Expand Sidebar"],
+  .ecare-sidebar button[title="Collapse Sidebar"] {
+    display: none !important;
+  }
+
+  .ecare-sidebar.collapsed {
+    transform: translateX(-100%) !important;
+  }
+
+  .ecare-sidebar-overlay {
+    display: block !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 998;
+    backdrop-filter: blur(4px);
+  }
+
+  .ecare-dashboard-grid-2col {
+    grid-template-columns: 1fr;
+  }
+
+  .ecare-doctor-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .ecare-patient-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Media Query overrides for mobile screens */
+@media (max-width: 768px) {
+  .ecare-header {
+    padding: 0 1rem !important;
+  }
+  
+  .ecare-header-right {
+    gap: 0.75rem !important;
+  }
+
+  .ecare-user-meta {
+    display: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .ecare-header p {
+    display: none !important; /* Hide page description subtitle on mobile */
+  }
+
+  .ecare-header h2 {
+    font-size: 1rem !important;
+  }
+
+  .ecare-toggle-label {
+    display: none !important; /* Keep only icons for doctor toggles */
+  }
+
+  /* Compact 2-column layout for stats on mobile */
+  .ecare-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.5rem !important;
+  }
+
+  .ecare-stat-grid .ecare-card {
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 10px !important;
+  }
+
+  .ecare-stat-grid .ecare-card div[style*="font-size: 1.5rem"] {
+    font-size: 1.1rem !important;
+  }
+
+  .ecare-stat-grid .ecare-card div[style*="font-size: 0.875rem"],
+  .ecare-stat-grid .ecare-card div[style*="font-size: 0.8125rem"] {
+    font-size: 0.7rem !important;
+  }
+
+  .ecare-stat-grid .ecare-card svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .ecare-stat-grid .ecare-card div[style*="margin-bottom: 1rem"] {
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Compact Tables for Mobile */
+  .ecare-table th,
+  .ecare-table td {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Compact Charts for Mobile */
+  .recharts-responsive-container {
+    height: 180px !important;
+  }
+
+  .ecare-dashboard-grid-4col {
+    grid-template-columns: 1fr;
+  }
+
+  .ecare-patient-services-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Ensure padding inside main area is compact */
+  .ecare-main {
+    padding: 0.75rem !important;
+  }
+  
+  .ecare-card {
+    padding: 0.75rem !important;
+  }
+}
+
+.ecare-grid-2col-equal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+@media (max-width: 1024px) {
+  .ecare-grid-2col-equal {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* Slight Border Radius Override - Subtle Rounded Corners Everywhere */
+.ecare-card,
+.ecare-btn,
+.ecare-btn-secondary,
+.ecare-button,
+.ecare-input,
+.ecare-select,
+.ecare-badge,
+.ecare-status-dot,
+.ecare-profile-card,
+.ecare-sub-dot,
+.ecare-logo-icon,
+.ob-logo-icon,
+.ob-step-item,
+.ob-step-number,
+.ob-input,
+.ob-btn,
+.ob-dot,
+.auth-input,
+.auth-btn-brand,
+.auth-btn-social,
+.auth-promo-card,
+.auth-mockup-container,
+.auth-mockup-card,
+.auth-mockup-trend,
+.auth-mockup-status,
+.auth-mockup-list,
+.auth-mockup-row,
+.auth-mockup-dot,
+.auth-dot,
+.auth-logo-icon,
+.auth-error-box,
+*[style*="border-radius"],
+*[style*="borderRadius"] {
+  border-radius: 4px !important;
+}
+
+/* Responsive flex-wrap and stack utilities */
+.ecare-flex-responsive {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .ecare-flex-responsive {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+}
+
+/* Compact dashboard spacing overrides */
+@media (max-width: 640px) {
+  .ecare-card {
+    padding: 0.875rem !important;
+  }
+  .ecare-dashboard-page {
+    gap: 0.75rem !important;
+  }
+  .ecare-patient-services-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* Patient Dashboard actions 2-column layout */
+.ecare-patient-actions-grid-2col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+@media (max-width: 1024px) {
+  .ecare-patient-actions-grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Service Card responsive styles */
+.ecare-service-card {
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  border-radius: 16px;
+  border: 1.5px solid #f1f5f9;
+  background: #f8fafc;
+  text-align: center;
+  transition: all 0.2s;
+}
+@media (max-width: 640px) {
+  .ecare-service-card {
+    padding: 0.75rem !important;
+  }
+}
+
+/* Floating Action Button (FAB) styles for Profile */
+.ecare-profile-fab-container {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  z-index: 9999;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.ecare-profile-fab {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  z-index: 9999;
+  width: 56px;
+  height: 56px;
+  border-radius: 50% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background: var(--ecare-primary);
+  color: white;
+  box-shadow: 0 10px 25px -5px rgba(27, 59, 43, 0.4);
+  padding: 0 !important;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.ecare-profile-fab-secondary {
+  width: 48px;
+  height: 48px;
+  border-radius: 50% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #475569;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 0 !important;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.ecare-profile-fab-primary {
+  width: 48px;
+  height: 48px;
+  border-radius: 50% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background: var(--ecare-primary);
+  color: white;
+  box-shadow: 0 10px 25px -5px rgba(27, 59, 43, 0.4);
+  padding: 0 !important;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+@media (max-width: 640px) {
+  .ecare-profile-fab-container,
+  .ecare-profile-fab {
+    bottom: 1.5rem;
+    right: 1.5rem;
+  }
+  .ecare-profile-fab {
+    width: 48px;
+    height: 48px;
+  }
+  .ecare-profile-fab-secondary,
+  .ecare-profile-fab-primary {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* Dashboard panel responsive hardening */
+.ecare-dashboard-page,
+.ecare-dashboard-page * {
+  min-width: 0;
+}
+
+.ecare-dashboard-page .ecare-card {
+  max-width: 100%;
+}
+
+.ecare-dashboard-page h2,
+.ecare-dashboard-page h3,
+.ecare-dashboard-page h4,
+.ecare-dashboard-page p,
+.ecare-dashboard-page span,
+.ecare-dashboard-page button {
+  overflow-wrap: anywhere;
+}
+
+.ecare-dashboard-page [style*="height: 240px"],
+.ecare-dashboard-page [style*="height: 220px"],
+.ecare-dashboard-page [style*="height: 160px"] {
+  max-width: 100%;
+}
+
+.ecare-dashboard-page [style*="display: flex"][style*="justify-content: space-between"] {
+  min-width: 0;
+}
+
+@media (max-width: 1200px) {
+  .ecare-dashboard-page {
+    gap: 0.875rem !important;
+  }
+
+  .ecare-stat-grid,
+  .ecare-dashboard-grid-2col,
+  .ecare-dashboard-grid-4col,
+  .ecare-doctor-grid,
+  .ecare-grid-2col-equal,
+  .ecare-patient-actions-grid,
+  .ecare-patient-actions-grid-2col {
+    gap: 0.875rem !important;
+  }
+
+  .ecare-dashboard-grid-2col {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 32%) !important;
+  }
+
+  .ecare-doctor-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 36%) !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .ecare-dashboard {
+    min-height: 100dvh;
+  }
+
+  .ecare-main {
+    width: 100%;
+    min-width: 0;
+    padding: 0.875rem !important;
+  }
+
+  .ecare-header {
+    height: 60px !important;
+    min-height: 60px !important;
+  }
+
+  .ecare-dashboard-grid-2col,
+  .ecare-doctor-grid,
+  .ecare-grid-2col-equal,
+  .ecare-patient-actions-grid,
+  .ecare-patient-actions-grid-2col {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ecare-dashboard-grid-4col,
+  .ecare-patient-services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .ecare-dashboard-page .ecare-card[style*="min-height: '340px'"],
+  .ecare-dashboard-page .ecare-card[style*="minHeight: '340px'"],
+  .ecare-dashboard-page .ecare-card[style*="min-height: 340px"],
+  .ecare-dashboard-page .ecare-card[style*="minHeight: 340px"] {
+    min-height: 300px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .ecare-main {
+    padding: 0.75rem !important;
+  }
+
+  .ecare-dashboard-page {
+    gap: 0.75rem !important;
+  }
+
+  .ecare-card {
+    border-radius: 4px !important;
+  }
+
+  .ecare-dashboard-page .ecare-card {
+    padding: 0.75rem !important;
+  }
+
+  .ecare-dashboard-page .ecare-card[style*="padding: 1.5rem"],
+  .ecare-dashboard-page .ecare-card[style*="padding: 1.25rem"],
+  .ecare-dashboard-page .ecare-card[style*="padding: '1.5rem'"],
+  .ecare-dashboard-page .ecare-card[style*="padding: '1.25rem'"] {
+    padding: 0.75rem !important;
+  }
+
+  .ecare-flex-responsive {
+    gap: 0.75rem !important;
+  }
+
+  .ecare-flex-responsive > * {
+    max-width: 100%;
+  }
+
+  .ecare-flex-responsive button,
+  .ecare-dashboard-page .ecare-btn,
+  .ecare-dashboard-page .ecare-btn-secondary,
+  .ecare-dashboard-page .ecare-button {
+    min-width: 0;
+  }
+
+  .ecare-dashboard-page [style*="font-size: 1.75rem"],
+  .ecare-dashboard-page [style*="font-size: '1.75rem'"] {
+    font-size: 1.25rem !important;
+  }
+
+  .ecare-dashboard-page [style*="font-size: 1.5rem"],
+  .ecare-dashboard-page [style*="font-size: '1.5rem'"] {
+    font-size: 1.15rem !important;
+  }
+
+  .ecare-dashboard-page [style*="font-size: 1.25rem"],
+  .ecare-dashboard-page [style*="font-size: '1.25rem'"] {
+    font-size: 1rem !important;
+  }
+
+  .ecare-dashboard-page [style*="width: 64px"],
+  .ecare-dashboard-page [style*="height: 64px"],
+  .ecare-dashboard-page [style*="width: '64px'"],
+  .ecare-dashboard-page [style*="height: '64px'"] {
+    width: 48px !important;
+    height: 48px !important;
+    flex-basis: 48px !important;
+  }
+
+  .ecare-dashboard-page [style*="width: 60px"],
+  .ecare-dashboard-page [style*="height: 60px"],
+  .ecare-dashboard-page [style*="width: '60px'"],
+  .ecare-dashboard-page [style*="height: '60px'"] {
+    width: 46px !important;
+    height: 46px !important;
+    flex-basis: 46px !important;
+  }
+
+  .ecare-dashboard-page [style*="width: 48px"],
+  .ecare-dashboard-page [style*="height: 48px"],
+  .ecare-dashboard-page [style*="width: '48px'"],
+  .ecare-dashboard-page [style*="height: '48px'"] {
+    width: 38px !important;
+    height: 38px !important;
+    flex-basis: 38px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .ecare-dashboard {
+    height: 100dvh;
+  }
+
+  .ecare-header {
+    padding: 0 0.75rem !important;
+  }
+
+  .ecare-header-right {
+    gap: 0.5rem !important;
+  }
+
+  .ecare-main {
+    padding: 0.5rem !important;
+  }
+
+  .ecare-dashboard-page {
+    gap: 0.5rem !important;
+  }
+
+  .ecare-stat-grid,
+  .ecare-dashboard-grid-2col,
+  .ecare-dashboard-grid-4col,
+  .ecare-doctor-grid,
+  .ecare-grid-2col-equal,
+  .ecare-patient-services-grid,
+  .ecare-patient-actions-grid,
+  .ecare-patient-actions-grid-2col {
+    gap: 0.5rem !important;
+    margin: 0 !important;
+  }
+
+  .ecare-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .ecare-stat-grid .ecare-card {
+    min-height: 88px;
+    padding: 0.625rem !important;
+    border-radius: 4px !important;
+  }
+
+  .ecare-stat-grid .ecare-card > div:first-child {
+    margin-bottom: 0.375rem !important;
+  }
+
+  .ecare-stat-grid .ecare-card [style*="width: 48px"],
+  .ecare-stat-grid .ecare-card [style*="height: 48px"] {
+    width: 30px !important;
+    height: 30px !important;
+    flex-basis: 30px !important;
+  }
+
+  .ecare-stat-grid .ecare-card svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+  .ecare-dashboard-grid-4col,
+  .ecare-patient-services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .ecare-dashboard-page .ecare-card {
+    padding: 0.625rem !important;
+  }
+
+  .ecare-dashboard-page .ecare-card[style*="min-height"],
+  .ecare-patient-dashboard .ecare-patient-actions-grid > .ecare-card {
+    min-height: 0 !important;
+  }
+
+  .ecare-dashboard-page [style*="height: 240px"] {
+    height: 185px !important;
+  }
+
+  .ecare-dashboard-page [style*="height: 220px"] {
+    height: 165px !important;
+  }
+
+  .ecare-dashboard-page [style*="height: 160px"] {
+    height: 130px !important;
+  }
+
+  .ecare-dashboard-page .recharts-wrapper,
+  .ecare-dashboard-page .recharts-surface {
+    max-width: 100% !important;
+  }
+
+  .ecare-service-card {
+    min-height: 112px;
+    padding: 0.625rem !important;
+  }
+
+  .ecare-service-card > div:first-child {
+    width: 34px !important;
+    height: 34px !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .ecare-service-card svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .ecare-dashboard-page [style*="display: flex"][style*="gap: 1.5rem"],
+  .ecare-dashboard-page [style*="display: flex"][style*="gap: '1.5rem'"],
+  .ecare-dashboard-page [style*="display: flex"][style*="gap: 1rem"],
+  .ecare-dashboard-page [style*="display: flex"][style*="gap: '1rem'"] {
+    gap: 0.625rem !important;
+  }
+
+  .ecare-dashboard-page [style*="padding: 1rem"],
+  .ecare-dashboard-page [style*="padding: '1rem'"] {
+    padding: 0.625rem !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .ecare-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.5rem !important;
+  }
+
+  .ecare-dashboard-grid-4col,
+  .ecare-patient-services-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ecare-stat-grid .ecare-card {
+    min-height: 74px;
+    padding: 0.5rem 0.625rem !important;
+  }
+
+  .ecare-stat-grid .ecare-card div[style*="font-size: 1.5rem"] {
+    font-size: 1.1rem !important;
+    word-break: break-word !important;
+  }
+
+  .ecare-stat-grid .ecare-card div[style*="font-size: 0.875rem"],
+  .ecare-stat-grid .ecare-card div[style*="font-size: 0.8125rem"] {
+    font-size: 0.68rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .ecare-dashboard-page .ecare-card {
+    padding: 0.5625rem !important;
+  }
+
+  .ecare-flex-responsive {
+    align-items: stretch !important;
+  }
+
+  .ecare-flex-responsive button,
+  .ecare-dashboard-page button[style*="padding"] {
+    width: 100%;
+  }
+
+  .ecare-dashboard-page [style*="gridTemplateColumns: '1fr 1fr'"],
+  .ecare-dashboard-page [style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Mobile app-wide form, modal, support, settings, and table hardening */
+.ecare-settings-mobile-submenu {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .ecare-settings-layout {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0.75rem !important;
+    padding: 0.5rem !important;
+  }
+
+  .ecare-settings-nav {
+    display: none !important;
+  }
+
+  .ecare-settings-mobile-submenu {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding: 0.625rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    backdrop-filter: blur(8px);
+  }
+
+  .ecare-settings-mobile-title {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--ecare-primary);
+    font-size: 0.82rem;
+    font-weight: 800;
+    min-width: 0;
+  }
+
+  .ecare-settings-mobile-title span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ecare-settings-mobile-submenu > div:not(.ecare-settings-mobile-title) {
+    min-width: 0;
+  }
+
+  .ecare-settings-mobile-save {
+    width: auto !important;
+    min-width: 72px !important;
+    height: 38px;
+    padding: 0 0.75rem !important;
+    border-radius: 4px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .ecare-settings-page > div > div:last-child {
+    min-height: 0 !important;
+  }
+
+  .ecare-dashboard form,
+  .ecare-dashboard form > div,
+  .ecare-dashboard .ecare-card,
+  .ecare-dashboard main > div,
+  .ecare-dashboard section {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .ecare-dashboard form [style*="grid-template-columns"]:not(.ecare-keep-grid),
+  .ecare-dashboard .ecare-card [style*="grid-template-columns"]:not(.ecare-keep-grid),
+  .ecare-dashboard main > div [style*="grid-template-columns"]:not(.ecare-keep-grid) {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ecare-dashboard form [style*="display: grid"],
+  .ecare-dashboard .ecare-card [style*="display: grid"] {
+    gap: 0.75rem !important;
+  }
+
+  .ecare-dashboard form [style*="flex: 0 0 320px"],
+  .ecare-dashboard form [style*="flex: 0 0 340px"],
+  .ecare-dashboard form [style*="flex: 0 0 360px"],
+  .ecare-dashboard form [style*="position: sticky"] {
+    position: static !important;
+    flex: 1 1 100% !important;
+    width: 100% !important;
+  }
+
+  .ecare-dashboard form .ecare-card,
+  .ecare-dashboard main > div > .ecare-card {
+    padding: 0.875rem !important;
+  }
+
+  .ecare-dashboard .ecare-form-group {
+    margin-bottom: 0.625rem !important;
+  }
+
+  .ecare-dashboard .ecare-radio-group {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap;
+  }
+
+  .ecare-dashboard .ecare-radio-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0.45rem 0.5rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  .ecare-dashboard form > div[style*="gap: 1.5rem"],
+  .ecare-dashboard form > div[style*="gap: '1.5rem'"],
+  .ecare-dashboard form > div[style*="gap: 2rem"],
+  .ecare-dashboard form > div[style*="gap: '2rem'"] {
+    gap: 0.75rem !important;
+  }
+
+  .ecare-dashboard form [style*="align-items: center"][style*="justify-content: space-between"]:not(.ecare-select-trigger):not(.ecare-datepicker-trigger):not(.ecare-timepicker-trigger) {
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .ecare-dashboard [style*="position: fixed"][style*="inset: 0"] {
+    padding: 0.5rem !important;
+    align-items: stretch !important;
+  }
+
+  .ecare-dashboard [style*="maxWidth"],
+  .ecare-dashboard [style*="max-width"] {
+    max-width: 100% !important;
+  }
+
+  .ecare-dashboard [style*="width: 520px"],
+  .ecare-dashboard [style*="width: '520px'"],
+  .ecare-dashboard [style*="width: 640px"],
+  .ecare-dashboard [style*="width: '640px'"],
+  .ecare-dashboard [style*="width: 720px"],
+  .ecare-dashboard [style*="width: '720px'"],
+  .ecare-dashboard [style*="width: 800px"],
+  .ecare-dashboard [style*="width: '800px'"],
+  .ecare-dashboard [style*="width: 900px"],
+  .ecare-dashboard [style*="width: '900px'"] {
+    width: 100% !important;
+  }
+
+  .ecare-dashboard [style*="max-height: 90vh"],
+  .ecare-dashboard [style*="maxHeight: '90vh'"],
+  .ecare-dashboard [style*="max-height: 95vh"],
+  .ecare-dashboard [style*="maxHeight: '95vh'"] {
+    max-height: calc(100dvh - 1rem) !important;
+  }
+
+  .ecare-dashboard [style*="padding: 1.5rem"],
+  .ecare-dashboard [style*="padding: '1.5rem'"],
+  .ecare-dashboard [style*="padding: 2rem"],
+  .ecare-dashboard [style*="padding: '2rem'"] {
+    padding: 0.875rem !important;
+  }
+
+  .ecare-dashboard [style*="grid-template-columns: 350px 1fr"],
+  .ecare-dashboard [style*="grid-template-columns: 320px 1fr 340px"],
+  .ecare-dashboard [style*="grid-template-columns: 250px 1fr"],
+  .ecare-dashboard [style*="grid-template-columns: 1.2fr 1fr 1.2fr"],
+  .ecare-dashboard [style*="grid-template-columns: 1.2fr 1.2fr 0.8fr"],
+  .ecare-dashboard [style*="grid-template-columns: 1.1fr 0.9fr"],
+  .ecare-dashboard [style*="grid-template-columns: 1.5fr 1fr"],
+  .ecare-dashboard [style*="grid-template-columns: 1fr 1fr 1fr"],
+  .ecare-dashboard [style*="grid-template-columns: repeat(3"],
+  .ecare-dashboard [style*="grid-template-columns: repeat(2"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ecare-dashboard [style*="height: calc(100vh - 120px)"],
+  .ecare-dashboard [style*="min-height: 600px"] {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .ecare-dashboard form button,
+  .ecare-dashboard form .ecare-button,
+  .ecare-dashboard form .ecare-btn-secondary {
+    min-width: 0;
+  }
+
+  .ecare-dashboard form > div:last-child[style*="display: flex"],
+  .ecare-dashboard form [style*="margin-top: auto"] {
+    flex-wrap: wrap;
+  }
+
+  .ecare-dashboard form > div:last-child[style*="display: flex"] > button,
+  .ecare-dashboard form [style*="margin-top: auto"] button {
+    flex: 0 1 auto !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .ecare-data-table-card > div[style*="overflow-x: auto"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ecare-data-table-card .ecare-table {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .ecare-data-table-card .ecare-table th,
+  .ecare-data-table-card .ecare-table td {
+    white-space: nowrap;
+  }
+}
+
+/* Global page and panel spacing normalization */
+#ecare-shadow-inner {
+  --ecare-page-padding: 1rem;
+  --ecare-page-gap: 1rem;
+  --ecare-panel-padding: 1.25rem;
+  --ecare-panel-gap: 1rem;
+  --ecare-mobile-page-padding: 0.625rem;
+  --ecare-mobile-panel-padding: 0.75rem;
+  --ecare-mobile-gap: 0.625rem;
+}
+
+.ecare-main {
+  padding: var(--ecare-page-padding) !important;
+}
+
+.ecare-main > * {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.ecare-main > div,
+.ecare-main > form,
+.ecare-main > section {
+  padding: 0 !important;
+}
+
+.ecare-main form {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.ecare-main form,
+.ecare-dashboard-page,
+.ecare-settings-page,
+.ecare-profile-page {
+  gap: var(--ecare-page-gap) !important;
+}
+
+.ecare-main .ecare-card {
+  padding: var(--ecare-panel-padding) !important;
+}
+
+.ecare-main .ecare-card.ecare-data-table-card {
+  padding: 0 !important;
+}
+
+.ecare-main .ecare-stat-grid .ecare-card {
+  padding: 1rem !important;
+}
+
+.ecare-stat-grid,
+.ecare-dashboard-grid-2col,
+.ecare-dashboard-grid-4col,
+.ecare-doctor-grid,
+.ecare-widget-grid,
+.ecare-grid-2col,
+.ecare-grid-3col,
+.ecare-grid-4col,
+.ecare-grid-2col-equal,
+.ecare-card-row,
+.ecare-patient-services-grid,
+.ecare-patient-actions-grid,
+.ecare-patient-actions-grid-2col,
+.ecare-form-grid {
+  gap: var(--ecare-panel-gap) !important;
+}
+
+.ecare-main .ecare-card + .ecare-card,
+.ecare-main .ecare-card + .ecare-data-table-card,
+.ecare-main .ecare-data-table-card + .ecare-card,
+.ecare-main form > .ecare-card + .ecare-card,
+.ecare-main form > div + div {
+  margin-top: 0 !important;
+}
+
+.ecare-data-table-card {
+  margin-top: 0 !important;
+}
+
+.ecare-table-toolbar {
+  padding: var(--ecare-panel-padding) !important;
+}
+
+.ecare-pagination-footer,
+.ecare-data-table-card > div:last-child {
+  padding: 0.875rem var(--ecare-panel-padding) !important;
+}
+
+.ecare-dashboard [style*="position: fixed"][style*="inset: 0"] > div,
+.ecare-dashboard [style*="position: fixed"][style*="inset: 0"] > form {
+  max-width: min(100%, 920px);
+}
+
+@media (max-width: 1024px) {
+  #ecare-shadow-inner {
+    --ecare-page-padding: 0.875rem;
+    --ecare-page-gap: 0.875rem;
+    --ecare-panel-padding: 1rem;
+    --ecare-panel-gap: 0.875rem;
+  }
+
+  .ecare-main {
+    padding: var(--ecare-page-padding) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #ecare-shadow-inner {
+    --ecare-page-padding: var(--ecare-mobile-page-padding);
+    --ecare-page-gap: var(--ecare-mobile-gap);
+    --ecare-panel-padding: var(--ecare-mobile-panel-padding);
+    --ecare-panel-gap: var(--ecare-mobile-gap);
+  }
+
+  .ecare-main {
+    padding: var(--ecare-page-padding) !important;
+  }
+
+  .ecare-main form,
+  .ecare-dashboard-page,
+  .ecare-settings-page,
+  .ecare-profile-page {
+    gap: var(--ecare-page-gap) !important;
+  }
+
+  .ecare-main .ecare-card,
+  .ecare-main .ecare-stat-grid .ecare-card {
+    padding: var(--ecare-panel-padding) !important;
+  }
+
+  .ecare-main .ecare-card.ecare-data-table-card {
+    padding: 0 !important;
+  }
+
+  .ecare-stat-grid,
+  .ecare-dashboard-grid-2col,
+  .ecare-dashboard-grid-4col,
+  .ecare-doctor-grid,
+  .ecare-widget-grid,
+  .ecare-grid-2col,
+  .ecare-grid-3col,
+  .ecare-grid-4col,
+  .ecare-grid-2col-equal,
+  .ecare-card-row,
+  .ecare-patient-services-grid,
+  .ecare-patient-actions-grid,
+  .ecare-patient-actions-grid-2col,
+  .ecare-form-grid {
+    gap: var(--ecare-panel-gap) !important;
+  }
+
+  .ecare-table-toolbar,
+  .ecare-pagination-footer,
+  .ecare-data-table-card > div:last-child {
+    padding: var(--ecare-panel-padding) !important;
+  }
+
+  .ecare-dashboard [style*="position: fixed"][style*="inset: 0"] {
+    padding: var(--ecare-page-padding) !important;
+  }
+
+  .ecare-dashboard [style*="position: fixed"][style*="inset: 0"] > div,
+  .ecare-dashboard [style*="position: fixed"][style*="inset: 0"] > form {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #ecare-shadow-inner {
+    --ecare-mobile-page-padding: 0.5rem;
+    --ecare-mobile-panel-padding: 0.625rem;
+    --ecare-mobile-gap: 0.5rem;
+  }
+}
+
+/* Final spacing authority: keep page gutters and section gaps identical */
+#ecare-shadow-inner {
+  --ecare-space-page: 1rem;
+  --ecare-space-section: 1rem;
+  --ecare-space-panel: 1rem;
+}
+
+.ecare-main {
+  padding: var(--ecare-space-page) !important;
+}
+
+.ecare-main > * {
+  margin: 0 !important;
+}
+
+.ecare-main > div:not(.ecare-settings-layout):not(.ecare-support-grid),
+.ecare-main > section,
+.ecare-main > form,
+.ecare-dashboard-page,
+.ecare-profile-page,
+.ecare-settings-page {
+  width: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-width: 0;
+}
+
+.ecare-main > div:not(.ecare-settings-layout):not([class*="auth"]):not([class*="invoice"]):not(.ecare-support-grid),
+.ecare-main > form,
+.ecare-dashboard-page,
+.ecare-profile-page,
+.ecare-staff-page > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ecare-space-section) !important;
+}
+
+.ecare-settings-layout {
+  padding: 0 !important;
+  margin: 0 !important;
+  gap: var(--ecare-space-section) !important;
+}
+
+.ecare-main .ecare-card,
+.ecare-main .ecare-profile-card {
+  margin: 0 !important;
+  padding: var(--ecare-space-panel) !important;
+}
+
+.ecare-main .ecare-data-table-card {
+  margin: 0 !important;
+  margin-top: 0 !important;
+  padding: 0 !important;
+}
+
+.ecare-main .ecare-stat-grid {
+  margin: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.ecare-main .ecare-stat-grid + .ecare-data-table-card {
+  margin-top: 0 !important;
+}
+
+.ecare-main .ecare-card > :first-child,
+.ecare-main .ecare-profile-card > :first-child {
+  margin-top: 0 !important;
+}
+
+.ecare-main .ecare-card > :last-child,
+.ecare-main .ecare-profile-card > :last-child {
+  margin-bottom: 0 !important;
+}
+
+.ecare-stat-grid,
+.ecare-dashboard-grid-2col,
+.ecare-dashboard-grid-4col,
+.ecare-doctor-grid,
+.ecare-widget-grid,
+.ecare-grid-2col,
+.ecare-grid-3col,
+.ecare-grid-4col,
+.ecare-grid-2col-equal,
+.ecare-card-row,
+.ecare-patient-services-grid,
+.ecare-patient-actions-grid,
+.ecare-patient-actions-grid-2col,
+.ecare-form-grid {
+  margin: 0 !important;
+  gap: var(--ecare-space-section) !important;
+}
+
+.ecare-main form [style*="display: grid"],
+.ecare-main form [style*="display: flex"],
+.ecare-main .ecare-card [style*="display: grid"] {
+  gap: var(--ecare-space-section) !important;
+}
+
+.ecare-table-toolbar,
+.ecare-pagination-footer,
+.ecare-data-table-card > div:last-child {
+  padding: var(--ecare-space-panel) !important;
+}
+
+@media (max-width: 1024px) {
+  #ecare-shadow-inner {
+    --ecare-space-page: 0.875rem;
+    --ecare-space-section: 0.875rem;
+    --ecare-space-panel: 0.875rem;
+  }
+}
+
+@media (max-width: 768px) {
+  #ecare-shadow-inner {
+    --ecare-space-page: 0.75rem;
+    --ecare-space-section: 0.75rem;
+    --ecare-space-panel: 0.75rem;
+    --ecare-mobile-page-padding: 0.75rem;
+    --ecare-mobile-panel-padding: 0.75rem;
+    --ecare-mobile-gap: 0.75rem;
+    --ecare-header-title-size: 1.05rem;
+    --ecare-header-desc-size: 0.75rem;
+  }
+
+  #ecare-shadow-inner h2,
+  #ecare-shadow-inner .ecare-card h2,
+  #ecare-shadow-inner .ecare-table-toolbar-title h2 {
+    font-size: 1.05rem !important;
+  }
+
+  #ecare-shadow-inner h3,
+  #ecare-shadow-inner .ecare-card h3 {
+    font-size: 0.9rem !important;
+  }
+
+  #ecare-shadow-inner h4,
+  #ecare-shadow-inner .ecare-card h4 {
+    font-size: 0.78rem !important;
+  }
+
+  .ecare-main {
+    padding: var(--ecare-space-page) !important;
+  }
+
+  .ecare-main > div:not(.ecare-settings-layout):not(.ecare-support-grid),
+  .ecare-main > section,
+  .ecare-main > form,
+  .ecare-dashboard-page,
+  .ecare-profile-page,
+  .ecare-settings-page {
+    gap: var(--ecare-space-section) !important;
+  }
+
+  .ecare-main .ecare-card,
+  .ecare-main .ecare-profile-card,
+  .ecare-main .ecare-stat-grid .ecare-card {
+    padding: var(--ecare-space-panel) !important;
+  }
+
+  .ecare-main .ecare-data-table-card {
+    padding: 0 !important;
+  }
+
+  .ecare-settings-layout {
+    padding: 0 !important;
+    gap: var(--ecare-space-section) !important;
+  }
+
+  .ecare-settings-mobile-submenu {
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #ecare-shadow-inner {
+    --ecare-space-page: 0.75rem;
+    --ecare-space-section: 0.75rem;
+    --ecare-space-panel: 0.75rem;
+    --ecare-mobile-page-padding: 0.75rem;
+    --ecare-mobile-panel-padding: 0.75rem;
+    --ecare-mobile-gap: 0.75rem;
+    --ecare-header-title-size: 0.95rem;
+    --ecare-header-desc-size: 0.68rem;
+  }
+  
+  #ecare-shadow-inner h2,
+  #ecare-shadow-inner .ecare-card h2,
+  #ecare-shadow-inner .ecare-table-toolbar-title h2 {
+    font-size: 0.95rem !important;
+  }
+
+  #ecare-shadow-inner h3,
+  #ecare-shadow-inner .ecare-card h3 {
+    font-size: 0.82rem !important;
+  }
+
+  #ecare-shadow-inner h4,
+  #ecare-shadow-inner .ecare-card h4 {
+    font-size: 0.74rem !important;
+  }
+
+  .ecare-stat-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.5rem !important;
+    margin: 0 !important;
+  }
+
+  .ecare-stat-grid .ecare-card {
+    min-width: 0 !important;
+    padding: 0.5rem 0.625rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .ecare-stat-grid .ecare-card div[style*="font-size: 1.5rem"] {
+    font-size: 1.1rem !important;
+    word-break: break-word !important;
+  }
+
+  .ecare-stat-grid .ecare-card div[style*="font-size: 0.875rem"],
+  .ecare-stat-grid .ecare-card div[style*="font-size: 0.8125rem"] {
+    font-size: 0.68rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+/* Telemedicine Virtual Room Full-Width Fix */
+.ecare-virtual-room {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  z-index: 99999 !important;
+  background: #020617 !important;
+}
+
+.ecare-virtual-room > div {
+  max-width: 100% !important;
+}
+
+/* Support Center Responsive Layout & Header Fixes */
+.ecare-main > div.ecare-support-grid,
+.ecare-support-grid {
+  display: grid !important;
+  grid-template-columns: 350px 1fr !important;
+  gap: 1.25rem !important;
+  height: calc(100vh - 140px) !important;
+  min-height: 600px !important;
+}
+
+@media (max-width: 992px) {
+  .ecare-main > div.ecare-support-grid,
+  .ecare-support-grid {
+    grid-template-columns: 300px 1fr !important;
+    gap: 1rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .ecare-main > div.ecare-support-grid,
+  .ecare-support-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .ecare-support-grid .ecare-support-mobile-hide {
+    display: none !important;
+  }
+
+  .ecare-support-back-btn {
+    display: inline-flex !important;
+  }
+
+  .ecare-support-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .ecare-support-header-actions {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    margin-top: 0.5rem !important;
+  }
+}
+
+.ecare-support-header-actions,
+.ecare-support-header-actions > div {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  flex-wrap: nowrap !important;
+  width: auto !important;
+  flex-shrink: 0 !important;
+}
+
+.ecare-support-header-actions button,
+.ecare-support-header-actions .ecare-button,
+.ecare-support-header-actions .ecare-btn-secondary {
+  width: auto !important;
+  min-width: 0 !important;
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
+
+/* Sophisticated Data Table Styling */
+.ecare-table-container {
+  overflow-x: auto !important;
+  width: 100% !important;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.ecare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  background-color: #ffffff;
+}
+
+.ecare-table th {
+  padding: 0.875rem 1rem !important;
+  font-size: 0.725rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  color: #64748b !important;
+  background-color: #f8fafc !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+  white-space: nowrap !important;
+  text-align: left;
+  user-select: none;
+}
+
+.ecare-table td {
+  padding: 0.875rem 1rem !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+  color: #1e293b !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  line-height: 1.4 !important;
+}
+
+.ecare-table tr:last-child td {
+  border-bottom: none !important;
+}
+
+.ecare-table tr:hover td {
+  background-color: #f8fafc !important;
+}
+
+.ecare-table td > span,
+.ecare-table td > p,
+.ecare-table td > label {
+  white-space: nowrap !important;
+}
+
+.ecare-table td [style*="border-radius: 20px"]:not(.ecare-dropdown-item):not(.ecare-select-dropdown):not(.ecare-select-dropdown *):not(.ecare-dropdown-menu *),
+.ecare-table td [style*="border-radius: 6px"]:not(.ecare-dropdown-item):not(.ecare-select-dropdown):not(.ecare-select-dropdown *):not(.ecare-dropdown-menu *),
+.ecare-table td [style*="border-radius: 8px"]:not(.ecare-dropdown-item):not(.ecare-select-dropdown):not(.ecare-select-dropdown *):not(.ecare-dropdown-menu *) {
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── TopBar Notification Panel & Mobile Responsiveness ── */
+.ecare-notif-backdrop {
+  display: none;
+}
+
+.ecare-notif-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: -80px;
+  width: 380px;
+  max-width: calc(100vw - 24px);
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  z-index: 500;
+}
+
+.ecare-notif-header {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+}
+
+.ecare-notif-close-mobile-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.ecare-notif-close-mobile-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.ecare-notif-body {
+  max-height: 420px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ecare-notif-item {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  gap: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.ecare-notif-item:last-child {
+  border-bottom: none;
+}
+
+@media (hover: hover) {
+  .ecare-notif-item:hover {
+    background-color: #f8fafc;
+  }
+  .ecare-notif-item.unread:hover {
+    background-color: #e0f2fe;
+  }
+}
+
+.ecare-notif-item:active {
+  background-color: #f1f5f9;
+}
+
+/* Tablet & Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+  .ecare-notif-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 1040;
+  }
+
+  .ecare-notif-dropdown {
+    position: fixed !important;
+    top: 68px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: 440px !important;
+    margin: 0 auto !important;
+    max-height: calc(100dvh - 84px) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.08) !important;
+    z-index: 1050 !important;
+  }
+
+  .ecare-notif-body {
+    max-height: calc(100dvh - 155px) !important;
+  }
+
+  .ecare-notif-close-mobile-btn {
+    display: flex !important;
+  }
+
+  .ecare-notif-header {
+    padding: 0.875rem 1rem !important;
+  }
+
+  .ecare-notif-item {
+    padding: 0.875rem 1rem !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .ecare-notif-dropdown {
+    left: 8px !important;
+    right: 8px !important;
+    top: 64px !important;
+  }
+  .ecare-notif-btn-text {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Attendance Manager Responsive Enhancements
+   ========================================================================== */
+.ecare-attendance-controls-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.ecare-attendance-controls-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ecare-attendance-tabs {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.ecare-attendance-tab-btn {
+  border: none;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ecare-attendance-divider {
+  height: 24px;
+  width: 1px;
+  background: #e2e8f0;
+}
+
+.ecare-attendance-date-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ecare-attendance-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 10px;
+  margin-left: auto;
+  white-space: nowrap;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.ecare-attendance-table-card {
+  padding: 1.5rem;
+}
+
+/* Tablet & Mobile Breakpoints for Attendance */
+@media (max-width: 768px) {
+  .ecare-attendance-controls-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.875rem !important;
+    padding: 0.875rem 1rem !important;
+  }
+
+  .ecare-attendance-controls-left {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+  }
+
+  .ecare-attendance-tabs {
+    width: 100% !important;
+    display: flex !important;
+  }
+
+  .ecare-attendance-tab-btn {
+    flex: 1 !important;
+    text-align: center !important;
+    justify-content: center !important;
+    padding: 7px 10px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .ecare-attendance-divider {
+    display: none !important;
+  }
+
+  .ecare-attendance-date-group {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .ecare-attendance-date-group > div:last-child {
+    flex: 1 !important;
+    max-width: 200px !important;
+  }
+
+  .ecare-attendance-save-btn {
+    width: 100% !important;
+    margin-left: 0 !important;
+    justify-content: center !important;
+    padding: 9px 16px !important;
+  }
+
+  .ecare-attendance-table-card {
+    padding: 1rem 0.75rem !important;
+  }
+
+  /* History Grid Split */
+  .ecare-attendance-history-split {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  .ecare-attendance-history-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.875rem !important;
+  }
+
+  .ecare-attendance-history-header-left {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+
+  .ecare-attendance-history-header-left .ecare-attendance-divider {
+    display: none !important;
+  }
+
+  .ecare-attendance-history-period {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .ecare-attendance-history-period > div:last-child {
+    flex: 1 !important;
+    max-width: 240px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .ecare-attendance-tab-btn {
+    padding: 6px 4px !important;
+    font-size: 0.6875rem !important;
+    letter-spacing: -0.01em;
+  }
+  
+  .ecare-attendance-date-group {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+  }
+
+  .ecare-attendance-date-group > div:last-child {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .ecare-attendance-history-period {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+  }
+
+  .ecare-attendance-history-period > div:last-child {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+}
+
+/* ─── E-CARE Custom Toast Notifications ───────────────────────────────────── */
+@keyframes ecare-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ecare-toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ecare-toast-slide-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+}
+
+.ecare-toast-card {
+  box-sizing: border-box !important;
+  font-family: var(--ecare-font-family, 'Plus Jakarta Sans', system-ui, sans-serif) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.ecare-toast-enter {
+  animation: ecare-toast-slide-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.ecare-toast-leave {
+  animation: ecare-toast-slide-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.ecare-toast-badge {
+  flex-shrink: 0 !important;
+}
+
+.ecare-toast-message {
+  font-size: 0.845rem !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+
+.ecare-toast-close:hover {
+  color: #1e293b !important;
+  background: rgba(0, 0, 0, 0.07) !important;
+}
+
+/* Fallback for raw react-hot-toast DOM elements inside shadow DOM */
+div[data-toaster-container] > div,
+.react-hot-toast > div {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.12), 0 6px 12px -3px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 12px !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
