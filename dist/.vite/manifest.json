@@ -1,51 +1,51 @@
 {
-  "_AmbulanceRequest-L9tozdRG.js": {
-    "file": "assets/AmbulanceRequest-L9tozdRG.js",
+  "_AmbulanceRequest-CjzN3j4K.js": {
+    "file": "assets/AmbulanceRequest-CjzN3j4K.js",
     "name": "AmbulanceRequest",
     "imports": [
-      "_src-sKid97TB.js",
-      "_useStore-FKbJehlt.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_x-sxKovTkf.js",
-      "_stethoscope-BKrEx6Lr.js",
-      "_clock-xmP0C_rI.js",
-      "_triangle-alert-Bo63Qexi.js"
+      "_src-Dg4Cn4P2.js",
+      "_useStore-BW4ploR3.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_x-D5AfofKV.js",
+      "_stethoscope-aoBL8xqQ.js",
+      "_clock-BwCx9b9f.js",
+      "_triangle-alert-BnY7Nk8Y.js"
     ]
   },
-  "_ArrowRight.esm-JKBhlUnd.js": {
-    "file": "assets/ArrowRight.esm-JKBhlUnd.js",
+  "_ArrowRight.esm-vm3Wxy-V.js": {
+    "file": "assets/ArrowRight.esm-vm3Wxy-V.js",
     "name": "ArrowRight.esm",
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js"
     ]
   },
-  "_AuthApp-D8NT6Cqi.js": {
-    "file": "assets/AuthApp-D8NT6Cqi.js",
+  "_AuthApp-DxjbRxfk.js": {
+    "file": "assets/AuthApp-DxjbRxfk.js",
     "name": "AuthApp",
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_ArrowRight.esm-JKBhlUnd.js",
-      "_CustomDatePicker-B_v66_am.js",
-      "_CheckCircle.esm-DC_X9pni.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_ArrowRight.esm-vm3Wxy-V.js",
+      "_CustomDatePicker-B6tCFgbc.js",
+      "_CheckCircle.esm-CmQJ-ftr.js"
     ],
     "dynamicImports": [
-      "_firebase-CcUPGelJ.js"
+      "_firebase-BkREwsBA.js"
     ]
   },
-  "_CareProviderBookingRequest-f8R5B3D7.js": {
-    "file": "assets/CareProviderBookingRequest-f8R5B3D7.js",
+  "_CareProviderBookingRequest-Bi7YwpSL.js": {
+    "file": "assets/CareProviderBookingRequest-Bi7YwpSL.js",
     "name": "CareProviderBookingRequest",
     "imports": [
-      "_src-sKid97TB.js",
-      "_useStore-FKbJehlt.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_CustomDatePicker-B_v66_am.js",
-      "_CheckCircle.esm-DC_X9pni.js",
-      "_CustomTimePicker-1ixy4tUS.js",
-      "_ShieldCheck.esm-x5QRkQ2b.js"
+      "_src-Dg4Cn4P2.js",
+      "_useStore-BW4ploR3.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_CustomDatePicker-B6tCFgbc.js",
+      "_CheckCircle.esm-CmQJ-ftr.js",
+      "_CustomTimePicker-CbDIqvnh.js",
+      "_ShieldCheck.esm-CSm08RLU.js"
     ],
     "assets": [
       "assets/cg_nurse-8UcJLwru.png",
@@ -54,227 +54,227 @@
       "assets/cg_physiotherapist-Be_W5OUl.png"
     ]
   },
-  "_Cart-DLBBcVIi.js": {
-    "file": "assets/Cart-DLBBcVIi.js",
+  "_Cart-Dtd-q7gB.js": {
+    "file": "assets/Cart-Dtd-q7gB.js",
     "name": "Cart",
     "imports": [
-      "_src-sKid97TB.js",
-      "_AuthApp-D8NT6Cqi.js",
-      "_useStore-FKbJehlt.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_ArrowRight.esm-JKBhlUnd.js",
-      "_CustomDatePicker-B_v66_am.js",
-      "_CheckCircle.esm-DC_X9pni.js",
-      "_ClipboardText.esm-D461YN5O.js",
-      "_CustomTimePicker-1ixy4tUS.js",
-      "_ShieldCheck.esm-x5QRkQ2b.js",
-      "_useAuth-DgBbpki8.js",
-      "_portal-DKShLlFh.js"
+      "_src-Dg4Cn4P2.js",
+      "_AuthApp-DxjbRxfk.js",
+      "_useStore-BW4ploR3.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_ArrowRight.esm-vm3Wxy-V.js",
+      "_CustomDatePicker-B6tCFgbc.js",
+      "_CheckCircle.esm-CmQJ-ftr.js",
+      "_ClipboardText.esm-DGBSEJT_.js",
+      "_CustomTimePicker-CbDIqvnh.js",
+      "_ShieldCheck.esm-CSm08RLU.js",
+      "_useAuth-BwCFdJFF.js",
+      "_portal-DUfEYA4m.js"
     ]
   },
-  "_CheckCircle.esm-DC_X9pni.js": {
-    "file": "assets/CheckCircle.esm-DC_X9pni.js",
+  "_CheckCircle.esm-CmQJ-ftr.js": {
+    "file": "assets/CheckCircle.esm-CmQJ-ftr.js",
     "name": "CheckCircle.esm",
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js"
     ]
   },
-  "_ClipboardText.esm-D461YN5O.js": {
-    "file": "assets/ClipboardText.esm-D461YN5O.js",
+  "_ClipboardText.esm-DGBSEJT_.js": {
+    "file": "assets/ClipboardText.esm-DGBSEJT_.js",
     "name": "ClipboardText.esm",
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js"
     ]
   },
-  "_Clock.esm-CVL6mSsA.js": {
-    "file": "assets/Clock.esm-CVL6mSsA.js",
+  "_Clock.esm-MCOdrFBj.js": {
+    "file": "assets/Clock.esm-MCOdrFBj.js",
     "name": "Clock.esm",
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js"
     ]
   },
-  "_CustomDatePicker-B_v66_am.js": {
-    "file": "assets/CustomDatePicker-B_v66_am.js",
+  "_CustomDatePicker-B6tCFgbc.js": {
+    "file": "assets/CustomDatePicker-B6tCFgbc.js",
     "name": "CustomDatePicker",
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js"
     ]
   },
-  "_CustomSelect-B2E96r_4.js": {
-    "file": "assets/CustomSelect-B2E96r_4.js",
+  "_CustomSelect-BNwUCgJg.js": {
+    "file": "assets/CustomSelect-BNwUCgJg.js",
     "name": "CustomSelect",
     "imports": [
-      "_src-sKid97TB.js"
+      "_src-Dg4Cn4P2.js"
     ]
   },
-  "_CustomTimePicker-1ixy4tUS.js": {
-    "file": "assets/CustomTimePicker-1ixy4tUS.js",
+  "_CustomTimePicker-CbDIqvnh.js": {
+    "file": "assets/CustomTimePicker-CbDIqvnh.js",
     "name": "CustomTimePicker",
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_Clock.esm-CVL6mSsA.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_Clock.esm-MCOdrFBj.js"
     ]
   },
-  "_EcareToaster-BU7GKDP0.js": {
-    "file": "assets/EcareToaster-BU7GKDP0.js",
+  "_EcareToaster-BPK8NY-s.js": {
+    "file": "assets/EcareToaster-BPK8NY-s.js",
     "name": "EcareToaster",
     "imports": [
-      "_src-sKid97TB.js",
-      "_x-sxKovTkf.js"
+      "_src-Dg4Cn4P2.js",
+      "_x-D5AfofKV.js"
     ]
   },
-  "_Heart.esm-Yl2YODYG.js": {
-    "file": "assets/Heart.esm-Yl2YODYG.js",
+  "_Heart.esm-Cs4jL6Wy.js": {
+    "file": "assets/Heart.esm-Cs4jL6Wy.js",
     "name": "Heart.esm",
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js"
     ]
   },
-  "_InstantBooking-B-7XNxqI.js": {
-    "file": "assets/InstantBooking-B-7XNxqI.js",
+  "_InstantBooking-DurJv_Pu.js": {
+    "file": "assets/InstantBooking-DurJv_Pu.js",
     "name": "InstantBooking",
     "imports": [
-      "_src-sKid97TB.js",
-      "_AuthApp-D8NT6Cqi.js",
-      "_useStore-FKbJehlt.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_ArrowRight.esm-JKBhlUnd.js",
-      "_CheckCircle.esm-DC_X9pni.js",
-      "_ClipboardText.esm-D461YN5O.js",
-      "_ShieldCheck.esm-x5QRkQ2b.js",
-      "_UploadSimple.esm-B1hv-KiO.js",
-      "_portal-DKShLlFh.js"
+      "_src-Dg4Cn4P2.js",
+      "_AuthApp-DxjbRxfk.js",
+      "_useStore-BW4ploR3.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_ArrowRight.esm-vm3Wxy-V.js",
+      "_CheckCircle.esm-CmQJ-ftr.js",
+      "_ClipboardText.esm-DGBSEJT_.js",
+      "_ShieldCheck.esm-CSm08RLU.js",
+      "_UploadSimple.esm-O3Lv6-ge.js",
+      "_portal-DUfEYA4m.js"
     ]
   },
-  "_LabBookingRequest-lH13Q3lJ.js": {
-    "file": "assets/LabBookingRequest-lH13Q3lJ.js",
+  "_LabBookingRequest-YqZ7bDwE.js": {
+    "file": "assets/LabBookingRequest-YqZ7bDwE.js",
     "name": "LabBookingRequest",
     "imports": [
-      "_src-sKid97TB.js",
-      "_useStore-FKbJehlt.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_ArrowRight.esm-JKBhlUnd.js"
+      "_src-Dg4Cn4P2.js",
+      "_useStore-BW4ploR3.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_ArrowRight.esm-vm3Wxy-V.js"
     ]
   },
-  "_ShieldCheck.esm-x5QRkQ2b.js": {
-    "file": "assets/ShieldCheck.esm-x5QRkQ2b.js",
+  "_ShieldCheck.esm-CSm08RLU.js": {
+    "file": "assets/ShieldCheck.esm-CSm08RLU.js",
     "name": "ShieldCheck.esm",
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js"
     ]
   },
-  "_UploadSimple.esm-B1hv-KiO.js": {
-    "file": "assets/UploadSimple.esm-B1hv-KiO.js",
+  "_UploadSimple.esm-O3Lv6-ge.js": {
+    "file": "assets/UploadSimple.esm-O3Lv6-ge.js",
     "name": "UploadSimple.esm",
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js"
     ]
   },
-  "_arrow-right-NgTH3mPW.js": {
-    "file": "assets/arrow-right-NgTH3mPW.js",
+  "_arrow-right-BRPSBI3c.js": {
+    "file": "assets/arrow-right-BRPSBI3c.js",
     "name": "arrow-right",
     "imports": [
-      "_x-sxKovTkf.js"
+      "_x-D5AfofKV.js"
     ]
   },
-  "_clock-xmP0C_rI.js": {
-    "file": "assets/clock-xmP0C_rI.js",
+  "_clock-BwCx9b9f.js": {
+    "file": "assets/clock-BwCx9b9f.js",
     "name": "clock",
     "imports": [
-      "_x-sxKovTkf.js"
+      "_x-D5AfofKV.js"
     ]
   },
-  "_firebase-CcUPGelJ.js": {
-    "file": "assets/firebase-CcUPGelJ.js",
+  "_firebase-BkREwsBA.js": {
+    "file": "assets/firebase-BkREwsBA.js",
     "name": "firebase",
     "imports": [
-      "_src-sKid97TB.js"
+      "_src-Dg4Cn4P2.js"
     ]
   },
-  "_portal-DKShLlFh.js": {
-    "file": "assets/portal-DKShLlFh.js",
+  "_portal-DUfEYA4m.js": {
+    "file": "assets/portal-DUfEYA4m.js",
     "name": "portal",
     "imports": [
-      "_src-sKid97TB.js"
+      "_src-Dg4Cn4P2.js"
     ]
   },
-  "_src-BkjjdLOx.css": {
-    "file": "assets/src-BkjjdLOx.css",
-    "src": "_src-BkjjdLOx.css"
+  "_src-CfCc_x0f.css": {
+    "file": "assets/src-CfCc_x0f.css",
+    "src": "_src-CfCc_x0f.css"
   },
-  "_src-sKid97TB.js": {
-    "file": "assets/src-sKid97TB.js",
+  "_src-Dg4Cn4P2.js": {
+    "file": "assets/src-Dg4Cn4P2.js",
     "name": "src",
     "css": [
-      "assets/src-BkjjdLOx.css"
+      "assets/src-CfCc_x0f.css"
     ]
   },
-  "_stethoscope-BKrEx6Lr.js": {
-    "file": "assets/stethoscope-BKrEx6Lr.js",
+  "_stethoscope-aoBL8xqQ.js": {
+    "file": "assets/stethoscope-aoBL8xqQ.js",
     "name": "stethoscope",
     "imports": [
-      "_x-sxKovTkf.js"
+      "_x-D5AfofKV.js"
     ]
   },
-  "_triangle-alert-Bo63Qexi.js": {
-    "file": "assets/triangle-alert-Bo63Qexi.js",
+  "_triangle-alert-BnY7Nk8Y.js": {
+    "file": "assets/triangle-alert-BnY7Nk8Y.js",
     "name": "triangle-alert",
     "imports": [
-      "_x-sxKovTkf.js"
+      "_x-D5AfofKV.js"
     ]
   },
-  "_truck-Bd38bJ-D.js": {
-    "file": "assets/truck-Bd38bJ-D.js",
+  "_truck-BEoZaPHy.js": {
+    "file": "assets/truck-BEoZaPHy.js",
     "name": "truck",
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_x-sxKovTkf.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_x-D5AfofKV.js"
     ]
   },
-  "_useAuth-DgBbpki8.js": {
-    "file": "assets/useAuth-DgBbpki8.js",
+  "_useAuth-BwCFdJFF.js": {
+    "file": "assets/useAuth-BwCFdJFF.js",
     "name": "useAuth",
     "imports": [
-      "_useStore-FKbJehlt.js"
+      "_useStore-BW4ploR3.js"
     ]
   },
-  "_useStore-FKbJehlt.js": {
-    "file": "assets/useStore-FKbJehlt.js",
+  "_useStore-BW4ploR3.js": {
+    "file": "assets/useStore-BW4ploR3.js",
     "name": "useStore",
     "imports": [
-      "_src-sKid97TB.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_x-sxKovTkf.js",
-      "_stethoscope-BKrEx6Lr.js"
+      "_src-Dg4Cn4P2.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_x-D5AfofKV.js",
+      "_stethoscope-aoBL8xqQ.js"
     ]
   },
-  "_x-sxKovTkf.js": {
-    "file": "assets/x-sxKovTkf.js",
+  "_x-D5AfofKV.js": {
+    "file": "assets/x-D5AfofKV.js",
     "name": "x",
     "imports": [
-      "_src-sKid97TB.js"
+      "_src-Dg4Cn4P2.js"
     ]
   },
   "src/ambulanceBooking.jsx": {
-    "file": "assets/ambulanceBooking-Bv7q5_Ff.js",
+    "file": "assets/ambulanceBooking-egCW_inR.js",
     "name": "ambulanceBooking",
     "src": "src/ambulanceBooking.jsx",
     "isEntry": true,
     "imports": [
-      "_src-sKid97TB.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_AmbulanceRequest-L9tozdRG.js"
+      "_src-Dg4Cn4P2.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_AmbulanceRequest-CjzN3j4K.js"
     ]
   },
   "src/assets/cg_nanny.png": {
@@ -294,149 +294,149 @@
     "src": "src/assets/cg_senior_care.png"
   },
   "src/auth.jsx": {
-    "file": "assets/auth-BBqy7kQ1.js",
+    "file": "assets/auth-DVwLY0jK.js",
     "name": "auth",
     "src": "src/auth.jsx",
     "isEntry": true,
     "imports": [
-      "_src-sKid97TB.js",
-      "_AuthApp-D8NT6Cqi.js"
+      "_src-Dg4Cn4P2.js",
+      "_AuthApp-DxjbRxfk.js"
     ]
   },
   "src/bloodBankPage.jsx": {
-    "file": "assets/bloodBankPage-WYgEM7QN.js",
+    "file": "assets/bloodBankPage-CsCzC6Hs.js",
     "name": "bloodBankPage",
     "src": "src/bloodBankPage.jsx",
     "isEntry": true,
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_Clock.esm-CVL6mSsA.js",
-      "_Heart.esm-Yl2YODYG.js",
-      "_ShieldCheck.esm-x5QRkQ2b.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_Clock.esm-MCOdrFBj.js",
+      "_Heart.esm-Cs4jL6Wy.js",
+      "_ShieldCheck.esm-CSm08RLU.js"
     ]
   },
   "src/careProviderBooking.jsx": {
-    "file": "assets/careProviderBooking-CX71ZxL5.js",
+    "file": "assets/careProviderBooking-Cc2RciV3.js",
     "name": "careProviderBooking",
     "src": "src/careProviderBooking.jsx",
     "isEntry": true,
     "imports": [
-      "_src-sKid97TB.js",
-      "_useStore-FKbJehlt.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_CareProviderBookingRequest-f8R5B3D7.js"
+      "_src-Dg4Cn4P2.js",
+      "_useStore-BW4ploR3.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_CareProviderBookingRequest-Bi7YwpSL.js"
     ]
   },
   "src/cartPage.jsx": {
-    "file": "assets/cartPage-BAanIwIc.js",
+    "file": "assets/cartPage-CHa74Pcq.js",
     "name": "cartPage",
     "src": "src/cartPage.jsx",
     "isEntry": true,
     "imports": [
-      "_src-sKid97TB.js",
-      "_useStore-FKbJehlt.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_Cart-DLBBcVIi.js"
+      "_src-Dg4Cn4P2.js",
+      "_useStore-BW4ploR3.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_Cart-Dtd-q7gB.js"
     ]
   },
   "src/doctorsPage.jsx": {
-    "file": "assets/doctorsPage-2LLY8_Cj.js",
+    "file": "assets/doctorsPage-Bv48yx0k.js",
     "name": "doctorsPage",
     "src": "src/doctorsPage.jsx",
     "isEntry": true,
     "imports": [
-      "_src-sKid97TB.js",
-      "_AuthApp-D8NT6Cqi.js",
-      "_useStore-FKbJehlt.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_x-sxKovTkf.js",
-      "_arrow-right-NgTH3mPW.js",
-      "_clock-xmP0C_rI.js",
-      "_useAuth-DgBbpki8.js",
-      "_portal-DKShLlFh.js"
+      "_src-Dg4Cn4P2.js",
+      "_AuthApp-DxjbRxfk.js",
+      "_useStore-BW4ploR3.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_x-D5AfofKV.js",
+      "_arrow-right-BRPSBI3c.js",
+      "_clock-BwCx9b9f.js",
+      "_useAuth-BwCFdJFF.js",
+      "_portal-DUfEYA4m.js"
     ]
   },
   "src/instantBooking.jsx": {
-    "file": "assets/instantBooking-D_GPNfdL.js",
+    "file": "assets/instantBooking-Dpucq8R9.js",
     "name": "instantBooking",
     "src": "src/instantBooking.jsx",
     "isEntry": true,
     "imports": [
-      "_src-sKid97TB.js",
-      "_useStore-FKbJehlt.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_InstantBooking-B-7XNxqI.js"
+      "_src-Dg4Cn4P2.js",
+      "_useStore-BW4ploR3.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_InstantBooking-DurJv_Pu.js"
     ]
   },
   "src/labBooking.jsx": {
-    "file": "assets/labBooking-bg7P1YMM.js",
+    "file": "assets/labBooking-BVdE3gXU.js",
     "name": "labBooking",
     "src": "src/labBooking.jsx",
     "isEntry": true,
     "imports": [
-      "_src-sKid97TB.js",
-      "_useStore-FKbJehlt.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_LabBookingRequest-lH13Q3lJ.js"
+      "_src-Dg4Cn4P2.js",
+      "_useStore-BW4ploR3.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_LabBookingRequest-YqZ7bDwE.js"
     ]
   },
   "src/main.jsx": {
-    "file": "assets/main-COE9F1fx.js",
+    "file": "assets/main-2lalhXXm.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
     "imports": [
-      "_src-sKid97TB.js",
-      "_AuthApp-D8NT6Cqi.js",
-      "_firebase-CcUPGelJ.js",
-      "_useStore-FKbJehlt.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_EcareToaster-BU7GKDP0.js",
-      "_x-sxKovTkf.js",
-      "_AmbulanceRequest-L9tozdRG.js",
-      "_arrow-right-NgTH3mPW.js",
-      "_stethoscope-BKrEx6Lr.js",
-      "_clock-xmP0C_rI.js",
-      "_triangle-alert-Bo63Qexi.js",
-      "_truck-Bd38bJ-D.js",
-      "_CareProviderBookingRequest-f8R5B3D7.js",
-      "_ArrowRight.esm-JKBhlUnd.js",
-      "_Cart-DLBBcVIi.js",
-      "_CustomDatePicker-B_v66_am.js",
-      "_CheckCircle.esm-DC_X9pni.js",
-      "_ClipboardText.esm-D461YN5O.js",
-      "_Clock.esm-CVL6mSsA.js",
-      "_InstantBooking-B-7XNxqI.js",
-      "_Heart.esm-Yl2YODYG.js",
-      "_LabBookingRequest-lH13Q3lJ.js",
-      "_CustomTimePicker-1ixy4tUS.js",
-      "_ShieldCheck.esm-x5QRkQ2b.js",
-      "_UploadSimple.esm-B1hv-KiO.js",
-      "_useAuth-DgBbpki8.js",
-      "_portal-DKShLlFh.js"
+      "_src-Dg4Cn4P2.js",
+      "_AuthApp-DxjbRxfk.js",
+      "_firebase-BkREwsBA.js",
+      "_useStore-BW4ploR3.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_EcareToaster-BPK8NY-s.js",
+      "_x-D5AfofKV.js",
+      "_AmbulanceRequest-CjzN3j4K.js",
+      "_arrow-right-BRPSBI3c.js",
+      "_stethoscope-aoBL8xqQ.js",
+      "_clock-BwCx9b9f.js",
+      "_triangle-alert-BnY7Nk8Y.js",
+      "_truck-BEoZaPHy.js",
+      "_CareProviderBookingRequest-Bi7YwpSL.js",
+      "_ArrowRight.esm-vm3Wxy-V.js",
+      "_Cart-Dtd-q7gB.js",
+      "_CustomDatePicker-B6tCFgbc.js",
+      "_CheckCircle.esm-CmQJ-ftr.js",
+      "_ClipboardText.esm-DGBSEJT_.js",
+      "_Clock.esm-MCOdrFBj.js",
+      "_InstantBooking-DurJv_Pu.js",
+      "_Heart.esm-Cs4jL6Wy.js",
+      "_LabBookingRequest-YqZ7bDwE.js",
+      "_CustomTimePicker-CbDIqvnh.js",
+      "_ShieldCheck.esm-CSm08RLU.js",
+      "_UploadSimple.esm-O3Lv6-ge.js",
+      "_useAuth-BwCFdJFF.js",
+      "_portal-DUfEYA4m.js"
     ]
   },
   "src/registration.jsx": {
-    "file": "assets/registration-DO6DsxW0.js",
+    "file": "assets/registration-BmelBM_o.js",
     "name": "registration",
     "src": "src/registration.jsx",
     "isEntry": true,
     "imports": [
-      "_src-sKid97TB.js",
-      "_CustomSelect-B2E96r_4.js",
-      "_x-sxKovTkf.js",
-      "_stethoscope-BKrEx6Lr.js",
-      "_triangle-alert-Bo63Qexi.js",
-      "_truck-Bd38bJ-D.js",
-      "_CustomDatePicker-B_v66_am.js",
-      "_UploadSimple.esm-B1hv-KiO.js"
+      "_src-Dg4Cn4P2.js",
+      "_CustomSelect-BNwUCgJg.js",
+      "_x-D5AfofKV.js",
+      "_stethoscope-aoBL8xqQ.js",
+      "_triangle-alert-BnY7Nk8Y.js",
+      "_truck-BEoZaPHy.js",
+      "_CustomDatePicker-B6tCFgbc.js",
+      "_UploadSimple.esm-O3Lv6-ge.js"
     ]
   }
 }

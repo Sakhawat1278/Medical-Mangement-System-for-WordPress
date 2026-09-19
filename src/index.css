@@ -4275,6 +4275,8 @@ div[data-toaster-container] > div,
   align-items: flex-start;
   gap: 1.5rem;
   flex-wrap: nowrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .ecare-blood-stat-card {
@@ -4284,6 +4286,7 @@ div[data-toaster-container] > div,
   padding: 1.25rem 1.5rem;
   flex-shrink: 0;
   width: 210px;
+  box-sizing: border-box;
 }
 
 /* On narrow screens: stack vertically, full width */
@@ -4334,12 +4337,20 @@ div[data-toaster-container] > div,
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media (max-width: 600px) {
   .ecare-blood-public-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+    gap: 0.625rem;
   }
+}
+
+/* Ensure individual card children don't overflow */
+.ecare-blood-public-grid > * {
+  min-width: 0;
+  box-sizing: border-box;
 }
 
