@@ -190,6 +190,7 @@ function App() {
         'profile', 
         'telemedicine', 
         'appointments', 
+        'add-appointment',
         'care-bookings', 
         'care-providers',
         'care-list',
@@ -205,7 +206,11 @@ function App() {
         'payment-transactions',
         'payment-refunds',
         'support',
-        'cart'
+        'cart',
+        'blood-bank',
+        'blood-inventory',
+        'blood-donors',
+        'blood-requests'
       ]
       if (!patientAllowedPages.includes(activePage)) {
         setActivePage('dashboard')
@@ -243,7 +248,11 @@ function App() {
       'lab-orders': 'lab',
       'lab-catalog': 'lab',
       'lab-booking-create': 'lab',
-      'care-provider-booking-create': 'care_providers'
+      'care-provider-booking-create': 'care_providers',
+      'blood-bank': 'bloodbank',
+      'blood-inventory': 'bloodbank',
+      'blood-donors': 'bloodbank',
+      'blood-requests': 'bloodbank'
     }
 
     const requiredModule = pageModuleMap[activePage]

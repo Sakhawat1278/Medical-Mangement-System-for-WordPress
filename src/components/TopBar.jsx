@@ -268,6 +268,28 @@ const TopBar = () => {
       case 'lab-catalog': return { title: 'Lab Catalog', desc: 'Browse available diagnostic tests and services.' };
       case 'lab-locations': return { title: 'Diagnostic Centers', desc: 'Available lab facilities and sample collection points.' };
 
+      // Blood Bank
+      case 'blood-bank': 
+        return { 
+          title: user.ecareRole === 'patient' ? 'Blood Bank & Reserves' : 'Blood Bank Management', 
+          desc: user.ecareRole === 'patient' ? 'Real-time blood stock availability and voluntary donor network.' : 'Real-time blood reserves, volunteer donor network, and clinical dispatch.' 
+        };
+      case 'blood-inventory': 
+        return { 
+          title: user.ecareRole === 'patient' ? 'Hospital Blood Reserves' : 'Blood Bag Inventory', 
+          desc: user.ecareRole === 'patient' ? 'Screened and certified blood units in clinical refrigeration.' : 'Track, verify, and manage individual blood bags and storage.' 
+        };
+      case 'blood-donors': 
+        return { 
+          title: user.ecareRole === 'patient' ? 'Voluntary Blood Donors' : 'Blood Donors Registry', 
+          desc: user.ecareRole === 'patient' ? 'Register or update your profile to save lives during urgent needs.' : 'Volunteer donor records, eligibility status, and collection history.' 
+        };
+      case 'blood-requests': 
+        return { 
+          title: user.ecareRole === 'patient' ? 'Blood Requisitions' : 'Blood Requests & Requisitions', 
+          desc: user.ecareRole === 'patient' ? 'Submit emergency blood requests and track allocation progress.' : 'Manage clinical blood demands, hospital requests, and dispatch.' 
+        };
+
       // System
       case 'settings': return { title: 'System Settings', desc: 'Configure clinic rules, payments, and global parameters.' };
       case 'admin': return { title: 'Admin Panel', desc: 'Manage system users and access permissions.' };

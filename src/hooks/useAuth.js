@@ -65,11 +65,11 @@ const useAuth = () => {
       
       // Default permissions for Doctors & Patients if not explicitly set
       if (role === 'doctor' && ['patients', 'appointments'].includes(ability)) return true
-      if (role === 'patient' && ['appointments', 'care_providers', 'ambulance', 'lab', 'billing'].includes(ability)) return true
+      if (role === 'patient' && ['appointments', 'care_providers', 'ambulance', 'lab', 'billing', 'bloodbank'].includes(ability)) return true
 
       // Backward compatibility / convenience check
       // If checking 'doctors', allow if they have 'doctors_view' or any doctor related perm
-      const topLevelModules = ['doctors', 'ambulance', 'patients', 'appointments', 'billing', 'staff', 'settings'];
+      const topLevelModules = ['doctors', 'ambulance', 'patients', 'appointments', 'billing', 'staff', 'settings', 'bloodbank'];
       if (topLevelModules.includes(ability)) {
           const prefix = ability + '_';
           if (permissions.includes(ability)) return true; // Legacy support

@@ -56,8 +56,8 @@
       "assets/cg_physiotherapist-Be_W5OUl.png"
     ]
   },
-  "_Cart-drJI1yhW.js": {
-    "file": "assets/Cart-drJI1yhW.js",
+  "_Cart-DGq_48f4.js": {
+    "file": "assets/Cart-DGq_48f4.js",
     "name": "Cart",
     "imports": [
       "_src-C9ll6FZ_.js",
@@ -72,7 +72,7 @@
       "_ClipboardText.esm-iS0Jg283.js",
       "_CustomTimePicker-DeRlRNz9.js",
       "_ShieldCheck.esm-BIdUaAcI.js",
-      "_useAuth-BM14RMY1.js",
+      "_useAuth-B7AOljgM.js",
       "_portal-ChtB0tBf.js"
     ]
   },
@@ -257,8 +257,8 @@
       "_x-Csr_KE7U.js"
     ]
   },
-  "_useAuth-BM14RMY1.js": {
-    "file": "assets/useAuth-BM14RMY1.js",
+  "_useAuth-B7AOljgM.js": {
+    "file": "assets/useAuth-B7AOljgM.js",
     "name": "useAuth",
     "imports": [
       "_useStore-DsfXkuG8.js"
@@ -346,7 +346,7 @@
     ]
   },
   "src/cartPage.jsx": {
-    "file": "assets/cartPage-C9CbcyKi.js",
+    "file": "assets/cartPage-C13owPa8.js",
     "name": "cartPage",
     "src": "src/cartPage.jsx",
     "isEntry": true,
@@ -355,11 +355,11 @@
       "_useStore-DsfXkuG8.js",
       "_proxy-B9913vzh.js",
       "_EcareToaster-BFSWgqDY.js",
-      "_Cart-drJI1yhW.js"
+      "_Cart-DGq_48f4.js"
     ]
   },
   "src/doctorsPage.jsx": {
-    "file": "assets/doctorsPage-BBeBqYAR.js",
+    "file": "assets/doctorsPage-LhR4NH49.js",
     "name": "doctorsPage",
     "src": "src/doctorsPage.jsx",
     "isEntry": true,
@@ -373,7 +373,7 @@
       "_arrow-right-DXeUcTx6.js",
       "_clock-BdXaY5Ei.js",
       "_CustomSelect-BY0x3kBx.js",
-      "_useAuth-BM14RMY1.js",
+      "_useAuth-B7AOljgM.js",
       "_portal-ChtB0tBf.js"
     ]
   },
@@ -404,7 +404,7 @@
     ]
   },
   "src/main.jsx": {
-    "file": "assets/main-ciRADFDu.js",
+    "file": "assets/main-B2r7bdx0.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
@@ -424,7 +424,7 @@
       "_truck-Cu6p5avG.js",
       "_CareProviderBookingRequest-Du7bBWE5.js",
       "_ArrowRight.esm-BRQ8Hh3X.js",
-      "_Cart-drJI1yhW.js",
+      "_Cart-DGq_48f4.js",
       "_CustomDatePicker-DoGPkQtS.js",
       "_CustomSelect-BY0x3kBx.js",
       "_CheckCircle.esm-B_wGfGDU.js",
@@ -436,7 +436,7 @@
       "_CustomTimePicker-DeRlRNz9.js",
       "_ShieldCheck.esm-BIdUaAcI.js",
       "_UploadSimple.esm-DguD00Ht.js",
-      "_useAuth-BM14RMY1.js",
+      "_useAuth-B7AOljgM.js",
       "_portal-ChtB0tBf.js"
     ]
   },
