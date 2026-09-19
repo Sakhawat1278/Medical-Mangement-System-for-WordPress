@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Calendar, Clock, User, UserSquare, CalendarCheck, DotsThreeVertical, CheckCircle, XCircle, ClockAfternoon, Activity } from 'phosphor-react'
+import { Calendar, Clock, User, UserSquare, CalendarCheck, DotsThreeVertical, CheckCircle, XCircle, ClockAfternoon, Activity, Star } from 'phosphor-react'
 import DataTable from '../components/DataTable'
 import CustomSelect from '../components/CustomSelect'
 import useStore, { isTimeslotEnded } from '../store/useStore'
 import toast from 'react-hot-toast'
 import { formatPaymentMethod } from '../utils/formatters'
+import ReviewModal from '../components/ReviewModal'
 
 const isVideoConsultMode = (mode) => {
   const normalized = String(mode || '').trim().toLowerCase()
@@ -46,6 +47,9 @@ const Appointments = () => {
   } = useStore()
   const isDoctor = user?.ecareRole === 'doctor'
   const isPatient = user?.ecareRole === 'patient'
+
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewAppointment, setReviewAppointment] = useState(null);
 
   const requestMissedDoctorRefund = React.useCallback(async (appt) => {
     const existingRefund = (refunds || []).find(refund =>
@@ -411,10 +415,37 @@ const Appointments = () => {
         }
 
         if (row.status === 'Completed') {
+          const hasReviewed = (useStore.getState().reviews || []).some(r => String(r.appointment_id) === String(row.id));
           return (
-            <span style={{ fontSize: '0.75rem', color: 'var(--ecare-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <CheckCircle size={14} weight="bold" /> Completed
-            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--ecare-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <CheckCircle size={14} weight="bold" /> Completed
+              </span>
+              {isPatient && !hasReviewed && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setReviewAppointment(row);
+                    setIsReviewModalOpen(true);
+                  }}
+                  style={{
+                    padding: '4px 8px', borderRadius: '6px',
+                    background: '#fef3c7', color: '#d97706',
+                    border: '1px solid #fde68a',
+                    fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '4px',
+                    justifyContent: 'center', transition: 'all 0.2s'
+                  }}
+                >
+                  <Star size={12} weight="fill" /> Rate Doctor
+                </button>
+              )}
+              {isPatient && hasReviewed && (
+                <span style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '2px' }}>
+                  <Star size={10} weight="fill" color="#f59e0b" /> Reviewed
+                </span>
+              )}
+            </div>
           );
         }
 
@@ -664,6 +695,15 @@ const Appointments = () => {
         onEdit={isDoctor || isPatient ? null : (row) => { setEditingAppointment(row); setActivePage('add-appointment'); }}
         onDelete={isDoctor || isPatient ? null : handleDelete}
         onBulkDelete={isDoctor || isPatient ? null : handleBulkDelete}
+      />
+
+      <ReviewModal 
+        isOpen={isReviewModalOpen}
+        onClose={() => {
+          setIsReviewModalOpen(false);
+          setReviewAppointment(null);
+        }}
+        appointment={reviewAppointment}
       />
     </motion.div>
   )

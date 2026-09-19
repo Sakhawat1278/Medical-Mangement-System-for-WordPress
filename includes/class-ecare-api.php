@@ -65,7 +65,8 @@ class ECARE_API
             'staff-attendance',
             'support-tickets',
             'support-messages',
-            'promo-codes'
+            'promo-codes',
+            'reviews'
         );
 
         register_rest_route('ecare/v1', '/bootstrap', array(
@@ -1049,7 +1050,8 @@ class ECARE_API
             'staff-attendance' => 'ecare_staff_attendance',
             'support-tickets' => 'ecare_support_tickets',
             'support-messages' => 'ecare_support_messages',
-            'promo-codes' => 'ecare_promo_codes'
+            'promo-codes' => 'ecare_promo_codes',
+            'reviews' => 'ecare_reviews'
         );
         return isset($map[$module]) ? $map[$module] : null;
     }

@@ -731,6 +731,7 @@ const useStore = create(
       specialities: [],
       services: [],
       appointments: [],
+      reviews: [],
       careProviderBookings: [],
       careProviders: [],
       pendingCareProviders: [],
@@ -1336,24 +1337,24 @@ const useStore = create(
           const currentUser = get().user;
           const role = currentUser?.ecareRole || 'guest';
 
-          const allowedForGuest = ['doctors'];
+          const allowedForGuest = ['doctors', 'reviews'];
           const allowedForPatient = [
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
             'telemed-rooms', 'support-tickets', 'support-messages', 
             'care-provider-bookings', 'ambulance-bookings', 'telemed-messages',
-            'patients'
+            'patients', 'reviews'
           ];
           const allowedForDoctor = [
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
             'telemed-rooms', 'support-tickets', 'support-messages', 'telemed-messages',
-            'patients'
+            'patients', 'reviews'
           ];
           const allowedForAdmin = [
             'stats', 'doctors', 'appointments', 'billing', 'notifications', 
             'telemed-rooms', 'support-tickets', 'support-messages', 
             'care-providers', 'ambulance', 'manual-verifications',
             'care-provider-bookings', 'ambulance-bookings', 'telemed-messages',
-            'patients', 'staff'
+            'patients', 'staff', 'reviews'
           ];
 
           let modulesToSync = [];
@@ -1392,6 +1393,7 @@ const useStore = create(
           const patientsData = Array.isArray(data['patients']) ? data['patients'] : [];
           const staffData = Array.isArray(data['staff']) ? data['staff'] : [];
           const labOrdersData = Array.isArray(data['lab-orders']) ? data['lab-orders'] : (get().labOrders || []);
+          const reviewsData = Array.isArray(data['reviews']) ? data['reviews'] : [];
 
           const allDoctors = doctorsData;
 
@@ -1419,6 +1421,7 @@ const useStore = create(
             doctorList: allDoctors.filter(d => d.status !== 'Pending'),
             pendingDoctors: allDoctors.filter(d => d.status === 'Pending'),
             appointments: appointmentsData,
+            reviews: reviewsData,
             transactions: billingData,
             notifications: combinedNotifs,
             telemedRooms: telemedRoomsData,
@@ -1531,6 +1534,11 @@ const useStore = create(
         }
         return get().handleOp('appointments', 'delete', null, 'Appointment cancelled', 'appointments', id);
       },
+
+      // Reviews
+      addReview: (data) => get().handleOp('reviews', 'post', data, 'Review submitted successfully', 'reviews'),
+      updateReview: (id, data) => get().handleOp('reviews', 'put', data, 'Review updated', 'reviews', id),
+      deleteReview: (id) => get().handleOp('reviews', 'delete', null, 'Review removed', 'reviews', id),
 
       // Lab Management
       addLabTest: (data) => get().handleOp('lab-tests', 'post', data, 'Lab test added', 'labTests'),
