@@ -900,8 +900,8 @@ const Sidebar = () => {
         )}
 
         {/* Reviews */}
-        {(isAdmin || isDoctor) && (
-          <NavItem id="reviews" icon={Star} label="Reviews" index={13.9} isCollapsed={isSidebarCollapsed} />
+        {(isAdmin || isDoctor || isPatient) && (
+          <NavItem id="reviews" icon={Star} label={isPatient ? "My Reviews" : "Reviews"} index={13.9} isCollapsed={isSidebarCollapsed} />
         )}
 
         {/* Settings & Admin Panel — admin or staff with settings ability */}
