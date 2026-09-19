@@ -4269,4 +4269,137 @@ div[data-toaster-container] > div,
   }
 }
 
+/* Public Standalone Blood Bank Styles */
+.ecare-bb-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.ecare-bb-hero-content {
+  flex: 1 1 320px;
+  max-width: 650px;
+}
+
+.ecare-bb-hero-btn-group {
+  display: flex;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+.ecare-bb-stat-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  min-width: 220px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.ecare-bb-trust-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.ecare-bb-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.ecare-bb-filter-container {
+  display: flex;
+  background: #f1f5f9;
+  padding: 3px;
+  border-radius: 8px;
+  gap: 2px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 900px) {
+  .ecare-bb-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .ecare-bb-hero {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .ecare-bb-hero-content {
+    max-width: 100%;
+  }
+  .ecare-bb-hero-btn-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .ecare-bb-hero-btn {
+    padding: 9px 8px !important;
+    font-size: 0.78rem !important;
+    justify-content: center !important;
+    width: 100% !important;
+    white-space: nowrap !important;
+  }
+  .ecare-bb-stat-card {
+    width: 100%;
+    min-width: unset;
+    box-sizing: border-box;
+    padding: 0.875rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .ecare-bb-trust-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-top: 0.875rem;
+    padding-top: 0.875rem;
+  }
+  .ecare-bb-trust-item {
+    font-size: 0.75rem !important;
+  }
+  .ecare-bb-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  .ecare-bb-card {
+    padding: 0.75rem 0.625rem !important;
+    gap: 0.5rem !important;
+    border-radius: 10px !important;
+  }
+  .ecare-bb-card-badge {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 0.85rem !important;
+    border-radius: 6px !important;
+  }
+  .ecare-bb-card-count {
+    font-size: 1rem !important;
+  }
+  .ecare-bb-card-compat {
+    font-size: 0.65rem !important;
+    padding-top: 4px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .ecare-bb-hero-btn-group {
+    grid-template-columns: 1fr;
+  }
+}
+
 
