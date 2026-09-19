@@ -441,16 +441,16 @@ const BloodRequests = () => {
                   overflow: 'hidden', display: 'flex', flexDirection: 'column'
                 }}
               >
-                <div style={{ padding: '1.25rem 1.5rem', background: '#fef2f2', borderBottom: '1px solid #fee2e2', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ padding: '1.25rem 1.5rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <FirstAid size={20} weight="fill" />
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: 0, color: '#991b1b' }}>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: 0, color: '#1e293b' }}>
                         {editingRequest ? 'Edit Blood Requisition' : 'Create Blood Requisition'}
                       </h3>
-                      <p style={{ fontSize: '0.72rem', color: '#b91c1c', margin: 0 }}>Clinical or emergency blood allocation request</p>
+                      <p style={{ fontSize: '0.72rem', color: '#64748b', margin: 0 }}>Clinical or emergency blood allocation request</p>
                     </div>
                   </div>
                   <button onClick={() => setIsAddModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
@@ -507,7 +507,7 @@ const BloodRequests = () => {
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Blood Group *</label>
                       <CustomSelect 
@@ -517,33 +517,34 @@ const BloodRequests = () => {
                       />
                     </div>
                     <div className="ecare-form-group">
-                      <label className="ecare-label">Units (Bags)</label>
+                      <label className="ecare-label">Units (Bags) *</label>
                       <input 
                         type="number" 
                         min="1"
                         max="10"
+                        required
                         className="ecare-input" 
                         value={formData.units_required} 
-                        onChange={e => setFormData({ ...formData, units_required: Number(e.target.value) })} 
-                      />
-                    </div>
-                    <div className="ecare-form-group">
-                      <label className="ecare-label">Urgency</label>
-                      <CustomSelect 
-                        value={formData.urgency} 
-                        onChange={val => setFormData({ ...formData, urgency: val })}
-                        options={URGENCY_OPTIONS}
+                        onChange={e => setFormData({ ...formData, units_required: Math.max(1, Number(e.target.value)) })} 
                       />
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: isPatient ? '1fr' : '1fr 1fr', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: isPatient ? '1fr 1fr' : 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Component</label>
                       <CustomSelect 
                         value={formData.component} 
                         onChange={val => setFormData({ ...formData, component: val })}
                         options={COMPONENT_OPTIONS}
+                      />
+                    </div>
+                    <div className="ecare-form-group">
+                      <label className="ecare-label">Urgency Priority</label>
+                      <CustomSelect 
+                        value={formData.urgency} 
+                        onChange={val => setFormData({ ...formData, urgency: val })}
+                        options={URGENCY_OPTIONS}
                       />
                     </div>
                     {!isPatient && (
@@ -569,12 +570,12 @@ const BloodRequests = () => {
                     />
                   </div>
 
-                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem', paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9' }}>
                     <button type="button" onClick={() => setIsAddModalOpen(false)} className="ecare-btn-secondary" style={{ flex: 1, padding: '0.65rem' }}>
                       Cancel
                     </button>
-                    <button type="submit" className="ecare-button" style={{ flex: 2, padding: '0.65rem' }}>
-                      {editingRequest ? 'Save Changes' : 'Submit Requisition'}
+                    <button type="submit" className="ecare-button" style={{ flex: 2, padding: '0.65rem', width: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                      <FirstAid size={16} weight="bold" /> {editingRequest ? 'Save Changes' : 'Submit Requisition'}
                     </button>
                   </div>
                 </form>

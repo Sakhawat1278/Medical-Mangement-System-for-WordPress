@@ -343,19 +343,14 @@ const BloodBankDashboard = () => {
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
-        marginBottom: '1.5rem',
+        marginBottom: '0.75rem',
         flexWrap: 'wrap',
-        gap: '1rem'
+        gap: '0.75rem'
       }}>
         <div>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--ecare-text-main)', margin: 0 }}>
             {isPatient ? "Blood Bank & Donor Network" : "Blood Bank Management"}
           </h2>
-          <p style={{ fontSize: '0.8125rem', color: 'var(--ecare-text-muted)', margin: '3px 0 0 0' }}>
-            {isPatient 
-              ? "Check live blood reserves, request units for surgery or emergency, and volunteer as a registered donor"
-              : "Real-time blood reserves, volunteer donor network, and clinical dispatch"}
-          </p>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', flexWrap: 'wrap' }}>
@@ -466,27 +461,24 @@ const BloodBankDashboard = () => {
         />
       </div>
 
-      {/* ─── Blood Group Inventory Grid (Clean & Harmonious) ──────── */}
-      <div className="ecare-card" style={{ padding: '1.25rem', marginBottom: '1.5rem', borderRadius: '14px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+      {/* ─── Blood Group Inventory Grid (Clean & Compact) ────────── */}
+      <div className="ecare-card" style={{ padding: '1rem 1.25rem', marginBottom: '1.25rem', borderRadius: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.875rem', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--ecare-text-main)', margin: 0 }}>
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--ecare-text-main)', margin: 0 }}>
               Blood Group Stock Availability
             </h3>
-            <p style={{ fontSize: '0.75rem', color: 'var(--ecare-text-muted)', margin: '2px 0 0 0' }}>
-              Real-time reserves across standard ABO and Rh blood types
-            </p>
           </div>
           <span 
             onClick={() => setActivePage(isPatient ? 'blood-requests' : 'blood-inventory')}
-            style={{ fontSize: '0.8125rem', color: 'var(--ecare-primary)', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+            style={{ fontSize: '0.75rem', color: 'var(--ecare-primary)', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
           >
-            {isPatient ? "Request Blood Units" : "Manage All Bags"} <ArrowRight size={14} weight="bold" />
+            {isPatient ? "Request Blood Units" : "Manage All Bags"} <ArrowRight size={13} weight="bold" />
           </span>
         </div>
 
-        {/* 4x2 Grid on desktop, 2x4 on tablet */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
+        {/* Responsive Compact Grid: 4 columns on desktop, 2 columns on mobile */}
+        <div className="ecare-blood-group-grid">
           {BLOOD_GROUPS.map((group) => {
             const count = stats.byGroup[group] || 0
             const isSafe = count >= 4
@@ -498,38 +490,39 @@ const BloodBankDashboard = () => {
                 key={group}
                 style={{
                   background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
+                  border: isCritical ? '1px solid #fee2e2' : '1px solid #e2e8f0',
                   borderRadius: '10px',
-                  padding: '0.875rem 0.75rem',
+                  padding: '0.625rem 0.5rem',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   textAlign: 'center',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
                 }}
               >
                 <div style={{ 
-                  width: '36px', height: '36px', borderRadius: '50%', 
+                  width: '30px', height: '30px', borderRadius: '50%', 
                   background: isCritical ? '#fee2e2' : 'white',
                   border: isCritical ? '1px solid #fecaca' : '1px solid #e2e8f0',
                   color: isCritical ? '#dc2626' : 'var(--ecare-primary)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1rem', fontWeight: 800, marginBottom: '6px'
+                  fontSize: '0.85rem', fontWeight: 800, marginBottom: '4px'
                 }}>
                   {group}
                 </div>
 
-                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1e293b' }}>
-                  {count} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#64748b' }}>Bags</span>
+                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1e293b', lineHeight: 1.2 }}>
+                  {count} <span style={{ fontSize: '0.675rem', fontWeight: 500, color: '#64748b' }}>Bags</span>
                 </div>
 
                 <div style={{ 
-                  marginTop: '6px', 
-                  fontSize: '0.675rem', 
+                  marginTop: '4px', 
+                  fontSize: '0.625rem', 
                   fontWeight: 700, 
                   color: isCritical ? '#dc2626' : (isLow ? '#d97706' : '#16a34a'),
                   background: isCritical ? '#fee2e2' : (isLow ? '#fef3c7' : '#dcfce7'),
-                  padding: '2px 8px',
+                  padding: '1px 6px',
                   borderRadius: '4px'
                 }}>
                   {isCritical ? 'Empty' : (isLow ? 'Low Stock' : 'Adequate')}
@@ -543,23 +536,24 @@ const BloodBankDashboard = () => {
                       setIsAddRequestModalOpen(true)
                     }}
                     style={{
-                      marginTop: '8px',
+                      marginTop: '6px',
                       width: '100%',
-                      padding: '5px 4px',
+                      padding: '4px 6px',
                       borderRadius: '6px',
                       background: isCritical ? '#fee2e2' : '#f0fdf4',
                       border: isCritical ? '1px solid #fecaca' : '1px solid #bbf7d0',
-                      fontSize: '0.7rem',
+                      fontSize: '0.68rem',
                       fontWeight: 700,
                       color: isCritical ? '#dc2626' : '#166534',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '4px'
+                      gap: '4px',
+                      whiteSpace: 'nowrap'
                     }}
                   >
-                    <FirstAid size={12} weight="bold" /> Request {group}
+                    <FirstAid size={11} weight="bold" /> Request {group}
                   </button>
                 ) : (
                   <button
@@ -569,16 +563,17 @@ const BloodBankDashboard = () => {
                       setIsAddBagModalOpen(true)
                     }}
                     style={{
-                      marginTop: '8px',
+                      marginTop: '6px',
                       width: '100%',
-                      padding: '4px',
+                      padding: '4px 6px',
                       borderRadius: '6px',
                       background: '#ffffff',
                       border: '1px solid #cbd5e1',
-                      fontSize: '0.7rem',
+                      fontSize: '0.68rem',
                       fontWeight: 700,
                       color: '#475569',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap'
                     }}
                   >
                     + Add
@@ -1277,19 +1272,19 @@ const BloodBankDashboard = () => {
                 initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
                 className="ecare-card"
                 style={{ 
-                  width: '100%', maxWidth: '500px', maxHeight: '90vh', position: 'relative', 
+                  width: '100%', maxWidth: '520px', maxHeight: '90vh', position: 'relative', 
                   padding: 0, border: 'none', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
                   overflow: 'hidden', display: 'flex', flexDirection: 'column'
                 }}
               >
-                <div style={{ padding: '1.25rem 1.5rem', background: '#fef2f2', borderBottom: '1px solid #fee2e2', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ padding: '1.25rem 1.5rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <FirstAid size={20} weight="fill" />
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: 0, color: '#991b1b' }}>Create Blood Requisition</h3>
-                      <p style={{ fontSize: '0.72rem', color: '#b91c1c', margin: 0 }}>Place emergency or surgical blood request</p>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: 0, color: '#1e293b' }}>Create Blood Requisition</h3>
+                      <p style={{ fontSize: '0.72rem', color: '#64748b', margin: 0 }}>Place emergency or surgical blood request</p>
                     </div>
                   </div>
                   <button type="button" onClick={() => setIsAddRequestModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
@@ -1298,7 +1293,7 @@ const BloodBankDashboard = () => {
                 </div>
 
                 <form onSubmit={handleCreateRequest} style={{ padding: '1.25rem 1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Patient Name *</label>
                       <input 
@@ -1316,14 +1311,14 @@ const BloodBankDashboard = () => {
                         type="text" 
                         required 
                         className="ecare-input" 
-                        placeholder="e.g. ICU Bed 4"
+                        placeholder="e.g. ICU Bed 4, City Hospital"
                         value={requestForm.hospital_name} 
                         onChange={e => setRequestForm({ ...requestForm, hospital_name: e.target.value })} 
                       />
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div className="ecare-form-group">
                       <label className="ecare-label">Blood Group *</label>
                       <CustomSelect 
@@ -1333,18 +1328,30 @@ const BloodBankDashboard = () => {
                       />
                     </div>
                     <div className="ecare-form-group">
-                      <label className="ecare-label">Units (Bags)</label>
+                      <label className="ecare-label">Units (Bags) *</label>
                       <input 
                         type="number" 
                         min="1"
                         max="10"
+                        required
                         className="ecare-input" 
                         value={requestForm.units_required} 
-                        onChange={e => setRequestForm({ ...requestForm, units_required: Number(e.target.value) })} 
+                        onChange={e => setRequestForm({ ...requestForm, units_required: Math.max(1, Number(e.target.value)) })} 
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                    <div className="ecare-form-group">
+                      <label className="ecare-label">Component Type</label>
+                      <CustomSelect 
+                        value={requestForm.component} 
+                        onChange={val => setRequestForm({ ...requestForm, component: val })}
+                        options={COMPONENT_OPTIONS}
                       />
                     </div>
                     <div className="ecare-form-group">
-                      <label className="ecare-label">Urgency</label>
+                      <label className="ecare-label">Urgency Priority</label>
                       <CustomSelect 
                         value={requestForm.urgency} 
                         onChange={val => setRequestForm({ ...requestForm, urgency: val })}
@@ -1353,12 +1360,34 @@ const BloodBankDashboard = () => {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                  <div className="ecare-form-group">
+                    <label className="ecare-label">Contact Phone</label>
+                    <input 
+                      type="tel" 
+                      className="ecare-input" 
+                      placeholder="e.g. +880 1700-000000"
+                      value={requestForm.contact_phone} 
+                      onChange={e => setRequestForm({ ...requestForm, contact_phone: e.target.value })} 
+                    />
+                  </div>
+
+                  <div className="ecare-form-group">
+                    <label className="ecare-label">Clinical Indication / Diagnosis Notes</label>
+                    <textarea 
+                      rows={2}
+                      className="ecare-input" 
+                      placeholder="e.g. Scheduled emergency surgery at 4 PM, Hb 7.2 g/dL"
+                      value={requestForm.notes} 
+                      onChange={e => setRequestForm({ ...requestForm, notes: e.target.value })} 
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem', paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9' }}>
                     <button type="button" onClick={() => setIsAddRequestModalOpen(false)} className="ecare-btn-secondary" style={{ flex: 1, padding: '0.65rem' }}>
                       Cancel
                     </button>
-                    <button type="submit" className="ecare-button" style={{ flex: 2, padding: '0.65rem', background: '#dc2626', width: 'auto' }}>
-                      Submit Requisition
+                    <button type="submit" className="ecare-button" style={{ flex: 2, padding: '0.65rem', width: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                      <FirstAid size={16} weight="bold" /> Submit Requisition
                     </button>
                   </div>
                 </form>

@@ -4248,3 +4248,25 @@ div[data-toaster-container] > div,
   border: 1px solid #e2e8f0 !important;
 }
 
+/* Blood Bank Compact Responsive Grid */
+.ecare-blood-group-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 960px) {
+  .ecare-blood-group-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .ecare-blood-group-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+
