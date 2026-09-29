@@ -1114,7 +1114,8 @@ const useStore = create(
               labTests, labOrders, labLocations, telemedRooms, telemedMessages, 
               doctorAvailability, consultationNotes, staffAttendance, settings,
               supportTickets, supportMessages, notificationsResp, payoutsResp,
-              reviews, bloodInventory, bloodDonors, bloodRequests;
+              reviews, bloodInventory, bloodDonors, bloodRequests,
+              bloodCamps, bloodExpiryAlerts, ipdWards, ipdBeds, ipdAdmissions;
 
           let bootstrapResp = null;
           try {

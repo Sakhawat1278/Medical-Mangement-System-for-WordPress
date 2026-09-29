@@ -1,47 +1,29 @@
 <?php
 /**
  * Plugin Name: E-CARE Management System
- * Description: A massive clinic management system with full style isolation and custom high-performance database.
+ * Plugin URI: https://wordpress.org/plugins/e-care-management-system/
+ * Description: A modern, comprehensive clinic and hospital management system with patient portal, telemedicine, appointment scheduling, and blood bank management.
  * Version: 1.0.0
  * Author: Sakhawat Hossain
+ * Author URI: https://wordpress.org
+ * License: GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: e-care-management
+ * Domain Path: /languages
+ * Requires at least: 5.8
+ * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-// Prevent PHP deprecation notices (e.g. from Hostinger WP_DEBUG / PHP 8.1+) from polluting WordPress activation output buffer
-if (defined('WP_SANDBOX_SCRAPING') && WP_SANDBOX_SCRAPING) {
-    @ini_set('display_errors', '0');
-}
-
+define('ECARE_VERSION', '1.0.0');
 define('ECARE_PATH', plugin_dir_path(__FILE__));
-
-// Dynamic URL detection to prevent CORS issues (e.g. dynamic/different ports in local dev)
-$ecare_url = plugin_dir_url(__FILE__);
-if (!empty($_SERVER['HTTP_HOST'])) {
-    $parsed_url = parse_url($ecare_url);
-    if (is_array($parsed_url) && !empty($parsed_url['path'])) {
-        $scheme = is_ssl() ? 'https' : 'http';
-        $ecare_url = $scheme . '://' . $_SERVER['HTTP_HOST'] . $parsed_url['path'];
-    }
-}
-define('ECARE_URL', $ecare_url);
+define('ECARE_URL', plugin_dir_url(__FILE__));
 
 if (!function_exists('ecare_adjust_url')) {
     function ecare_adjust_url($url) {
-        if (empty($url) || !is_string($url)) return $url;
-        if (!empty($_SERVER['HTTP_HOST'])) {
-            $parsed = parse_url($url);
-            if (is_array($parsed)) {
-                $scheme = is_ssl() ? 'https' : 'http';
-                $path = $parsed['path'] ?? '';
-                $query = isset($parsed['query']) ? '?' . $parsed['query'] : '';
-                $fragment = isset($parsed['fragment']) ? '#' . $parsed['fragment'] : '';
-                $url = $scheme . '://' . $_SERVER['HTTP_HOST'] . $path . $query . $fragment;
-            }
-        }
         return $url;
     }
 }
@@ -745,12 +727,12 @@ class ECARE_Management_System {
 
         $css_url = !empty($css_files) ? ECARE_URL . 'dist/' . $css_files[0] : '';
 
-        wp_enqueue_style('ecare-google-fonts', 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap', [], null);
+        wp_enqueue_style('ecare-fonts', ECARE_URL . 'assets/css/ecare-fonts.css', [], ECARE_VERSION);
 
-        wp_enqueue_script('ecare-react-app', ECARE_URL . 'dist/' . $js_file, [], time(), true);
+        wp_enqueue_script('ecare-react-app', ECARE_URL . 'dist/' . $js_file, [], ECARE_VERSION, true);
 
         if ($css_url) {
-            wp_enqueue_style('ecare-styles', $css_url, [], time());
+            wp_enqueue_style('ecare-styles', $css_url, ['ecare-fonts'], ECARE_VERSION);
         }
 
         /* ── Build user payload ── */
@@ -875,7 +857,7 @@ class ECARE_Management_System {
     }
 
     public function enqueue_frontend_assets() {
-        wp_enqueue_style('ecare-google-fonts', 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap', [], null);
+        wp_enqueue_style('ecare-fonts', ECARE_URL . 'assets/css/ecare-fonts.css', [], ECARE_VERSION);
     }
 
     public function force_woocommerce_settings($value) {

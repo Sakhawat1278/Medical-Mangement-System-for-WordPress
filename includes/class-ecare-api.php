@@ -463,19 +463,12 @@ class ECARE_API
             }
 
             if ($endpoint === 'settings') {
-                $settings_record = $data[0] ?? new stdClass();
-                if (is_object($settings_record)) {
-                    if (!empty($settings_record->agoraAppCertificate) || !empty(get_option('ecare_agora_app_certificate', ''))) {
-                        $settings_record->hasAgoraAppCertificate = true;
-                    }
-                    unset($settings_record->agoraAppCertificate, $settings_record->dailyApiKey);
-                } elseif (is_array($settings_record)) {
-                    if (!empty($settings_record['agoraAppCertificate']) || !empty(get_option('ecare_agora_app_certificate', ''))) {
-                        $settings_record['hasAgoraAppCertificate'] = true;
-                    }
-                    unset($settings_record['agoraAppCertificate'], $settings_record['dailyApiKey']);
-                }
-                $response_data['settings'] = $settings_record;
+                $raw_settings = (array) ($data[0] ?? array());
+                $is_admin = ($role === 'admin');
+                $sanitized_settings = function_exists('ecare_get_client_settings')
+                    ? ecare_get_client_settings($raw_settings, $is_admin)
+                    : $raw_settings;
+                $response_data['settings'] = (object) $sanitized_settings;
             } else {
                 if ($endpoint === 'refunds') {
                     $this->sync_refund_statuses($data, $batch_data['ecare_billing'] ?? null);
@@ -877,7 +870,7 @@ class ECARE_API
             return true;
         }
 
-        $public_read_modules = array('doctors', 'specialities', 'services', 'lab-tests', 'lab-locations', 'settings', 'stats', 'blood-inventory', 'blood-donors', 'blood-camps', 'ipd-wards', 'ipd-beds');
+        $public_read_modules = array('doctors', 'specialities', 'services', 'lab-tests', 'lab-locations', 'settings', 'stats', 'blood-inventory', 'blood-camps', 'ipd-wards', 'ipd-beds');
         if ($action === 'read' && in_array($module, $public_read_modules, true)) {
             return true;
         }
@@ -1020,10 +1013,10 @@ class ECARE_API
         $method = $request ? $request->get_method() : 'GET';
 
         if ($role === 'guest') {
-            if ($method === 'GET' && in_array($module, array('specialities', 'services', 'settings', 'doctors', 'reviews', 'blood-inventory', 'blood-donors'), true)) {
+            if ($method === 'GET' && in_array($module, array('specialities', 'services', 'settings', 'doctors', 'reviews', 'blood-inventory', 'blood-camps', 'ipd-wards', 'ipd-beds'), true)) {
                 return true;
             }
-            if ($method === 'POST' && in_array($module, array('doctors', 'care-providers', 'ambulance'), true)) {
+            if ($method === 'POST' && in_array($module, array('doctors', 'care-providers', 'ambulance', 'blood-donors', 'blood-requests'), true)) {
                 return true;
             }
             return false;
@@ -2288,7 +2281,7 @@ class ECARE_API
                                     ));
                                     if (!empty($orders)) {
                                         $order = $orders[0];
-                                        $order->update_status('completed', __('Manual verification approved by admin. Order completed.', 'e-care'));
+                                        $order->update_status('completed', __('Manual verification approved by admin. Order completed.', 'e-care-management'));
                                         $order_updated = true;
                                     }
                                 }
@@ -2341,7 +2334,7 @@ class ECARE_API
                                     ));
                                     if (!empty($orders)) {
                                         $order = $orders[0];
-                                        $order->update_status('on-hold', __('Manual verification rejected by admin.', 'e-care'));
+                                        $order->update_status('on-hold', __('Manual verification rejected by admin.', 'e-care-management'));
                                         $order_updated = true;
                                     }
                                 }
@@ -2861,6 +2854,23 @@ class ECARE_API
         return $data;
     }
 
+    private function get_private_upload_dir() {
+        $upload_dir = wp_upload_dir();
+        $private_dir = trailingslashit($upload_dir['basedir']) . 'ecare-private-files';
+        if (!wp_mkdir_p($private_dir)) {
+            return false;
+        }
+        $htaccess_path = trailingslashit($private_dir) . '.htaccess';
+        if (!file_exists($htaccess_path)) {
+            @file_put_contents($htaccess_path, "Deny from all\nOptions -Indexes");
+        }
+        $index_path = trailingslashit($private_dir) . 'index.php';
+        if (!file_exists($index_path)) {
+            @file_put_contents($index_path, '<?php // Silence is golden.');
+        }
+        return $private_dir;
+    }
+
     public function handle_file_upload($request) {
         if (empty($_FILES)) {
             return new WP_Error('no_file', 'No files uploaded', array('status' => 400));
@@ -2897,13 +2907,9 @@ class ECARE_API
             }
 
             if (!$is_public) {
-                $private_dir = trailingslashit(dirname(ABSPATH)) . 'ecare-private-files';
-                if (!wp_mkdir_p($private_dir)) {
+                $private_dir = $this->get_private_upload_dir();
+                if (!$private_dir) {
                     return new WP_Error('storage_error', 'Private file storage is unavailable.', array('status' => 500));
-                }
-                $htaccess_path = trailingslashit($private_dir) . '.htaccess';
-                if (!file_exists($htaccess_path)) {
-                    @file_put_contents($htaccess_path, "Deny from all\nOptions -Indexes");
                 }
                 $file_id = wp_generate_uuid4();
                 $stored_name = $file_id . '.' . $extension;
@@ -3016,9 +3022,17 @@ class ECARE_API
 
         $this->log_audit_event('download', 'private-files', $file_id, array('name' => $file->original_name ?? ''));
 
-        $path = trailingslashit(dirname(ABSPATH)) . 'ecare-private-files/' . basename((string) ($file->stored_name ?? ''));
+        $upload_dir = wp_upload_dir();
+        $stored_filename = basename((string) ($file->stored_name ?? ''));
+        $path = trailingslashit($upload_dir['basedir']) . 'ecare-private-files/' . $stored_filename;
         if (!is_file($path) || !is_readable($path)) {
-            return new WP_Error('not_found', 'Stored file not found.', array('status' => 404));
+            // Fallback for files created before storage directory migration
+            $legacy_path = trailingslashit(dirname(ABSPATH)) . 'ecare-private-files/' . $stored_filename;
+            if (is_file($legacy_path) && is_readable($legacy_path)) {
+                $path = $legacy_path;
+            } else {
+                return new WP_Error('not_found', 'Stored file not found.', array('status' => 404));
+            }
         }
 
         nocache_headers();
@@ -3487,8 +3501,8 @@ class ECARE_API
                 // COD: auto-confirm as processing. BACS/cheque/Mobile manual: on-hold
                 $wc_status    = ($paymentMethod === 'cod') ? 'processing' : 'on-hold';
                 $status_note  = ($paymentMethod === 'cod')
-                    ? __('Cash on Delivery order confirmed via E-CARE checkout.', 'e-care')
-                    : sprintf(__('%s payment received via E-CARE checkout. Awaiting manual verification.', 'e-care'), $gateway_label);
+                    ? __('Cash on Delivery order confirmed via E-CARE checkout.', 'e-care-management')
+                    : sprintf(__('%s payment received via E-CARE checkout. Awaiting manual verification.', 'e-care-management'), $gateway_label);
 
                 $order->update_status($wc_status, $status_note);
                 wc_reduce_stock_levels($order->get_id());
@@ -3601,7 +3615,7 @@ class ECARE_API
                     }
                 } else {
                     // Gateway not found — mark pending
-                    $order->update_status('pending', __('Payment gateway not found; awaiting manual processing.', 'e-care'));
+                    $order->update_status('pending', __('Payment gateway not found; awaiting manual processing.', 'e-care-management'));
                     $order_completed = true;
                 }
             }
@@ -3869,8 +3883,8 @@ class ECARE_API
             if (in_array($payment_method, $offline_gateways, true)) {
                 $wc_status = ($payment_method === 'cod') ? 'processing' : 'on-hold';
                 $status_note = ($payment_method === 'cod')
-                    ? __('Cash payment for remaining balance confirmed.', 'e-care')
-                    : __('Check payment received. Awaiting bank confirmation.', 'e-care');
+                    ? __('Cash payment for remaining balance confirmed.', 'e-care-management')
+                    : __('Check payment received. Awaiting bank confirmation.', 'e-care-management');
 
                 $order->update_status($wc_status, $status_note);
 
@@ -3926,7 +3940,7 @@ class ECARE_API
                         return new WP_Error('payment_processing_failed', 'Payment processing failed.', array('status' => 400));
                     }
                 } else {
-                    $order->update_status('pending', __('Awaiting manual processing.', 'e-care'));
+                    $order->update_status('pending', __('Awaiting manual processing.', 'e-care-management'));
                     $order_completed = true;
                 }
             }
@@ -4177,7 +4191,7 @@ class ECARE_API
     public function handle_health_check($request) {
         global $wpdb;
         $table     = $wpdb->prefix . 'ecare_documents';
-        $exists    = $wpdb->get_var("SHOW TABLES LIKE '{$table}'");
+        $exists    = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table));
         $isHealthy = ($exists === $table);
 
         // Quick write-test query
@@ -4457,8 +4471,8 @@ class ECARE_API
         $raw_id  = $params['room_id'] ?? $params['id'] ?? $params['appointment_id'] ?? $request->get_param('room_id') ?? $request->get_param('id') ?? 0;
         $room_id = intval($raw_id);
 
-        if (!$room_id) {
-            $room_id = 1;
+        if ($room_id <= 0) {
+            return new WP_Error('invalid_room_id', __('Valid room ID or appointment ID is required.', 'e-care-management'), array('status' => 400));
         }
 
         // Load Jitsi server from settings (defaults to public meet.jit.si)
@@ -4468,18 +4482,19 @@ class ECARE_API
             $jitsi_server = 'https://meet.jit.si';
         }
 
-        // Room resolution: by id, or appointment_id, or auto-creation
+        $current_user_id = get_current_user_id();
+
+        // Room resolution: by id, or appointment_id, or auto-creation for authenticated user
         $room = ECARE_DB_Client::select_one('ecare_telemed_rooms', $room_id);
         if (!$room) {
             $rooms = ECARE_DB_Client::select_where('ecare_telemed_rooms', 'appointment_id', $room_id);
             if (!empty($rooms)) {
                 $room = $rooms[0];
-            } else {
-                // Auto-create room record so token request never fails
-                $current_user_id = get_current_user_id();
+            } elseif ($current_user_id > 0) {
+                // Auto-create room record for authenticated participant
                 $insert_id = ECARE_DB_Client::insert('ecare_telemed_rooms', array(
                     'appointment_id' => $room_id,
-                    'patient_id'     => $current_user_id ?: 0,
+                    'patient_id'     => $current_user_id,
                     'doctor_id'      => null,
                     'status'         => 'Active',
                     'type'           => 'Instant',
@@ -4488,6 +4503,8 @@ class ECARE_API
                     'updated_at'     => current_time('mysql'),
                 ));
                 $room = array('id' => $insert_id ?: $room_id);
+            } else {
+                return new WP_Error('not_found', __('Consultation room not found.', 'e-care-management'), array('status' => 404));
             }
         }
 

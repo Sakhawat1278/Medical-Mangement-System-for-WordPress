@@ -139,7 +139,7 @@ class ECARE_DB {
     public static function is_healthy() {
         global $wpdb;
         $table = $wpdb->prefix . 'ecare_documents';
-        $exists = $wpdb->get_var("SHOW TABLES LIKE '{$table}'");
+        $exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table));
         return $exists === $table;
     }
 }

@@ -357,15 +357,21 @@ class ECARE_Auth {
     }
 
     public function handle_registration(WP_REST_Request $request) {
+        // Respect WordPress site registration setting
+        $can_register = apply_filters('ecare_allow_registration', (bool) get_option('users_can_register'));
+        if (!$can_register) {
+            return new WP_Error('registration_disabled', __('User registration is currently disabled on this site.', 'e-care-management'), ['status' => 403]);
+        }
+
         // Honeypot validation
         $honeypot = $request->get_param('middlename');
         if (!empty($honeypot)) {
-            return new WP_Error('spam_detected', 'Spam registration detected.', ['status' => 400]);
+            return new WP_Error('spam_detected', __('Spam registration detected.', 'e-care-management'), ['status' => 400]);
         }
 
         // Rate limiting: 3 registrations per hour per IP
         if (ecare_is_rate_limited('register_ip', 3)) {
-            return new WP_Error('too_many_requests', 'Too many registration attempts. Please try again in an hour.', ['status' => 429]);
+            return new WP_Error('too_many_requests', __('Too many registration attempts. Please try again in an hour.', 'e-care-management'), ['status' => 429]);
         }
 
         $name     = $request->get_param('name');

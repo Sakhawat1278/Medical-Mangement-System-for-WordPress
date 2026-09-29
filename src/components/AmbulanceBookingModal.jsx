@@ -33,6 +33,11 @@ const DetailRow = ({ icon: Icon, label, value, iconColor = '#94a3b8' }) => (
   </div>
 )
 
+const getCurrentTimeStr = () => {
+  const d = new Date()
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+
 const AmbulanceBookingModal = () => {
   const {
     isAmbulanceModalOpen,
@@ -60,7 +65,7 @@ const AmbulanceBookingModal = () => {
   // ─── Form state — used for both create and edit info modes ───────────────
   const [formData, setFormData] = useState({
     patient: '', type: 'Non-AC', location: '', dest: '',
-    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    time: getCurrentTimeStr(),
     priority: 'Normal', phone: '', notes: ''
   })
 
@@ -76,7 +81,7 @@ const AmbulanceBookingModal = () => {
         type:     getField(b, 'type', 'ambulance_type', 'ambulanceType', 'vehicleType') || 'Non-AC',
         location: getField(b, 'location', 'pickup_location', 'pickupLocation', 'pickup'),
         dest:     getField(b, 'dest', 'destination', 'drop_location', 'dropLocation'),
-        time:     getField(b, 'time', 'dispatch_time', 'dispatchTime'),
+        time:     getField(b, 'time', 'dispatch_time', 'dispatchTime') || getCurrentTimeStr(),
         priority: getField(b, 'priority', 'urgency') || 'Normal',
         phone:    getField(b, 'phone', 'contact_phone', 'contactPhone', 'patient_phone'),
         notes:    getField(b, 'notes', 'additional_notes', 'additionalNotes'),
@@ -86,7 +91,7 @@ const AmbulanceBookingModal = () => {
     } else {
       setFormData({
         patient: '', type: 'Non-AC', location: '', dest: '',
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        time: getCurrentTimeStr(),
         priority: 'Normal', phone: '', notes: ''
       })
       setVehicleId('')
